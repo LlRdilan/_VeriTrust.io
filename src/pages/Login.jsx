@@ -1,35 +1,37 @@
+import { Link } from "react-router-dom";
+
 export default function Login() {
     return (
-        <div class="contact" style="padding-top:40px;padding-bottom:40px;">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <div class="titlepage">
-                            <h2><strong class="yellow">Iniciar Sesión</strong><br></br>Accede a tu cuenta</h2>
+        <div className="contact" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-8 offset-md-2">
+                        <div className="titlepage">
+                            <h2><strong className="yellow">Iniciar Sesión</strong><br />Accede a tu cuenta</h2>
                         </div>
-                        <form class="contact_form" id="loginForm">
-                            <div class="row">
-                                <div class="col-md-12">
-                                    <label for="InputRut">RUT/RUN (Sin punto, pero con guion)</label>
-                                    <input type="text" class="contact_control" id="InputRut" placeholder="Ej: 12345678-9" required></input>
-                                    <small class="error" id="ErrorRut" style="color:red;"></small>
+                        <form className="contact_form" id="loginForm">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <label htmlFor="InputRut">RUT/RUN (Sin punto, pero con guion)</label>
+                                    <input type="text" className="contact_control" id="InputRut" placeholder="Ej: 12345678-9" required />
+                                    <small className="error" id="ErrorRut" style={{ color: 'red' }}></small>
                                 </div>
-                                <div class="col-md-12">
-                                    <label for="InputContraseña">Contraseña</label>
-                                    <input type="password" class="contact_control" id="InputContraseña" placeholder="Ingresa tu contraseña" required></input>
-                                    <small class="error" id="ErrorContraseña" style="color:red;"></small>
+                                <div className="col-md-12">
+                                    <label htmlFor="InputContraseña">Contraseña</label>
+                                    <input type="password" className="contact_control" id="InputContraseña" placeholder="Ingresa tu contraseña" required />
+                                    <small className="error" id="ErrorContraseña" style={{ color: 'red' }}></small>
                                 </div>
-                                <div class="col-md-12 mt-3">
-                                    <div class="form-check">
-                                        <input type="checkbox" class="form-check-input" id="Recuerdame"></input>
-                                        <label class="form-check-label" for="Recuerdame">Recuérdame</label>
+                                <div className="col-md-12 mt-3">
+                                    <div className="form-check">
+                                        <input type="checkbox" className="form-check-input" id="Recuerdame" />
+                                        <label className="form-check-label" htmlFor="Recuerdame">Recuérdame</label>
                                     </div>
                                 </div>
-                                <div class="col-md-12">
-                                    <button type="submit" class="send_btn">Ingresar</button>
+                                <div className="col-md-12">
+                                    <button type="submit" className="send_btn">Ingresar</button>
                                 </div>
-                                <div class="col-md-12 mt-3 text-center">
-                                    <p>¿No tienes cuenta? <a href="sign.html">Regístrate aquí</a></p>
+                                <div className="col-md-12 mt-3 text-center">
+                                    <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
                                     <p><a href="#">¿Olvidaste tu contraseña?</a></p>
                                 </div>
                             </div>
@@ -37,6 +39,39 @@ export default function Login() {
                     </div>
                 </div>
             </div>
-        </div>
-    )
+
+            <form className="contact_form" id="loginForm">
+              <div className="row">
+                <div className="col-md-12">
+                  <label htmlFor="InputRut">RUT/RUN (Sin punto, pero con guion)</label>
+                  <input type="text" className="contact_control" id="InputRut" placeholder="Ej: 12345678-9" required />
+                  <small className="error" id="ErrorRut" style={{ color: 'red' }}></small>
+                </div>
+
+                <div className="col-md-12">
+                  <label htmlFor="InputContraseña">Contraseña</label>
+                  <input type="password" className="contact_control" id="InputContraseña" placeholder="Ingresa tu contraseña" required />
+                  <small className="error" id="ErrorContraseña" style={{ color: 'red' }}></small>
+                </div>
+
+                </div>
+
+                <div className="col-md-12">
+                  <button type="submit" className="send_btn">Ingresar</button>
+                </div>
+
+                <div className="col-md-12 mt-3">
+                  <div className="form-check">
+                    <input type="checkbox" className="form-check-input" id="Recuerdame" />
+                    <label className="form-check-label" htmlFor="Recuerdame">Recuérdame</label>
+                  </div>
+                <div className="col-md-12 mt-3 text-center">
+                  <p>¿No tienes cuenta? <a href="sign.html">Regístrate aquí</a></p>
+                  <p><a href="#">¿Olvidaste tu contraseña?</a></p>
+                </div>
+              </div>
+            </form>
+
+          </div>
+  );
 }
