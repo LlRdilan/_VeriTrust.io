@@ -1,38 +1,40 @@
-export default function Contactanos(){
-    return(
-        <div id="contact" class="contact ">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="titlepage">
-                            <h2><strong class="yellow">Contáctanos</strong><br></br>Solicitar una llamada</h2>
+import React from 'react';
+
+export default function Contactanos() {
+    return (
+        <div id="contact" className="contact">
+            <div className="container">
+                <div className="row">
+                    <div className="col-md-12">
+                        <div className="titlepage">
+                            <h2><strong className="yellow">Contáctanos</strong><br />Solicitar una llamada</h2>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col-md-8 offset-md-2">
-                        <form id="post_form" class="contact_form">
-                            <div class="row">
-                                <div class="col-md-12 ">
-                                    <input class="contact_control" placeholder="  Nombre" type="type" name="Name" required></input>
+                <div className="row">
+                    <div className="col-md-8 offset-md-2">
+                        <form id="post_form" className="contact_form">
+                            <div className="row">
+                                <div className="col-md-12">
+                                    <input className="contact_control" placeholder="  Nombre" type="text" name="Name" required />
                                 </div>
-                                <div class="col-md-12">
-                                    <input class="contact_control" placeholder="  Email" type="type" name="Email" required></input>
+                                <div className="col-md-12">
+                                    <input className="contact_control" placeholder="  Email" type="email" name="Email" required />
                                 </div>
-                                <div class="col-md-12">
-                                    <input class="contact_control" placeholder="  Número Telefónico" type="type" name="Phone Number " required></input>
+                                <div className="col-md-12">
+                                    <input className="contact_control" placeholder="  Número Telefónico" type="tel" name="Phone Number" required />
                                 </div>
-                                <div class="col-md-12">
-                                    <textarea class="textarea" placeholder="  Descripción" type="type" Message="Name" required></textarea>
+                                <div className="col-md-12">
+                                    <textarea className="textarea" placeholder="  Descripción" name="Message" required></textarea>
                                 </div>
-                                <div class="col-md-12">
-                                    <button class="send_btn"> Enviar </button>
+                                <div className="col-md-12">
+                                    <button className="send_btn"> Enviar </button>
                                 </div>
-                        </div>
-                    </form>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
         </div>
-    )
+    );
 }

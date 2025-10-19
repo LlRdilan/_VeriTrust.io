@@ -1,38 +1,38 @@
 export default function Compra() {
     return (
-        <main class="container" style="padding: 60px 0;">
-            <h1 class="text-center">Compra tu servicio VeriTrust</h1>
-            <div class="card"
-                style="padding: 30px; max-width: 600px; margin: 40px auto; box-shadow: 0 2px 8px rgba(11,31,46,0.1); border-radius: 12px; background: #fff;">
-                <h2 class="text-center" style="margin-bottom: 25px; color: #0FB3D1;">Detalles de tu compra</h2>
+        <main className="container" style={{ padding: '60px 0' }}>
+            <h1 className="text-center">Compra tu servicio VeriTrust</h1>
+            <div className="card"
+                style={{ padding: '30px', maxWidth: '600px', margin: '40px auto', boxShadow: '0 2px 8px rgba(11,31,46,0.1)', borderRadius: '12px', background: '#fff' }}>
+                <h2 className="text-center" style={{ marginBottom: '25px', color: '#0FB3D1' }}>Detalles de tu compra</h2>
                 <form id="compraForm">
-                    <div class="form-group">
-                        <label for="nombreTarjeta">Nombre en la tarjeta:</label>
-                        <input type="text" id="nombreTarjeta" class="form-control" required></input>
+                    <div className="form-group">
+                        <label htmlFor="nombreTarjeta">Nombre en la tarjeta:</label>
+                        <input type="text" id="nombreTarjeta" className="form-control" required />
                     </div>
-                    <div class="form-group">
-                        <label for="numeroTarjeta">Número de tarjeta:</label>
-                        <input type="text" id="numeroTarjeta" maxlength="16" class="form-control" required></input>
+                    <div className="form-group">
+                        <label htmlFor="numeroTarjeta">Número de tarjeta:</label>
+                        <input type="text" id="numeroTarjeta" maxLength="16" className="form-control" required />
                     </div>
-                    <div class="row">
-                        <div class="col-md-6 form-group">
-                            <label for="mesExp">Mes de expiración:</label>
-                            <input type="text" id="mesExp" maxlength="2" placeholder="MM" class="form-control" required></input>
+                    <div className="row">
+                        <div className="col-md-6 form-group">
+                            <label htmlFor="mesExp">Mes de expiración:</label>
+                            <input type="text" id="mesExp" maxLength="2" placeholder="MM" className="form-control" required />
                         </div>
-                        <div class="col-md-6 form-group">
-                            <label for="anoExp">Año de expiración:</label>
-                            <input type="text" id="anoExp" maxlength="4" placeholder="AAAA" class="form-control" required></input>
+                        <div className="col-md-6 form-group">
+                            <label htmlFor="anoExp">Año de expiración:</label>
+                            <input type="text" id="anoExp" maxLength="4" placeholder="AAAA" className="form-control" required />
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="cvv">CVV:</label>
-                        <input type="text" id="cvv" maxlength="3" class="form-control" required></input>
+                    <div className="form-group">
+                        <label htmlFor="cvv">CVV:</label>
+                        <input type="text" id="cvv" maxLength="3" className="form-control" required />
                     </div>
-                    <div class="form-group text-center">
-                        <button class="comprar_btn" type="submit">Pagar</button>
+                    <div className="form-group text-center">
+                        <button className="comprar_btn" type="submit">Pagar</button>
                     </div>
                 </form>
-                <div id="mensajeError" style="color:red; margin-top:10px;"></div>
+                <div id="mensajeError" style={{ color: 'red', marginTop: '10px' }}></div>
             </div>
         </main>
     )
