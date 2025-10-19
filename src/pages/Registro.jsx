@@ -1,3 +1,5 @@
+import React from 'react';
+
 export default function Registro() {
   return (
     <div className="contact" style={{ paddingTop: '40px', paddingBottom: '40px' }}>

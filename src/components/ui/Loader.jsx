@@ -1,7 +1,7 @@
-export default function Loader(){
-    return(
-        <div class="loader_bg">
-            <div class="loader"><img src="images/loading.gif" alt="Cargando..." /></div>
+export default function Loader() {
+    return (
+        <div className="loader_bg">
+            <div className="loader"><img src="images/loading.gif" alt="Cargando..." /></div>
         </div>
-    )
+    );
 }
