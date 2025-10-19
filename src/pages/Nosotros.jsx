@@ -1,0 +1,32 @@
+export default function Nosotros() {
+    return (
+        <div id="about" class="about">
+            <div class="container-fluid">
+                <div class="row">
+                    <div class="col-md-12 col-lg-7">
+                        <div class="about_box">
+                            <div class="titlepage">
+                                <h2><strong class="yellow">Sobre Nosotros</strong></h2>
+                            </div>
+                            <h3>SOLUCIONES INTEGRALES PARA EMPRESAS Y USUARIOS</h3>
+                            <p>En VeriTrust, nos dedicamos a ofrecer servicios de identidad digital de alta confiabilidad.
+                                Nuestra experiencia en certificación digital, firma electrónica y verificación de identidad
+                                permite a organizaciones y personas realizar sus gestiones en línea de manera segura, eficiente
+                                y conforme a los estándares legales y tecnológicos más exigentes.</p>
+                            <p>Desde certificados digitales hasta firmas electrónicas reconocidas por el SII,
+                                proporcionamos las herramientas necesarias para que tu empresa opere en el mundo digital
+                                con total tranquilidad y respaldo legal.</p>
+                            <span class="try">CONOCE CÓMO NUESTRAS SOLUCIONES PUEDEN FORTALECER TU EMPRESA</span>
+                            <a class="read_morea" href="service.html" style="text-align: left; display: inline-block;">Comenzar <i class="fa fa-angle-right" aria-hidden="true"></i></a>
+                        </div>
+                    </div>
+                    <div class="col-md-12 col-lg-5">
+                        <div class="about_img">
+                            <figure><img src="images/about_img2.jpg" alt="VeriTrust - Identidad Digital Segura" /></figure>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    )
+}
