@@ -260,27 +260,24 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 
 /* SIGN/LOGIN BUTTON EN HEADER */
 .sign_btn {
-    float: right;
-    max-width: 161px;
-    background: #1f235e;
-    font-size: 17px;
-    width: 100%;
-    text-align: center;
-    border-radius: 10px;
-    /* padding: 6px 0;  <-- Elimina o comenta esta línea */
-    padding: 16px 0;     /* Nuevo: ajusta el padding vertical */
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #F7FAFC !important;
-    border: none;
-    transition: background 0.2s, color 0.2s;
-    height: 70px;        /* Nuevo: igual a la altura del header_bo */
-    display: flex;       /* Nuevo: centra verticalmente el texto */
-    align-items: center; /* Nuevo: centra verticalmente el texto */
-    justify-content: center; /* Nuevo: centra horizontalmente el texto */
-    box-sizing: border-box;
-    /* font-family asignada arriba en el selector general de botones */
+  background: #1f235e;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 24px;
+  font-size: 17px;
+  font-weight: 600;
+  text-transform: uppercase;
+  border-radius: 10px;
+  color: #F7FAFC !important;
+  border: none;
+  transition: 0.3s;
+  text-align: center;
 }
+
+
+
 .sign_btn:hover {
     background-color: #fff;
     color: #0FB3D1 !important;
@@ -423,7 +420,44 @@ ul.conta_icon li a:hover {
     font-size: 17px;
 }
 
+.language-box {
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f235e;
+}
+
+.language-box i.fa-globe {
+  font-size: 16px;
+  color: #1f235e;
+}
+
+.language-box .flag-icon {
+  width: 20px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+  margin-left: 5px;
+}
+
+.language-box .lang-select {
+  font-size: 14px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: white;
+  color: #1f235e;
+  margin-left: 5px;
+}
+
+.language-box .lang-label,
+.language-box .lang-name {
+  margin-left: 5px;
+}
+
+
 /** Banner Section **/
+
 .banner_main {
     padding: 60px 0 0;
     background: #F7FAFC url(../images/banner.jpg) no-repeat center center/cover;
@@ -467,6 +501,14 @@ ul.conta_icon li a:hover {
 .ban_img figure {
     margin: 0;
 }
+.flag-icon {
+  width: 20px;
+  height: auto;
+  margin-left: 8px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
 
 /** End Banner Section **/
 .titlepage {
