@@ -1,5 +1,4 @@
-import React from 'react';
-
+import { Link } from 'react-router-dom';
 export default function Header() {
     return (
         <header>
@@ -67,31 +66,28 @@ export default function Header() {
                                     </button>
                                     <div className="collapse navbar-collapse" id="navbarsExample04">
                                         <ul className="navbar-nav mr-auto">
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Inicio.jsx"> Inicio </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Nosotros.jsx"> Nosotros </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Servicios.jsx"> Servicios </a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Tutoriales.jsx">Tutoriales</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Clientes.jsx">Clientes</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="nav-link" href="Contactanos.jsx"> Contáctanos</a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a href="#"><i className="fa fa-search nav-link" aria-hidden="true"></i></a>
-                                            </li>
-                                            <li className="nav-item">
-                                                <a className="sign_btn nav-link" href="login.html">Iniciar Sesión</a>
-                                            </li>
-                                        </ul>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/">Inicio</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/nosotros">Nosotros</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/servicios">Servicios</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/tutorial">Tutoriales</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/clientes">Clientes</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="nav-link" to="/contactanos">Contáctanos</Link>
+                                        </li>
+                                        <li className="nav-item">
+                                            <Link className="sign_btn nav-link" to="/login">Iniciar Sesión</Link>
+                                        </li>
+                                    </ul>
                                     </div>
                                 </nav>
                             </div>

@@ -1,27 +1,31 @@
-import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Header from './components/Header';
 import Inicio from './pages/Inicio';
+import Nosotros from './pages/Nosotros';
 import Servicios from './pages/Servicios';
 import Tutorial from './pages/Tutorial';
-import Registro from './pages/Registro';
-import Login from './pages/Login';
-import Compra from './pages/Compra';
 import Clientes from './pages/Clientes';
-import Nosotros from './pages/Nosotros';
-import Admin from './pages/Admin';
 import Contactanos from './pages/Contactanos';
-import Header from './components/Header';
+import Login from './pages/Login';
+import Registro from './pages/Registro';
 import Footer from './components/Footer';
 
-function App() {
+export default function App() {
   return (
-    <>
+    <BrowserRouter>
       <Header />
-      <Inicio />
-      <Nosotros />
-      <Servicios />
+      <Routes>
+        <Route path="/" element={<Inicio />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        <Route path="/servicios" element={<Servicios />} />
+        <Route path="/tutorial" element={<Tutorial />} />
+        <Route path="/clientes" element={<Clientes />} />
+        <Route path="/contactanos" element={<Contactanos />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/registro" element={<Registro />} />
+      </Routes>
       <Footer />
-    </>
+    </BrowserRouter>
+
   );
 }
-
-export default App;

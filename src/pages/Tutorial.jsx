@@ -7,7 +7,7 @@ export default function Tutorial() {
                 <div className="row">
                     <div className="col-md-7">
                         <div className="titlepage">
-                            <h2><strong className="yellow">Tutoriales</strong> A continuación encontraras algunos tutoriales y
+                            <h2 className="yellow"> A continuación encontraras algunos tutoriales y
                                 consejos que debes ver para estar bien informado.</h2>
                         </div>
                     </div>

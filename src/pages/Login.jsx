@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 export default function Login() {
     return (
         <div className="contact" style={{ paddingTop: '40px', paddingBottom: '40px' }}>
@@ -29,7 +31,7 @@ export default function Login() {
                                     <button type="submit" className="send_btn">Ingresar</button>
                                 </div>
                                 <div className="col-md-12 mt-3 text-center">
-                                    <p>¿No tienes cuenta? <a href="sign.html">Regístrate aquí</a></p>
+                                    <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
                                     <p><a href="#">¿Olvidaste tu contraseña?</a></p>
                                 </div>
                             </div>
