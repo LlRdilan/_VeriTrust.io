@@ -1,5 +1,3 @@
-import React from 'react';
-
 export default function Tutorial() {
     return (
         <div id="service" className="service">
@@ -55,6 +53,6 @@ export default function Tutorial() {
                     </div>
                 </div>
             </div>
-        </div>
-    );
+          </div>
+  );
 }
