@@ -63,7 +63,22 @@ export default function Admin() {
   }, [navegar]);
 
   const guardarEnStorage = (datos) => {
-    localStorage.setItem("services", JSON.stringify(datos));
+    const normalizados = datos.map((s) => ({
+      name: s.nombre ?? s.name ?? "",
+      desc: s.descripcion ?? s.desc ?? "",
+      price:
+        typeof (s.precio ?? s.price) === "string"
+          ? parseFloat(s.precio ?? s.price)
+          : (s.precio ?? s.price) ?? 0,
+      details: Array.isArray(s.detalles)
+        ? s.detalles
+        : typeof s.detalles === "string"
+        ? s.detalles.split("\n")
+        : s.details ?? [],
+    }));
+
+    localStorage.setItem("services", JSON.stringify(normalizados));
+    // Mantener el estado del admin con las claves en español para el formulario
     setServicios(datos);
   };
 
