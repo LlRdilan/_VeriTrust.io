@@ -22,7 +22,7 @@ export default function Footer() {
                                     <a href="#"><i className="fa fa-volume-control-phone" aria-hidden="true"></i></a>+569 1111 1111
                                 </li>
                             </ul>
-                            <ul className="social_icon" style={{marginLeft: '30px'}}>
+                            <ul className="social_icon" style={{marginLeft: '0px'}}>
                                 <li><a href="#"><i className="fa fa-facebook-f"></i></a></li>
                                 <li><a href="#"><i className="fa fa-twitter"></i></a></li>
                                 <li><a href="#"><i className="fa fa-linkedin" aria-hidden="true"></i></a></li>
