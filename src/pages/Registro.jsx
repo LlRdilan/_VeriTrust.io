@@ -18,7 +18,6 @@ export default function Registro() {
 
   const [errores, setErrores] = useState({});
 
-  // ✅ Función de validación de RUT
   const validarRut = (rutCompleto) => {
     let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
     let cuerpo = rutLimpio.slice(0, -1);
@@ -59,7 +58,6 @@ export default function Registro() {
       terminos,
     } = form;
 
-    // 🔹 Validaciones
     if (!validarRut(rut)) {
       nuevosErrores.rut = "RUT inválido";
       valido = false;
@@ -120,7 +118,7 @@ export default function Registro() {
     setErrores(nuevosErrores);
 
     if (valido) {
-      alert("Registro exitoso ✅");
+      alert("Registro exitoso");
       navigate("/login");
     }
   };

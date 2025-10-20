@@ -3,12 +3,12 @@ import { useState } from "react";
 export default function Compra() {
   const [nombreTarjeta, setNombreTarjeta] = useState("");
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
-  const [mesExp, setMesExp] = useState("");
-  const [anoExp, setAnoExp] = useState("");
+  const [mesExpiracion, setMesExpiracion] = useState("");
+  const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
   const [mensajeError, setMensajeError] = useState("");
 
-  const validarTarjeta = (numero) => {
+  const validarNumeroTarjeta = (numero) => {
     let suma = 0;
     let doble = false;
     for (let i = numero.length - 1; i >= 0; i--) {
@@ -23,44 +23,39 @@ export default function Compra() {
     return suma % 10 === 0;
   };
 
-  const handleSubmit = (e) => {
+  const manejarEnvio = (e) => {
     e.preventDefault();
     setMensajeError("");
 
-    // Validar número de tarjeta
-    if (!/^\d{16}$/.test(numeroTarjeta) || !validarTarjeta(numeroTarjeta)) {
-      setMensajeError("Número de tarjeta inválido");
+    if (!/^\d{16}$/.test(numeroTarjeta) || !validarNumeroTarjeta(numeroTarjeta)) {
+      setMensajeError("Numero de tarjeta invalido");
       return;
     }
 
-    // Validar mes
-    const mes = parseInt(mesExp, 10);
-    if (!/^\d{2}$/.test(mesExp) || mes < 1 || mes > 12) {
-      setMensajeError("Mes de expiración inválido");
+    const mes = parseInt(mesExpiracion, 10);
+    if (!/^\d{2}$/.test(mesExpiracion) || mes < 1 || mes > 12) {
+      setMensajeError("Mes de expiracion invalido");
       return;
     }
 
-    // Validar año
-    const añoActual = new Date().getFullYear();
-    const año = parseInt(anoExp, 10);
-    if (!/^\d{4}$/.test(anoExp) || año < añoActual) {
-      setMensajeError("Año de expiración inválido");
+    const anioActual = new Date().getFullYear();
+    const anio = parseInt(anioExpiracion, 10);
+    if (!/^\d{4}$/.test(anioExpiracion) || anio < anioActual) {
+      setMensajeError("Anio de expiracion invalido");
       return;
     }
 
-    // Validar CVV
     if (!/^\d{3}$/.test(cvv)) {
-      setMensajeError("CVV inválido");
+      setMensajeError("CVV invalido");
       return;
     }
 
-    alert("Compra realizada con éxito!");
+    alert("Compra realizada con exito");
 
-    // Resetear formulario
     setNombreTarjeta("");
     setNumeroTarjeta("");
-    setMesExp("");
-    setAnoExp("");
+    setMesExpiracion("");
+    setAnioExpiracion("");
     setCvv("");
     setMensajeError("");
   };
@@ -84,7 +79,7 @@ export default function Compra() {
           Detalles de tu compra
         </h2>
 
-        <form onSubmit={handleSubmit}>
+        <form onSubmit={manejarEnvio}>
           <div className="form-group">
             <label htmlFor="nombreTarjeta">Nombre en la tarjeta:</label>
             <input
@@ -98,7 +93,7 @@ export default function Compra() {
           </div>
 
           <div className="form-group">
-            <label htmlFor="numeroTarjeta">Número de tarjeta:</label>
+            <label htmlFor="numeroTarjeta">Numero de tarjeta:</label>
             <input
               type="text"
               id="numeroTarjeta"
@@ -112,28 +107,28 @@ export default function Compra() {
 
           <div className="row">
             <div className="col-md-6 form-group">
-              <label htmlFor="mesExp">Mes de expiración:</label>
+              <label htmlFor="mesExpiracion">Mes de expiracion:</label>
               <input
                 type="text"
-                id="mesExp"
+                id="mesExpiracion"
                 maxLength={2}
                 placeholder="MM"
                 className="form-control"
-                value={mesExp}
-                onChange={(e) => setMesExp(e.target.value)}
+                value={mesExpiracion}
+                onChange={(e) => setMesExpiracion(e.target.value)}
                 required
               />
             </div>
             <div className="col-md-6 form-group">
-              <label htmlFor="anoExp">Año de expiración:</label>
+              <label htmlFor="anioExpiracion">Anio de expiracion:</label>
               <input
                 type="text"
-                id="anoExp"
+                id="anioExpiracion"
                 maxLength={4}
                 placeholder="AAAA"
                 className="form-control"
-                value={anoExp}
-                onChange={(e) => setAnoExp(e.target.value)}
+                value={anioExpiracion}
+                onChange={(e) => setAnioExpiracion(e.target.value)}
                 required
               />
             </div>

@@ -2,74 +2,88 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export default function Admin() {
-  const navigate = useNavigate();
+  const navegar = useNavigate();
 
-  const [services, setServices] = useState([]);
-  const [form, setForm] = useState({ name: "", desc: "", price: "", details: [] });
-  const [editIndex, setEditIndex] = useState(null);
+  const [servicios, setServicios] = useState([]);
+  const [formulario, setFormulario] = useState({ nombre: "", descripcion: "", precio: "", detalles: [] });
+  const [indiceEditar, setIndiceEditar] = useState(null);
 
   useEffect(() => {
     if (!localStorage.getItem("adminLogged")) {
-      navigate("/login");
+      navegar("/login");
     }
 
-    const stored = JSON.parse(localStorage.getItem("services")) || [
-      { name: "Firma Electrónica Simple", desc: "Certificado Digital", price: 15390, details: [] },
-      { name: "Firma Avanzada Online", desc: "e-token", price: 21990, details: [] },
-      { name: "Firma Avanzada Notario", desc: "Uso profesional", price: 42990, details: [] },
+    const guardados = JSON.parse(localStorage.getItem("services")) || [
+      { nombre: "Firma Electronica Simple", descripcion: "Certificado Digital", precio: 15390, detalles: [] },
+      { nombre: "Firma Avanzada Online", descripcion: "e-token", precio: 21990, detalles: [] },
+      { nombre: "Firma Avanzada Notario", descripcion: "Uso profesional", precio: 42990, detalles: [] },
     ];
-    setServices(stored);
-  }, [navigate]);
+    setServicios(guardados);
+  }, [navegar]);
 
-  const saveToStorage = (data) => {
-    localStorage.setItem("services", JSON.stringify(data));
-    setServices(data);
+  const guardarEnStorage = (datos) => {
+    localStorage.setItem("services", JSON.stringify(datos));
+    setServicios(datos);
   };
 
-  const handleSubmit = (e) => {
+  const manejarEnvio = (e) => {
     e.preventDefault();
-    const { name, desc, price, details } = form;
+    const { nombre, descripcion, precio, detalles } = formulario;
 
-    if (!name || !desc || isNaN(price)) {
-      alert("Complete todos los campos correctamente.");
+    if (!nombre.trim() || !descripcion.trim()) {
+      alert("El nombre y la descripcion no pueden estar vacios");
       return;
     }
 
-    const newService = { 
-      name, 
-      desc, 
-      price: parseInt(price, 10), 
-      details: details || [] 
+    const precioParseado = parseFloat(precio);
+    if (isNaN(precioParseado) || precioParseado <= 0 || precioParseado % 1 !== 0) {
+      alert("El precio debe ser un numero entero positivo");
+      return;
+    }
+
+    const detallesValidos = Array.isArray(detalles) ? detalles.filter(d => d.trim() !== "") : [];
+    if (detallesValidos.length < 3) {
+      alert("La descripcion larga debe tener al menos 3 lineas");
+      return;
+    }
+
+    const nuevoServicio = {
+      nombre: nombre.trim(),
+      descripcion: descripcion.trim(),
+      precio: precioParseado,
+      detalles: detallesValidos
     };
 
-    const updated =
-      editIndex !== null
-        ? services.map((s, i) => (i === editIndex ? newService : s))
-        : [...services, newService];
+    const serviciosActualizados =
+      indiceEditar !== null
+        ? servicios.map((s, i) => (i === indiceEditar ? nuevoServicio : s))
+        : [...servicios, nuevoServicio];
 
-    saveToStorage(updated);
-    setForm({ name: "", desc: "", price: "", details: [] });
-    setEditIndex(null);
+    guardarEnStorage(serviciosActualizados);
+    setFormulario({ nombre: "", descripcion: "", precio: "", detalles: [] });
+    setIndiceEditar(null);
+
+    alert("Servicio creado o actualizado correctamente");
   };
 
-  const handleEdit = (index) => {
-    setForm(services[index]);
-    setEditIndex(index);
+  const manejarEditar = (indice) => {
+    setFormulario(servicios[indice]);
+    setIndiceEditar(indice);
   };
 
-  const handleDelete = (index) => {
-    if (!window.confirm("¿Deseas eliminar este servicio?")) return;
-    const updated = services.filter((_, i) => i !== index);
-    saveToStorage(updated);
+  const manejarEliminar = (indice) => {
+    if (!window.confirm("Deseas eliminar este servicio?")) return;
+    const serviciosActualizados = servicios.filter((_, i) => i !== indice);
+    guardarEnStorage(serviciosActualizados);
   };
 
-  const handleLogout = () => {
+  const cerrarSesion = () => {
     localStorage.removeItem("adminLogged");
-    navigate("/login");
+    navegar("/login");
   };
 
-  const handlePreview = () => {
-    navigate("/servicios");
+  const verServiciosPublicos = () => {
+    navegar("/servicios");
   };
 
   return (
@@ -79,7 +93,7 @@ export default function Admin() {
         <div className="row">
           <div className="col-md-12">
             <div className="titlepage">
-              <h2>Administración de Servicios</h2>
+              <h2>Administracion de Servicios</h2>
               <p>Administra los servicios disponibles en el sitio web.</p>
             </div>
           </div>
@@ -89,57 +103,57 @@ export default function Admin() {
         <div className="row">
           <div className="col-md-12">
             <div className="backoffice_section">
-              <form onSubmit={handleSubmit}>
+              <form onSubmit={manejarEnvio}>
                 <div className="row g-3">
                   <div className="col-md-3">
-                    <label htmlFor="serviceName" className="form-label">Nombre</label>
+                    <label htmlFor="nombreServicio" className="form-label">Nombre</label>
                     <input
                       type="text"
-                      id="serviceName"
+                      id="nombreServicio"
                       className="form-control"
-                      value={form.name}
-                      onChange={(e) => setForm({ ...form, name: e.target.value })}
+                      value={formulario.nombre}
+                      onChange={(e) => setFormulario({ ...formulario, nombre: e.target.value })}
                       required
                     />
                   </div>
                   <div className="col-md-3">
-                    <label htmlFor="serviceDesc" className="form-label">Descripción</label>
+                    <label htmlFor="descripcionServicio" className="form-label">Descripcion</label>
                     <input
                       type="text"
-                      id="serviceDesc"
+                      id="descripcionServicio"
                       className="form-control"
-                      value={form.desc}
-                      onChange={(e) => setForm({ ...form, desc: e.target.value })}
+                      value={formulario.descripcion}
+                      onChange={(e) => setFormulario({ ...formulario, descripcion: e.target.value })}
                       required
                     />
                   </div>
                   <div className="col-md-2">
-                    <label htmlFor="servicePrice" className="form-label">Precio</label>
+                    <label htmlFor="precioServicio" className="form-label">Precio</label>
                     <input
                       type="number"
-                      id="servicePrice"
+                      id="precioServicio"
                       className="form-control"
-                      value={form.price}
-                      onChange={(e) => setForm({ ...form, price: e.target.value })}
+                      value={formulario.precio}
+                      onChange={(e) => setFormulario({ ...formulario, precio: e.target.value })}
                       required
                     />
                   </div>
                   <div className="col-md-4">
-                    <label htmlFor="serviceDetails" className="form-label">Detalles (1 por línea)</label>
+                    <label htmlFor="detallesServicio" className="form-label">Detalles (1 por linea)</label>
                     <textarea
-                      id="serviceDetails"
+                      id="detallesServicio"
                       className="form-control"
-                      value={form.details ? form.details.join("\n") : ""}
+                      value={formulario.detalles ? formulario.detalles.join("\n") : ""}
                       onChange={(e) =>
-                        setForm({ ...form, details: e.target.value.split("\n") })
+                        setFormulario({ ...formulario, detalles: e.target.value.split("\n") })
                       }
-                      placeholder="Ingresa cada detalle en una línea"
+                      placeholder="Ingresa cada detalle en una linea"
                       rows={4}
                     ></textarea>
                   </div>
                   <div className="col-md-12 mt-2">
                     <button type="submit" className="btn_primary w-100">
-                      {editIndex !== null ? "Actualizar" : "Guardar"}
+                      {indiceEditar !== null ? "Actualizar" : "Guardar"}
                     </button>
                   </div>
                 </div>
@@ -157,27 +171,27 @@ export default function Admin() {
                 <thead>
                   <tr>
                     <th>Nombre</th>
-                    <th>Descripción</th>
+                    <th>Descripcion</th>
                     <th>Precio</th>
                     <th style={{ width: "150px" }}>Acciones</th>
                   </tr>
                 </thead>
                 <tbody>
-                  {services.length === 0 ? (
+                  {servicios.length === 0 ? (
                     <tr>
                       <td colSpan="4" className="text-center">No hay servicios registrados.</td>
                     </tr>
                   ) : (
-                    services.map((s, i) => (
+                    servicios.map((s, i) => (
                       <tr key={i}>
-                        <td>{s.name}</td>
-                        <td>{s.desc}</td>
-                        <td>${Number(s.price).toLocaleString()}</td>
+                        <td>{s.nombre}</td>
+                        <td>{s.descripcion}</td>
+                        <td>${Number(s.precio).toLocaleString()}</td>
                         <td>
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => handleEdit(i)}>
+                          <button className="btn btn-warning btn-sm me-2" onClick={() => manejarEditar(i)}>
                             <i className="fa fa-edit"></i>
                           </button>
-                          <button className="btn btn-danger btn-sm" onClick={() => handleDelete(i)}>
+                          <button className="btn btn-danger btn-sm" onClick={() => manejarEliminar(i)}>
                             <i className="fa fa-trash"></i>
                           </button>
                         </td>
@@ -190,11 +204,11 @@ export default function Admin() {
 
             {/* Botones inferiores */}
             <div className="text-center mt-4 d-flex justify-content-center gap-3">
-              <button onClick={handlePreview} className="btn_primary">
-                <i className="fa fa-eye"></i> Ver servicios públicos
+              <button onClick={verServiciosPublicos} className="btn_primary">
+                <i className="fa fa-eye"></i> Ver servicios publicos
               </button>
-              <button onClick={handleLogout} className="btn btn-secondary ms-2">
-                <i className="fa fa-sign-out"></i> Cerrar sesión
+              <button onClick={cerrarSesion} className="btn btn-secondary ms-2">
+                <i className="fa fa-sign-out"></i> Cerrar sesion
               </button>
             </div>
           </div>
