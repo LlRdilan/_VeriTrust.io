@@ -579,7 +579,7 @@ ul.conta_icon li a:hover {
 
 /** End Banner Section **/
 .titlepage {
-    text-align: left;
+    text-align: center;
     padding-bottom: 60px;
 }
 .titlepage h2 {
@@ -743,7 +743,7 @@ ul.conta_icon li a:hover {
 }
 .service .read_more {
     color: #1f235e !important;
-    margin: 40px auto 0;
+    margin: 5% auto;
     max-width: 140px;
     width: 100%;
     display: table;
@@ -1090,6 +1090,7 @@ ul.social_icont li a {
     margin: 30px auto 0;
     font-weight: 600;
     border: none;
+    margin-bottom: 10%;
 }
 .contact_form .send_btn:hover {
     background-color: #0FB3D1;

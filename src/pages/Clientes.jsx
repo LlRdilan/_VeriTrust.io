@@ -49,7 +49,6 @@ export default function Clientes() {
           <div className="col-md-12">
             <div className="titlepage">
               <h2>
-                <strong className="yellow">Testimonios</strong>
                 <br />
                 ¿Qué piensan nuestros clientes?
               </h2>

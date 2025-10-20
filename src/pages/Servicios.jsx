@@ -50,10 +50,9 @@ export default function Servicios() {
       <div className="container">
         {/* Título principal */}
         <div className="row">
-          <div className="col-md-7">
+          <div className="col-md-7 mx-auto">
             <div className="titlepage">
               <h2>
-                <strong className="yellow">Servicios</strong>
                 <br /> Podemos ayudar a que tu negocio crezca
               </h2>
             </div>

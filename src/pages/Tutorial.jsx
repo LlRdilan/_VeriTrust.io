@@ -3,7 +3,7 @@ export default function Tutorial() {
         <div id="service" className="service">
             <div className="container">
                 <div className="row">
-                    <div className="col-md-7">
+                    <div className="col-md-7 mx-auto">
                         <div className="titlepage">
                             <h2 className="yellow"> A continuación encontraras algunos tutoriales y
                                 consejos que debes ver para estar bien informado.</h2>

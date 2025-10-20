@@ -81,7 +81,7 @@ export default function Header() {
                                                 <Link className="nav-link" to="/contactanos">Contáctanos</Link>
                                             </li>
                                             <li className="nav-item">
-                                                <Link className="sign_btn nav-link" to="/login">Iniciar Sesión</Link>
+                                                <Link className="sign_btn nav-link" to="/login">Acceder</Link>
                                             </li>
                                         </ul>
                                     </div>
