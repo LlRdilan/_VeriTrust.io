@@ -9,6 +9,8 @@ import Contactanos from './pages/Contactanos';
 import Login from './pages/Login';
 import Registro from './pages/Registro';
 import Footer from './components/Footer';
+import Admin from './pages/Admin';
+import Compra from './pages/Compra';
 
 export default function App() {
   return (
@@ -23,6 +25,8 @@ export default function App() {
         <Route path="/contactanos" element={<Contactanos />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
+        <Route path="/admin" element={<Admin />} />
+        <Route path="/compra" element={<Compra />} />
       </Routes>
       <Footer />
     </BrowserRouter>
