@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReCAPTCHA from "../components/api/ReCaptcha";
 
 export default function Compra() {
   const [nombreTarjeta, setNombreTarjeta] = useState("");
@@ -7,6 +8,7 @@ export default function Compra() {
   const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
   const [mensajeError, setMensajeError] = useState("");
+  const [captchaToken, setCaptchaToken] = useState(null);
 
   const validarNumeroTarjeta = (numero) => {
     let suma = 0;
@@ -26,6 +28,11 @@ export default function Compra() {
   const manejarEnvio = (e) => {
     e.preventDefault();
     setMensajeError("");
+
+    if (!captchaToken) {
+      alert("Por favor completa el captcha");
+      return;
+    }
 
     if (!/^\d{16}$/.test(numeroTarjeta) || !validarNumeroTarjeta(numeroTarjeta)) {
       setMensajeError("Numero de tarjeta invalido");
@@ -58,6 +65,7 @@ export default function Compra() {
     setAnioExpiracion("");
     setCvv("");
     setMensajeError("");
+    setCaptchaToken(null);
   };
 
   return (
@@ -80,6 +88,7 @@ export default function Compra() {
         </h2>
 
         <form onSubmit={manejarEnvio}>
+
           <div className="form-group">
             <label htmlFor="nombreTarjeta">Nombre en la tarjeta:</label>
             <input
@@ -91,7 +100,6 @@ export default function Compra() {
               required
             />
           </div>
-
           <div className="form-group">
             <label htmlFor="numeroTarjeta">Numero de tarjeta:</label>
             <input
@@ -104,7 +112,6 @@ export default function Compra() {
               required
             />
           </div>
-
           <div className="row">
             <div className="col-md-6 form-group">
               <label htmlFor="mesExpiracion">Mes de expiracion:</label>
@@ -120,7 +127,7 @@ export default function Compra() {
               />
             </div>
             <div className="col-md-6 form-group">
-              <label htmlFor="anioExpiracion">Anio de expiracion:</label>
+              <label htmlFor="anioExpiracion">Año de expiracion:</label>
               <input
                 type="text"
                 id="anioExpiracion"
@@ -133,7 +140,6 @@ export default function Compra() {
               />
             </div>
           </div>
-
           <div className="form-group">
             <label htmlFor="cvv">CVV:</label>
             <input
@@ -147,7 +153,11 @@ export default function Compra() {
             />
           </div>
 
-          <div className="form-group text-center">
+          <div className="col-md-12 mt-3 justify-content-center d-flex">
+            <ReCAPTCHA onChange={(token) => setCaptchaToken(token)} />
+          </div>
+
+          <div className="form-group text-center mt-3">
             <button className="comprar_btn" type="submit">Pagar</button>
           </div>
 

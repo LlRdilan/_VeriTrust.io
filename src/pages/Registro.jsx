@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import ReCAPTCHA from "../components/api/ReCaptcha";
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -17,17 +18,16 @@ export default function Registro() {
   });
 
   const [errores, setErrores] = useState({});
+  const [captchaValido, setCaptchaValido] = useState(false);
 
   const validarRut = (rutCompleto) => {
     let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
     let cuerpo = rutLimpio.slice(0, -1);
     let dv = rutLimpio.slice(-1).toUpperCase();
-
     if (!/^\d+$/.test(cuerpo)) return false;
 
     let suma = 0;
     let multiplo = 2;
-
     for (let i = cuerpo.length - 1; i >= 0; i--) {
       suma += parseInt(cuerpo[i]) * multiplo;
       multiplo = multiplo < 7 ? multiplo + 1 : 2;
@@ -57,6 +57,11 @@ export default function Registro() {
       confirmarContraseña,
       terminos,
     } = form;
+
+    if (!captchaValido) {
+      alert("Debes completar el reCAPTCHA");
+      return;
+    }
 
     if (!validarRut(rut)) {
       nuevosErrores.rut = "RUT inválido";
@@ -123,20 +128,22 @@ export default function Registro() {
     }
   };
 
+  const onCaptchaChange = (value) => {
+    setCaptchaValido(!!value);
+  };
+
   return (
     <div className="contact" style={{ paddingTop: "40px", paddingBottom: "40px" }}>
       <div className="container">
         <div className="row">
           <div className="col-md-8 offset-md-2">
             <div className="titlepage">
-              <h2>
-                <strong className="yellow">Registro</strong> Crea tu cuenta para acceder a nuestros servicios
-              </h2>
+              <h2 className="yellow">Crea tu cuenta para acceder a nuestros servicios</h2>
             </div>
 
             <form className="contact_form" onSubmit={handleSubmit}>
               <div className="row">
-                {/* RUT */}
+
                 <div className="col-md-12">
                   <label>RUT/RUN (Sin punto, pero con guion)</label>
                   <input
@@ -150,7 +157,6 @@ export default function Registro() {
                   {errores.rut && <small style={{ color: "red" }}>{errores.rut}</small>}
                 </div>
 
-                {/* Nombre */}
                 <div className="col-md-12">
                   <label>Nombre completo</label>
                   <input
@@ -164,7 +170,6 @@ export default function Registro() {
                   {errores.nombre && <small style={{ color: "red" }}>{errores.nombre}</small>}
                 </div>
 
-                {/* Fecha */}
                 <div className="col-md-12">
                   <label>Fecha de nacimiento</label>
                   <input
@@ -177,7 +182,6 @@ export default function Registro() {
                   {errores.fecha && <small style={{ color: "red" }}>{errores.fecha}</small>}
                 </div>
 
-                {/* Teléfono */}
                 <div className="col-md-12">
                   <label>Teléfono</label>
                   <input
@@ -191,7 +195,6 @@ export default function Registro() {
                   {errores.telefono && <small style={{ color: "red" }}>{errores.telefono}</small>}
                 </div>
 
-                {/* Email */}
                 <div className="col-md-12">
                   <label>Correo electrónico</label>
                   <input
@@ -205,7 +208,6 @@ export default function Registro() {
                   {errores.email && <small style={{ color: "red" }}>{errores.email}</small>}
                 </div>
 
-                {/* Confirmar Email */}
                 <div className="col-md-12">
                   <label>Confirma tu correo electrónico</label>
                   <input
@@ -221,7 +223,6 @@ export default function Registro() {
                   )}
                 </div>
 
-                {/* Contraseña */}
                 <div className="col-md-12">
                   <label>Contraseña</label>
                   <input
@@ -235,7 +236,6 @@ export default function Registro() {
                   {errores.contraseña && <small style={{ color: "red" }}>{errores.contraseña}</small>}
                 </div>
 
-                {/* Confirmar contraseña */}
                 <div className="col-md-12">
                   <label>Confirma tu contraseña</label>
                   <input
@@ -251,7 +251,6 @@ export default function Registro() {
                   )}
                 </div>
 
-                {/* Términos */}
                 <div className="col-md-12 mt-3">
                   <div className="form-check">
                     <input
@@ -259,9 +258,7 @@ export default function Registro() {
                       className="form-check-input"
                       id="Terminos"
                       checked={form.terminos}
-                      onChange={(e) =>
-                        setForm({ ...form, terminos: e.target.checked })
-                      }
+                      onChange={(e) => setForm({ ...form, terminos: e.target.checked })}
                     />
                     <label className="form-check-label">
                       Acepto los <a href="#">términos y condiciones</a>
@@ -272,12 +269,19 @@ export default function Registro() {
                   )}
                 </div>
 
-                {/* Botón */}
-                <div className="col-md-12">
+                <div className="col-md-12 mt-3 d-flex justify-content-center">
+                  <ReCAPTCHA
+                    sitekey="TU_SITE_KEY_AQUI"
+                    onChange={onCaptchaChange}
+                  />
+                </div>
+
+                <div className="col-md-12 mt-3">
                   <button type="submit" className="send_btn">
                     Crear cuenta
                   </button>
                 </div>
+
               </div>
             </form>
           </div>
