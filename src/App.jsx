@@ -11,6 +11,7 @@ import Registro from './pages/Registro';
 import Footer from './components/Footer';
 import Admin from './pages/Admin';
 import Compra from './pages/Compra';
+import Importante from './pages/Importante';
 
 export default function App() {
   return (
@@ -27,6 +28,7 @@ export default function App() {
         <Route path="/registro" element={<Registro />} />
         <Route path="/admin" element={<Admin />} />
         <Route path="/compra" element={<Compra />} />
+        <Route path="/importante" element={<Importante />} />
       </Routes>
       <Footer />
     </BrowserRouter>

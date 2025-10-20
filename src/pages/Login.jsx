@@ -121,7 +121,7 @@ export default function Login() {
                 </div>
                 <div className="col-md-12 mt-3 text-center">
                   <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
-                  <p><a href="#">¿Olvidaste tu contraseña?</a></p>
+                  <p><Link to="/importante">¿Olvidaste tu contraseña?</Link></p>
                 </div>
               </div>
             </form>
