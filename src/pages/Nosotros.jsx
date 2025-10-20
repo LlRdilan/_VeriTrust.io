@@ -1,10 +1,12 @@
+import { Link } from 'react-router-dom';
+
 export default function Nosotros() {
   return (
     <div id="about" className="about">
       <div className="container-fluid">
         <div className="row">
           <div className="col-md-12 col-lg-7">
-            <div className="about_box">
+            <div className="about_box text-center">
               <div className="titlepage">
                 <h2><strong className="yellow">Sobre Nosotros</strong></h2>
               </div>
@@ -21,16 +23,11 @@ export default function Nosotros() {
                 con total tranquilidad y respaldo legal.
               </p>
               <span className="try">CONOCE CÓMO NUESTRAS SOLUCIONES PUEDEN FORTALECER TU EMPRESA</span>
-              <a
-                className="read_morea"
-                href="service.html"
-                style={{ textAlign: 'left', display: 'inline-block' }}
-              >
+              <Link className="read_morea" to="/servicios">
                 Comenzar <i className="fa fa-angle-right" aria-hidden="true"></i>
-              </a>
+              </Link>
             </div>
           </div>
-
           <div className="col-md-12 col-lg-5">
             <div className="about_img">
               <figure><img src="images/about_img2.jpg" alt="VeriTrust - Identidad Digital Segura" /></figure>

@@ -261,21 +261,20 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 /* SIGN/LOGIN BUTTON EN HEADER */
 .sign_btn {
   background: #1f235e;
-  height: 70px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 0 24px;
-  font-size: 17px;
-  font-weight: 600;
-  text-transform: uppercase;
+  font-size: 16px;
+  text-align: center;
   border-radius: 10px;
   color: #F7FAFC !important;
   border: none;
-  transition: 0.3s;
-  text-align: center;
+  transition: background 0.2s, color 0.2s;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: top;
+  box-sizing: border-box;
+  padding: 0 24px;
+  line-height: 1;
 }
-
 
 
 .sign_btn:hover {
