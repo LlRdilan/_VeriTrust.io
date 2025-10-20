@@ -527,8 +527,8 @@ ul.conta_icon li a:hover {
 /** Banner Section **/
 
 .banner_main {
-    padding: 60px 0 0;
-    background: #F7FAFC url(../images/banner.jpg) no-repeat center center/cover;
+    padding: 70px 0 0;
+    background: #E2F2F4 url(../images/banner.png) no-repeat center center/cover;
 }
 .text-bg {
     text-align: center;
