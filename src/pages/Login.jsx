@@ -100,17 +100,17 @@ export default function Login() {
                   {errorContraseña && <small className="error" style={{ color: "red" }}>{errorContraseña}</small>}
                 </div>
 
-                <div className="col-md-12 mt-3">
-                  <div className="form-check">
-                    <input type="checkbox" className="form-check-input" id="Recuerdame" />
-                    <label className="form-check-label" htmlFor="Recuerdame">Recuérdame</label>
-                  </div>
                 </div>
 
                 <div className="col-md-12">
                   <button type="submit" className="send_btn">Ingresar</button>
                 </div>
 
+                <div className="col-md-12 mt-3">
+                  <div className="form-check">
+                    <input type="checkbox" className="form-check-input" id="Recuerdame" />
+                    <label className="form-check-label" htmlFor="Recuerdame">Recuérdame</label>
+                  </div>
                 <div className="col-md-12 mt-3 text-center">
                   <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
                   <p><a href="#">¿Olvidaste tu contraseña?</a></p>
@@ -118,8 +118,5 @@ export default function Login() {
               </div>
             </form>
           </div>
-        </div>
-      </div>
-    </div>
   );
 }

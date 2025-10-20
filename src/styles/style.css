@@ -260,27 +260,23 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 
 /* SIGN/LOGIN BUTTON EN HEADER */
 .sign_btn {
-    float: right;
-    max-width: 161px;
-    background: #1f235e;
-    font-size: 17px;
-    width: 100%;
-    text-align: center;
-    border-radius: 10px;
-    /* padding: 6px 0;  <-- Elimina o comenta esta línea */
-    padding: 16px 0;     /* Nuevo: ajusta el padding vertical */
-    font-weight: 600;
-    text-transform: uppercase;
-    color: #F7FAFC !important;
-    border: none;
-    transition: background 0.2s, color 0.2s;
-    height: 70px;        /* Nuevo: igual a la altura del header_bo */
-    display: flex;       /* Nuevo: centra verticalmente el texto */
-    align-items: center; /* Nuevo: centra verticalmente el texto */
-    justify-content: center; /* Nuevo: centra horizontalmente el texto */
-    box-sizing: border-box;
-    /* font-family asignada arriba en el selector general de botones */
+  background: #1f235e;
+  font-size: 16px;
+  text-align: center;
+  border-radius: 10px;
+  color: #F7FAFC !important;
+  border: none;
+  transition: background 0.2s, color 0.2s;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: top;
+  box-sizing: border-box;
+  padding: 0 24px;
+  line-height: 1;
 }
+
+
 .sign_btn:hover {
     background-color: #fff;
     color: #0FB3D1 !important;
@@ -292,6 +288,74 @@ ul.lan li select {
     border: none;
     color: #fff;
     font-weight: 500;
+}
+
+/* --- Estilos Mejorados para la Sección "Nosotros" --- */
+
+/* Contenedor principal de la sección */
+.about-section {
+  padding: 90px 0;
+  background-color: #E2F2F4; /* O el color de fondo que prefieras */
+}
+
+/* Fila con alineación vertical centrada */
+.about-row-centered {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap; /* Importante para que funcione en móviles */
+}
+
+/* Caja de texto mejorada */
+.about-box-content {
+  padding: 0 5%;
+  text-align: left;
+}
+
+.about-box-content .titlepage {
+  text-align: left;
+  padding-bottom: 20px;
+}
+
+.about-box-content h3 {
+  text-align: left;
+  font-weight: 700;
+  color: #0B1F2E;
+}
+
+/* Estilo para la figura de la imagen */
+.about-img-figure {
+  margin: 0 20px;
+  border-radius: 20px;
+  overflow: hidden;
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón de llamado a la acción personalizado */
+.btn-about-start {
+  background-color: #0FB3D1;
+  color: #FFF !important; /* !important para asegurar que sobreescriba otras reglas de 'a' */
+  padding: 14px 30px;
+  border-radius: 50px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Montserrat', sans-serif;
+  display: inline-flex;
+  align-items: center;
+  box-shadow: 0 4px 15px rgba(15, 179, 209, 0.3);
+  transition: all 0.3s ease;
+  border: none;
+}
+
+/* Efecto hover para el botón (mucho más simple en CSS) */
+.btn-about-start:hover {
+  background-color: #1f235e;
+  color: #FFF !important;
+  transform: translateY(-2px); /* Pequeño efecto de elevación */
+  box-shadow: 0 6px 20px rgba(31, 35, 94, 0.4);
+}
+
+.btn-about-start i {
+  margin-left: 10px;
 }
 
 /*--------------------------------------------------------------------- 
@@ -423,7 +487,44 @@ ul.conta_icon li a:hover {
     font-size: 17px;
 }
 
+.language-box {
+  gap: 10px;
+  font-size: 15px;
+  font-weight: 500;
+  color: #1f235e;
+}
+
+.language-box i.fa-globe {
+  font-size: 16px;
+  color: #1f235e;
+}
+
+.language-box .flag-icon {
+  width: 20px;
+  height: 14px;
+  object-fit: contain;
+  border-radius: 2px;
+  margin-left: 5px;
+}
+
+.language-box .lang-select {
+  font-size: 14px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  background: white;
+  color: #1f235e;
+  margin-left: 5px;
+}
+
+.language-box .lang-label,
+.language-box .lang-name {
+  margin-left: 5px;
+}
+
+
 /** Banner Section **/
+
 .banner_main {
     padding: 60px 0 0;
     background: #F7FAFC url(../images/banner.jpg) no-repeat center center/cover;
@@ -467,6 +568,14 @@ ul.conta_icon li a:hover {
 .ban_img figure {
     margin: 0;
 }
+.flag-icon {
+  width: 20px;
+  height: auto;
+  margin-left: 8px;
+  vertical-align: middle;
+  object-fit: contain;
+}
+
 
 /** End Banner Section **/
 .titlepage {
@@ -571,9 +680,9 @@ ul.conta_icon li a:hover {
 .about .read_morea {
     margin-top: 7px;
     padding: 8px 0;
-    margin-left: 40px;
+    margin-left: 25%;
     background-color: #0FB3D1;
-    max-width: 168px;
+    max-width: 250px;
     width: 100%;
     display: inline-block;
     text-align: center;
