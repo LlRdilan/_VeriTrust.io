@@ -1777,16 +1777,28 @@ pre code {
   }
 }
 
-@media (max-width: 991.98px) {
-  .table-responsive-lg {
-    display: block;
+  @media (max-width: 991.98px) {
+  .navigation .navbar-collapse {
+    background: #0B1F2E !important; /* Un azul oscuro de tu paleta, se ve mejor que el negro puro */
+    padding: 20px;
+    margin-top: 15px; /* Un margen superior consistente */
+    position: absolute;
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;
-    -ms-overflow-style: -ms-autohiding-scrollbar;
+    z-index: 999;
+    border-radius: 8px; /* Bordes redondeados para un look más moderno */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Sombra para darle profundidad */
   }
-  .table-responsive-lg > .table-bordered {
-    border: 0;
+
+  /* Asegurarnos de que los links se vean bien sobre el fondo oscuro */
+  .navigation.navbar-dark .navbar-nav .nav-link {
+    padding: 10px 15px;
+    color: #fff;
+    border-radius: 4px;
+    transition: background-color 0.2s ease-in-out;
+  }
+
+  .navigation.navbar-dark .navbar-nav .nav-link:hover {
+    background-color: #0FB3D1; /* Color de hover para los enlaces */
   }
 }
 
@@ -4098,14 +4110,6 @@ input[type="button"].btn-block {
   }
   .navbar-expand-md .navbar-toggler {
     display: none;
-  }
-}
-
-@media (max-width: 991.98px) {
-  .navbar-expand-lg > .container,
-  .navbar-expand-lg > .container-fluid {
-    padding-right: 0;
-    padding-left: 0;
   }
 }
 

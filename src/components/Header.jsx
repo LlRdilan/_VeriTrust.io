@@ -61,7 +61,7 @@ export default function Header() {
                     <div className="container">
                         <div className="row">
                             <div className="col-md-12 col-sm-12">
-                                <nav className="navigation navbar navbar-expand-md navbar-dark ">
+                                <nav className="navigation navbar navbar-expand-lg navbar-dark ">
                                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExample04" aria-controls="navbarsExample04" aria-expanded="false" aria-label="Toggle navigation">
                                         <span className="navbar-toggler-icon"></span>
                                     </button>
