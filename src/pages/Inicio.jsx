@@ -12,7 +12,7 @@ export default function Inicio() {
                             <p>Con Certificado Digital, Firma Electrónica y DNI puedes gestionar tus trámites en línea de manera rápida, sencilla y con total protección.</p>
                         </div>
                     </div>
-                    <div classNameName="col-md-5 col-lg-5">
+                    <div className="col-md-5 col-lg-5">
                     </div>
                 </div>
             </div>
