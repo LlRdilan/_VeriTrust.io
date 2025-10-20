@@ -1,10 +1,14 @@
+import { Link } from 'react-router-dom';
+
 export default function Nosotros() {
   return (
-    <div id="about" className="about">
+    <div id="about" className="about-section">
       <div className="container-fluid">
-        <div className="row">
+        <div className="row about-row-centered">
+
+          {/* --- Columna de Texto --- */}
           <div className="col-md-12 col-lg-7">
-            <div className="about_box">
+            <div className="about-box-content">
               <div className="titlepage">
                 <h2><strong className="yellow">Sobre Nosotros</strong></h2>
               </div>
@@ -20,22 +24,25 @@ export default function Nosotros() {
                 proporcionamos las herramientas necesarias para que tu empresa opere en el mundo digital
                 con total tranquilidad y respaldo legal.
               </p>
-              <span className="try">CONOCE CÓMO NUESTRAS SOLUCIONES PUEDEN FORTALECER TU EMPRESA</span>
-              <a
-                className="read_morea"
-                href="service.html"
-                style={{ textAlign: 'left', display: 'inline-block' }}
-              >
-                Comenzar <i className="fa fa-angle-right" aria-hidden="true"></i>
-              </a>
+              
+              <div style={{ marginTop: '30px' }}>
+                <Link className="btn-about-start" to="/servicios">
+                  Conoce nuestros servicios <i className="fa fa-angle-right"></i>
+                </Link>
+              </div>
+
             </div>
           </div>
 
+          {/* --- Columna de la Imagen --- */}
           <div className="col-md-12 col-lg-5">
             <div className="about_img">
-              <figure><img src="images/about_img2.jpg" alt="VeriTrust - Identidad Digital Segura" /></figure>
+              <figure className="about-img-figure">
+                <img src="images/about_img2.jpg" alt="VeriTrust - Identidad Digital Segura" />
+              </figure>
             </div>
           </div>
+
         </div>
       </div>
     </div>

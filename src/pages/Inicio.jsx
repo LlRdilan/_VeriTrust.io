@@ -1,3 +1,5 @@
+import { useState, useEffect } from 'react';
+
 export default function Inicio() {
     return (
         <section className="banner_main">
