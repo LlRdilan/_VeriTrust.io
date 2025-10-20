@@ -9,9 +9,14 @@ export default function Header() {
                             <div className="col-md-6 col-sm-6 d-flex align-items-center justify-content-start">
                                 <div className="language-box d-flex align-items-center">
                                     <i className="fa fa-globe" aria-hidden="true"></i>
-                                    <span className="lang-label ms-2 me-2">Idioma:</span>
+
+                                    <label htmlFor="language-selector" className="lang-label ms-2 me-2">
+                                        Idioma:
+                                    </label>
+
                                     <img className="flag-icon" src="/images/espana_bandera.png" alt="ES" />
-                                    <select className="lang-select">
+
+                                    <select id="language-selector" name="language" className="lang-select">
                                         <option value="es">Español</option>
                                         <option value="en">Inglés</option>
                                         <option value="pt">Portugués</option>
