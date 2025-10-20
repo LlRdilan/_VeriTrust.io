@@ -232,7 +232,7 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 
 /* NAVIGATION */
 .navigation.navbar {
-    float: left;
+    /*flo+at: left; */
     padding: 0;
     background: transparent;
 }
@@ -344,6 +344,7 @@ ul.lan li select {
   box-shadow: 0 4px 15px rgba(15, 179, 209, 0.3);
   transition: all 0.3s ease;
   border: none;
+  margin-bottom: 5%;
 }
 
 /* Efecto hover para el botón (mucho más simple en CSS) */
@@ -530,7 +531,7 @@ ul.conta_icon li a:hover {
     background: #F7FAFC url(../images/banner.jpg) no-repeat center center/cover;
 }
 .text-bg {
-    text-align: left;
+    text-align: center;
     padding-top: 120px;
 }
 .text-bg h1 {
