@@ -2,6 +2,27 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
+export const validarRut = (rutCompleto) => {
+  let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
+  let cuerpo = rutLimpio.slice(0, -1);
+  let dv = rutLimpio.slice(-1).toUpperCase();
+  if (!/^\d+$/.test(cuerpo)) return false;
+
+  let suma = 0;
+  let multiplo = 2;
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += parseInt(cuerpo[i]) * multiplo;
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
+  }
+
+  let dvEsperado = 11 - (suma % 11);
+  if (dvEsperado === 11) dvEsperado = "0";
+  else if (dvEsperado === 10) dvEsperado = "K";
+  else dvEsperado = dvEsperado.toString();
+
+  return dv === dvEsperado;
+};
+
 export default function Registro() {
   const navigate = useNavigate();
 
@@ -19,27 +40,6 @@ export default function Registro() {
 
   const [errores, setErrores] = useState({});
   const [captchaValido, setCaptchaValido] = useState(false);
-
-  const validarRut = (rutCompleto) => {
-    let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
-    let cuerpo = rutLimpio.slice(0, -1);
-    let dv = rutLimpio.slice(-1).toUpperCase();
-    if (!/^\d+$/.test(cuerpo)) return false;
-
-    let suma = 0;
-    let multiplo = 2;
-    for (let i = cuerpo.length - 1; i >= 0; i--) {
-      suma += parseInt(cuerpo[i]) * multiplo;
-      multiplo = multiplo < 7 ? multiplo + 1 : 2;
-    }
-
-    let dvEsperado = 11 - (suma % 11);
-    if (dvEsperado === 11) dvEsperado = "0";
-    else if (dvEsperado === 10) dvEsperado = "K";
-    else dvEsperado = dvEsperado.toString();
-
-    return dv === dvEsperado;
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -270,18 +270,12 @@ export default function Registro() {
                 </div>
 
                 <div className="col-md-12 mt-3 d-flex justify-content-center">
-                  <ReCAPTCHA
-                    sitekey="TU_SITE_KEY_AQUI"
-                    onChange={onCaptchaChange}
-                  />
+                  <ReCAPTCHA sitekey="TU_SITE_KEY_AQUI" onChange={onCaptchaChange} />
                 </div>
 
                 <div className="col-md-12 mt-3">
-                  <button type="submit" className="send_btn">
-                    Crear cuenta
-                  </button>
+                  <button type="submit" className="send_btn">Crear cuenta</button>
                 </div>
-
               </div>
             </form>
           </div>

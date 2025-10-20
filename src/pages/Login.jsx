@@ -2,6 +2,30 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
+export const validarRut = (rutCompleto) => {
+  let rutSinPuntos = rutCompleto.replace(/\./g, "").replace("-", "");
+  if (rutSinPuntos.length < 2) return false;
+  let cuerpo = rutSinPuntos.slice(0, -1);
+  let dv = rutSinPuntos.slice(-1).toUpperCase();
+
+  if (!/^\d+$/.test(cuerpo)) return false;
+
+  let suma = 0;
+  let multiplo = 2;
+
+  for (let i = cuerpo.length - 1; i >= 0; i--) {
+    suma += parseInt(cuerpo[i], 10) * multiplo;
+    multiplo = multiplo < 7 ? multiplo + 1 : 2;
+  }
+
+  let dvEsperado = 11 - (suma % 11);
+  if (dvEsperado === 11) dvEsperado = "0";
+  else if (dvEsperado === 10) dvEsperado = "K";
+  else dvEsperado = dvEsperado.toString();
+
+  return dv === dvEsperado;
+};
+
 export default function Login() {
   const [rut, setRut] = useState("");
   const [contraseña, setContraseña] = useState("");
@@ -10,29 +34,6 @@ export default function Login() {
   const [captchaValido, setCaptchaValido] = useState(false);
 
   const navigate = useNavigate();
-
-  const validarRut = (rutCompleto) => {
-    let rutSinPuntos = rutCompleto.replace(/\./g, "").replace("-", "");
-    let cuerpo = rutSinPuntos.slice(0, -1);
-    let dv = rutSinPuntos.slice(-1).toUpperCase();
-
-    if (!/^\d+$/.test(cuerpo)) return false;
-
-    let suma = 0;
-    let multiplo = 2;
-
-    for (let i = cuerpo.length - 1; i >= 0; i--) {
-      suma += parseInt(cuerpo[i], 10) * multiplo;
-      multiplo = multiplo < 7 ? multiplo + 1 : 2;
-    }
-
-    let dvEsperado = 11 - (suma % 11);
-    if (dvEsperado === 11) dvEsperado = "0";
-    else if (dvEsperado === 10) dvEsperado = "K";
-    else dvEsperado = dvEsperado.toString();
-
-    return dv === dvEsperado;
-  };
 
   const handleSubmit = (e) => {
     e.preventDefault();

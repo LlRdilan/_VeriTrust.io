@@ -1,6 +1,25 @@
 import { useState } from "react";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
+export function validarNumeroTarjeta(numero) {
+  if (typeof numero !== "string") return false;
+  // requerir 16 dígitos numéricos
+  if (!/^\d{16}$/.test(numero)) return false;
+
+  let suma = 0;
+  let doble = false;
+  for (let i = numero.length - 1; i >= 0; i--) {
+    let digito = parseInt(numero.charAt(i), 10);
+    if (doble) {
+      digito *= 2;
+      if (digito > 9) digito -= 9;
+    }
+    suma += digito;
+    doble = !doble;
+  }
+  return suma % 10 === 0;
+}
+
 export default function Compra() {
   const [nombreTarjeta, setNombreTarjeta] = useState("");
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
@@ -9,21 +28,6 @@ export default function Compra() {
   const [cvv, setCvv] = useState("");
   const [mensajeError, setMensajeError] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
-
-  const validarNumeroTarjeta = (numero) => {
-    let suma = 0;
-    let doble = false;
-    for (let i = numero.length - 1; i >= 0; i--) {
-      let digito = parseInt(numero.charAt(i), 10);
-      if (doble) {
-        digito *= 2;
-        if (digito > 9) digito -= 9;
-      }
-      suma += digito;
-      doble = !doble;
-    }
-    return suma % 10 === 0;
-  };
 
   const manejarEnvio = (e) => {
     e.preventDefault();

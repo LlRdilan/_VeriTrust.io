@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validarNumeroTarjeta } from "./Compra";
+import { validarNumeroTarjeta } from "../../pages/Compra";
 
 describe("validarNumeroTarjeta()", () => {
   it("deberia retornar true si el numero de tarjeta es valido", () => {

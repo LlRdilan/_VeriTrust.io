@@ -1,15 +1,17 @@
 {
   "name": "veritrust",
-  "private": false,
   "version": "0.0.0",
+  "private": true,
   "type": "module",
   "homepage": "https://llrdilan.github.io/_VeriTrust.io/",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run buil",
+    "lint": "eslint .",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
   "dependencies": {

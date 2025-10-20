@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { validarRut } from "./Login";
+import { validarRut } from "../../pages/Login";
 
 describe("validarRut()", () => {
   it("deberia retornar true para un rut valido", () => {

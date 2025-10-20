@@ -1,6 +1,47 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+export function ComprobarServicio(servicio) {
+  if (!servicio || typeof servicio !== "object") {
+    throw new Error("Servicio invalido");
+  }
+
+  // aceptar claves en español o inglés
+  const nombre = (servicio.nombre ?? servicio.name ?? "").toString();
+  const descripcion = (servicio.descripcion ?? servicio.desc ?? "").toString();
+
+  // precio puede venir como string o number, en clave precio o price
+  let precio = servicio.precio ?? servicio.price;
+  if (typeof precio === "string") precio = parseFloat(precio);
+
+  // detalles puede venir como array (detalles) o string con saltos de linea (longDesc / detalles)
+  let detalles = [];
+  if (Array.isArray(servicio.detalles)) {
+    detalles = servicio.detalles;
+  } else if (typeof servicio.longDesc === "string") {
+    detalles = servicio.longDesc.split("\n");
+  } else if (typeof servicio.detalles === "string") {
+    detalles = servicio.detalles.split("\n");
+  } else {
+    detalles = [];
+  }
+
+  if (!nombre.trim() || !descripcion.trim()) {
+    throw new Error("Nombre y descripcion son obligatorios");
+  }
+
+  if (typeof precio !== "number" || !Number.isFinite(precio) || precio <= 0 || precio % 1 !== 0) {
+    throw new Error("El precio debe ser un numero entero positivo");
+  }
+
+  const detallesValidos = Array.isArray(detalles) ? detalles.filter(d => typeof d === "string" && d.trim() !== "") : [];
+  if (detallesValidos.length < 3) {
+    throw new Error("La descripcion larga debe tener al menos 3 lineas");
+  }
+
+  return true;
+}
+
 export default function Admin() {
   const navegar = useNavigate();
 
@@ -28,30 +69,19 @@ export default function Admin() {
 
   const manejarEnvio = (e) => {
     e.preventDefault();
-    const { nombre, descripcion, precio, detalles } = formulario;
 
-    if (!nombre.trim() || !descripcion.trim()) {
-      alert("El nombre y la descripcion no pueden estar vacios");
-      return;
-    }
-
-    const precioParseado = parseFloat(precio);
-    if (isNaN(precioParseado) || precioParseado <= 0 || precioParseado % 1 !== 0) {
-      alert("El precio debe ser un numero entero positivo");
-      return;
-    }
-
-    const detallesValidos = Array.isArray(detalles) ? detalles.filter(d => d.trim() !== "") : [];
-    if (detallesValidos.length < 3) {
-      alert("La descripcion larga debe tener al menos 3 lineas");
+    try {
+      const precioParseado = parseFloat(formulario.precio);
+      ComprobarServicio({ ...formulario, precio: precioParseado });
+    } catch (error) {
+      alert(error.message);
       return;
     }
 
     const nuevoServicio = {
-      nombre: nombre.trim(),
-      descripcion: descripcion.trim(),
-      precio: precioParseado,
-      detalles: detallesValidos
+      ...formulario,
+      precio: parseFloat(formulario.precio),
+      detalles: formulario.detalles.filter(d => d.trim() !== "")
     };
 
     const serviciosActualizados =
@@ -89,7 +119,6 @@ export default function Admin() {
   return (
     <div id="admin" className="service">
       <div className="container">
-        {/* Encabezado */}
         <div className="row">
           <div className="col-md-12">
             <div className="titlepage">
@@ -98,8 +127,6 @@ export default function Admin() {
             </div>
           </div>
         </div>
-
-        {/* Formulario */}
         <div className="row">
           <div className="col-md-12">
             <div className="backoffice_section">
@@ -161,8 +188,6 @@ export default function Admin() {
             </div>
           </div>
         </div>
-
-        {/* Tabla de servicios */}
         <div className="row">
           <div className="col-md-12">
             <div className="backoffice_section mt-4">
@@ -201,8 +226,6 @@ export default function Admin() {
                 </tbody>
               </table>
             </div>
-
-            {/* Botones inferiores */}
             <div className="text-center mt-4 d-flex justify-content-center gap-3">
               <button onClick={verServiciosPublicos} className="btn_primary">
                 <i className="fa fa-eye"></i> Ver servicios publicos
