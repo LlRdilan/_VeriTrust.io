@@ -301,7 +301,7 @@ ul.lan li select {
 /* Fila con alineación vertical centrada */
 .about-row-centered {
   display: flex;
-  align-items: center;
+  align-items: anchor-center; /* Centra verticalmente */
   flex-wrap: wrap; /* Importante para que funcione en móviles */
 }
 
