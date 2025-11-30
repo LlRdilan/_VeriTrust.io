@@ -2,44 +2,54 @@ import { Link } from 'react-router-dom';
 
 export default function Nosotros() {
   return (
-    <div id="about" className="about-section">
-      <div className="container-fluid">
-        <div className="row about-row-centered">
-
-          {/* --- Columna de Texto --- */}
-          <div className="col-md-12 col-lg-7">
-            <div className="about-box-content">
-              <div className="titlepage">
-                <h2><strong className="yellow">Sobre Nosotros</strong></h2>
+    <div id="about" className="about about_section">
+      <div className="container">
+        <div className="row d_flex align-items-center">
+          
+          {/* Columna de Texto */}
+          <div className="col-lg-6 col-md-12 mb-4 mb-lg-0">
+            <div className="about_box_content">
+              <div className="titlepage text-lg-left text-center">
+                <h2>Sobre Nosotros</h2>
               </div>
-              <h3>SOLUCIONES INTEGRALES PARA EMPRESAS Y USUARIOS</h3>
-              <p>
-                En VeriTrust, nos dedicamos a ofrecer servicios de identidad digital de alta confiabilidad.
-                Nuestra experiencia en certificación digital, firma electrónica y verificación de identidad
-                permite a organizaciones y personas realizar sus gestiones en línea de manera segura, eficiente
-                y conforme a los estándares legales y tecnológicos más exigentes.
-              </p>
-              <p>
-                Desde certificados digitales hasta firmas electrónicas reconocidas por el SII,
-                proporcionamos las herramientas necesarias para que tu empresa opere en el mundo digital
-                con total tranquilidad y respaldo legal.
-              </p>
               
-              <div style={{ marginTop: '30px' }}>
-                <Link className="btn-about-start" to="/servicios">
-                  Conoce nuestros servicios <i className="fa fa-angle-right"></i>
-                </Link>
-              </div>
+              <h3 className="about_subtitle text-lg-left text-center">
+                Soluciones integrales para tu seguridad digital
+              </h3>
 
+              <p className="about_text text-lg-left text-center">
+                En VeriTrust, nos dedicamos a ofrecer servicios de identidad digital de alta confiabilidad. 
+                Nuestra experiencia en certificación digital, firma electrónica y verificación de identidad 
+                permite a organizaciones y personas realizar sus gestiones en línea de manera segura.
+              </p>
+
+              <p className="about_text text-lg-left text-center mb-4">
+                Desde certificados digitales hasta firmas electrónicas reconocidas por el SII, 
+                proporcionamos las herramientas necesarias para que tu empresa opere con total tranquilidad.
+              </p>
+
+              <div className="text-lg-left text-center">
+                <Link className="read_more" to="/servicios">Ver Servicios</Link>
+              </div>
             </div>
           </div>
 
-          {/* --- Columna de la Imagen --- */}
-          <div className="col-md-12 col-lg-5">
-            <div className="about_img">
-              <figure className="about-img-figure">
-                <img src="images/about_img2.jpg" alt="VeriTrust - Identidad Digital Segura" />
+          {/* Columna de Imagen */}
+          <div className="col-lg-6 col-md-12">
+            <div className="about_img_container">
+              <figure>
+                <img 
+                  className="about_img_style"
+                  src="images/about_img2.jpg" 
+                  alt="Equipo VeriTrust" 
+                />
               </figure>
+              
+              {/* Elemento flotante (Cuadro azul) */}
+              <div className="floating_box d-none d-lg-block">
+                  <h4>+10</h4>
+                  <span>Años de experiencia</span>
+              </div>
             </div>
           </div>
 

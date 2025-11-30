@@ -1,6 +1,15 @@
 import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 
 export default function Inicio() {
+    
+    // Estilo para redondear las imágenes del carrusel
+    const roundedStyle = {
+        borderRadius: '20px',
+        boxShadow: '0 8px 20px rgba(0,0,0,0.1)', // Sombra suave para destacar
+        transition: 'transform 0.3s ease'
+    };
+
     return (
         <section className="banner_main">
             <div className="container">
@@ -14,6 +23,7 @@ export default function Inicio() {
                     </div>
                 </div>
             </div>
+            
             <div className="business">
                 <div className="container">
                     <div className="row">
@@ -56,6 +66,7 @@ export default function Inicio() {
                     </div>
                 </div>
             </div>
+
             <div className="portfolio">
                 <div className="container">
                     <div className="row">
@@ -68,6 +79,7 @@ export default function Inicio() {
                     </div>
                 </div>
 
+                {/* CARRUSEL DE IMÁGENES */}
                 <div id="myCarousel" className="carousel slide portfolio_Carousel" data-ride="carousel">
                     <ol className="carousel-indicators">
                         <li data-target="#myCarousel" data-slide-to="0" className="active"></li>
@@ -82,70 +94,61 @@ export default function Inicio() {
                                     <div className="row">
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/cenco_pay_empresa.jpg" alt="#" />
+                                                <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />
                                                 <div className="middle">
                                                     <div className="text2">View More</div>
                                                 </div>
                                             </div>
                                         </div>
-                                        {/* CORREGIDO: Error de tipeo 'clasclassNames' a 'className' */}
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/banco_falabella_empresa.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/banco_falabella_empresa.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                {/* CORREGIDO: La ruta de la imagen va en 'src', no en 'className' */}
-                                                <img src="images/banco_santander_empresa.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/banco_santander_empresa.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/sii_foto.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/sii_foto.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
                             </div>
                         </div>
-                        {/* CORREGIDO: Error de tipeo 'claclassNamess' a 'className' */}
+                        
                         <div className="carousel-item">
                             <div className="container">
                                 <div className="carousel-caption">
                                     <div className="row">
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/cenco_pay_empresa.jpg" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/banco_falabella_empresa.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/banco_falabella_empresa.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/banco_santander_empresa.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/banco_santander_empresa.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
-                                                <img src="images/sii_foto.png" alt="#" />
-                                                <div className="middle">
-                                                </div>
+                                                <img src="images/sii_foto.png" alt="#" style={roundedStyle} />
+                                                <div className="middle"></div>
                                             </div>
                                         </div>
                                     </div>
@@ -153,6 +156,7 @@ export default function Inicio() {
                             </div>
                         </div>
                     </div>
+                    
                     <a className="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
                         <i className="fa fa-chevron-left" aria-hidden="true"></i>
                     </a>

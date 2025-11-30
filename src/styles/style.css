@@ -1725,3 +1725,85 @@ small.form-text.text-muted,
         padding: 20px;
     }
 }
+
+/* --- ESTILOS ESPECÍFICOS PARA NOSOTROS (Nosotros.jsx) --- */
+
+.about_section {
+    padding: 80px 0;
+    background-color: #F7FAFC;
+}
+
+/* Subtítulo con borde lateral azul */
+.about_subtitle {
+    font-size: 20px;
+    font-weight: 700;
+    color: #1f235e;
+    margin-bottom: 20px;
+    border-left: 4px solid #0FB3D1; /* Línea azul a la izquierda */
+    padding-left: 15px;
+}
+
+/* Párrafos de texto */
+.about_text {
+    font-size: 16px;
+    line-height: 1.8;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Contenedor de la imagen para posicionamiento relativo */
+.about_img_container {
+    position: relative;
+    padding: 20px;
+}
+
+/* Estilo de la imagen principal */
+.about_img_style {
+    border-radius: 30px;
+    box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+    width: 100%;
+    border: 5px solid #fff; /* Marco blanco tipo foto */
+    object-fit: cover;
+}
+
+/* Cuadro Flotante Azul (+10 años) */
+.floating_box {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    background: #1f235e;
+    color: #fff;
+    padding: 25px;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(31, 35, 94, 0.3);
+    max-width: 200px;
+    z-index: 1;
+}
+
+.floating_box h4 {
+    color: #0FB3D1;
+    font-size: 32px;
+    font-weight: bold;
+    margin: 0;
+    line-height: 1;
+}
+
+.floating_box span {
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    display: block;
+    margin-top: 5px;
+}
+
+/* Ajuste Responsive para móvil: Centrar subtítulo y quitar borde */
+@media (max-width: 991px) {
+    .about_subtitle {
+        border-left: none;
+        padding-left: 0;
+        border-bottom: 3px solid #0FB3D1;
+        display: inline-block;
+        padding-bottom: 5px;
+    }
+}
+

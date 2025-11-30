@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+
 export default function Header() {
     return (
         <header>
@@ -9,8 +10,9 @@ export default function Header() {
                             <div className="col-md-6 col-sm-6 d-flex align-items-center justify-content-start">
                                 <div className="language-box d-flex align-items-center">
                                     <i className="fa fa-globe" aria-hidden="true"></i>
-
-                                    <label htmlFor="language-selector" className="lang-label ms-2 me-2">
+                                    
+                                    {/* AQUI ESTA EL CAMBIO: agregué 'mb-0' para quitar el margen inferior */}
+                                    <label htmlFor="language-selector" className="lang-label ms-2 me-2 mb-0">
                                         Idioma:
                                     </label>
 
@@ -33,8 +35,6 @@ export default function Header() {
                                     <li><a href="#"><i className="fa fa-instagram"></i></a></li>
                                 </ul>
                             </div>
-
-
                         </div>
                     </div>
                 </div>
@@ -47,7 +47,7 @@ export default function Header() {
                                 </ul>
                             </div>
                             <div className="col-md-4 col-sm-4 ">
-                                <a className="logo" href="#"><img src="images/logo.png" alt="#" /></a>
+                                <Link className="logo" to="/"><img src="images/logo.png" alt="#" /></Link>
                             </div>
                             <div className="col-md-4 col-sm-4 d_none">
                                 <ul className="conta_icon ">
