@@ -50,18 +50,26 @@ export default function Login() {
       return;
     }
 
-    if (!(rut === "21867698-7" && contraseña === "admin")) {
+    if (rut === "21867698-7" && contraseña === "admin") {
+      
+      // --- CREAMOS LA SESIÓN (TOKEN SIMULADO) ---
+      const sessionData = {
+        nombre: "Dilan Admin", // Nombre que saldrá en el Header
+        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", // Token falso
+        rol: "admin",
+        loginTime: new Date().getTime()
+      };
+
+      // Guardamos el objeto en localStorage
+      localStorage.setItem("user_session", JSON.stringify(sessionData));
+      
+      // Limpiamos rastros antiguos
+      localStorage.removeItem("adminLogged"); 
+
+      navigate("/admin");
+    } else {
       setErrorContraseña("Usuario o contraseña incorrectos");
-      return;
     }
-
-    try {
-      localStorage.setItem("adminLogged", "1");
-    } catch {
-      sessionStorage.setItem("adminLogged", "1");
-    }
-
-    navigate("/admin");
   };
 
   const onCaptchaChange = (value) => {
@@ -111,10 +119,7 @@ export default function Login() {
                 </div>
 
                 <div className="col-md-12 mt-3 justify-content-center d-flex">
-                  <ReCAPTCHA
-                    sitekey="6Lc4UPArAAAAABbDqu7ecWIfeTKE5bbuhfs0Px4_"
-                    onChange={onCaptchaChange}
-                  />
+                  <ReCAPTCHA onChange={onCaptchaChange} />
                 </div>
 
                 <div className="col-md-12 mt-3">
