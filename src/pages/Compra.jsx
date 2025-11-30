@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom"; // Importamos hooks necesarios
+import { useLocation, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
 // Función de validación de tarjeta (Algoritmo de Luhn)
@@ -22,26 +22,42 @@ export function validarNumeroTarjeta(numero) {
 }
 
 export default function Compra() {
-  // Hooks para recibir datos
   const location = useLocation();
   const navigate = useNavigate();
-  const servicio = location.state; // Aquí vienen los datos desde Servicios.jsx
+  const servicio = location.state;
 
   // Estados del formulario
   const [nombreTarjeta, setNombreTarjeta] = useState("");
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
+  const [tipoTarjeta, setTipoTarjeta] = useState(""); // Estado para guardar si es Visa/Master/etc
   const [mesExpiracion, setMesExpiracion] = useState("");
   const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
   const [mensajeError, setMensajeError] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
 
-  // Validación de seguridad: Si no hay servicio seleccionado, volver atrás
   useEffect(() => {
     if (!servicio) {
       navigate("/servicios");
     }
   }, [servicio, navigate]);
+
+  // Lógica simple para detectar la tarjeta
+  const detectarFranquicia = (numero) => {
+    if (numero.startsWith("4")) return "visa";
+    if (/^5[1-5]/.test(numero)) return "mastercard";
+    if (/^3[47]/.test(numero)) return "amex";
+    return "";
+  };
+
+  const manejarCambioNumero = (e) => {
+    const valor = e.target.value;
+    // Permitir solo números
+    if (/^\d*$/.test(valor)) {
+        setNumeroTarjeta(valor);
+        setTipoTarjeta(detectarFranquicia(valor));
+    }
+  };
 
   const manejarEnvio = (e) => {
     e.preventDefault();
@@ -77,18 +93,17 @@ export default function Compra() {
 
     alert(`¡Compra Exitosa! Has adquirido: ${servicio.nombre}`);
     
-    // Limpiar formulario
     setNombreTarjeta("");
     setNumeroTarjeta("");
+    setTipoTarjeta("");
     setMesExpiracion("");
     setAnioExpiracion("");
     setCvv("");
     setMensajeError("");
     setCaptchaToken(null);
-    navigate("/"); // Volver al inicio
+    navigate("/");
   };
 
-  // Si no hay servicio cargado (mientras redirige), no mostrar nada
   if (!servicio) return null;
 
   return (
@@ -99,24 +114,10 @@ export default function Compra() {
                 <h2>Finalizar Compra</h2>
             </div>
 
-            <div
-                className="card"
-                style={{
-                padding: "30px",
-                boxShadow: "0 5px 20px rgba(0,0,0,0.05)",
-                borderRadius: "20px",
-                background: "#fff",
-                border: "none"
-                }}
-            >
-                {/* --- RESUMEN DEL PEDIDO --- */}
-                <div style={{
-                    backgroundColor: "#f7fafc", 
-                    padding: "20px", 
-                    borderRadius: "15px", 
-                    marginBottom: "30px",
-                    borderLeft: "5px solid #0FB3D1"
-                }}>
+            <div className="card" style={{ padding: "30px", boxShadow: "0 5px 20px rgba(0,0,0,0.05)", borderRadius: "20px", background: "#fff", border: "none" }}>
+                
+                {/* Resumen */}
+                <div style={{ backgroundColor: "#f7fafc", padding: "20px", borderRadius: "15px", marginBottom: "30px", borderLeft: "5px solid #0FB3D1" }}>
                     <h3 style={{color: "#1f235e", fontWeight: "700", fontSize: "20px", marginBottom: "15px"}}>
                         Resumen del Pedido
                     </h3>
@@ -139,7 +140,6 @@ export default function Compra() {
                     </div>
                 </div>
 
-                {/* --- FORMULARIO DE PAGO --- */}
                 <h4 style={{color: "#0FB3D1", fontWeight: "600", marginBottom: "20px"}}>Datos de Pago</h4>
                 
                 <form onSubmit={manejarEnvio}>
@@ -153,17 +153,33 @@ export default function Compra() {
                     required
                     />
                 </div>
+
                 <div className="form-group mb-3">
-                    <label>Numero de tarjeta</label>
+                    <div className="d-flex justify-content-between align-items-center">
+                        <label>Numero de tarjeta</label>
+                        {/* ICONOS DE TARJETAS */}
+                        <div style={{fontSize: '24px'}}>
+                            <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} 
+                               style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
+                            
+                            <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} 
+                               style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
+                            
+                            <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} 
+                               style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
+                        </div>
+                    </div>
                     <input
-                    type="text"
-                    maxLength={16}
-                    className="form-control"
-                    value={numeroTarjeta}
-                    onChange={(e) => setNumeroTarjeta(e.target.value)}
-                    required
+                        type="text"
+                        maxLength={16}
+                        className="form-control"
+                        placeholder="0000 0000 0000 0000"
+                        value={numeroTarjeta}
+                        onChange={manejarCambioNumero} // Usamos la nueva función aquí
+                        required
                     />
                 </div>
+
                 <div className="row">
                     <div className="col-md-6 form-group mb-3">
                     <label>Mes (MM)</label>
