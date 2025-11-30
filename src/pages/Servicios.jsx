@@ -39,13 +39,41 @@ export default function Servicios() {
           </div>
         </div>
 
+        {/* --- NUEVO BANNER DECORATIVO --- */}
+        <div className="row mb-5">
+            <div className="col-md-12">
+                <div style={{
+                    width: '100%', 
+                    height: '300px', 
+                    borderRadius: '20px', 
+                    overflow: 'hidden', 
+                    position: 'relative',
+                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
+                }}>
+                    <img 
+                        src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
+                        alt="Servicios Digitales" 
+                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
+                    />
+                    <div style={{
+                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+                        background: 'rgba(31, 35, 94, 0.7)',
+                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
+                        color: '#fff', padding: '20px'
+                    }}>
+                        <h2 style={{color: '#fff', fontSize: '35px', fontWeight: 'bold'}}>Tecnología de Punta</h2>
+                        <p style={{color: '#ddd', fontSize: '18px', maxWidth: '600px'}}>Garantizamos la seguridad de tus transacciones con los estándares más altos del mercado.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <div className="row">
           {servicios.map((s, i) => {
-            // --- CÁLCULO MATEMÁTICO ---
+            // Cálculo del IVA
             const neto = Number(s.price);
             const valorIva = Math.round(neto * 0.19);
             const total = neto + valorIva;
-            // --------------------------
 
             return (
               <div key={i} className="col-md-4 col-sm-6">
@@ -66,7 +94,7 @@ export default function Servicios() {
                     </strong>
                   </div>
                   
-                  {/* AQUÍ ESTÁ LA MAGIA: Enviamos los datos a la página de compra */}
+                  {/* Enviamos los datos completos a Compra */}
                   <Link 
                     className="comprar_btn" 
                     to="/compra" 
