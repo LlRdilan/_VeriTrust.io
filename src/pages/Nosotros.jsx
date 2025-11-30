@@ -47,7 +47,7 @@ export default function Nosotros() {
               
               {/* Elemento flotante (Cuadro azul) */}
               <div className="floating_box d-none d-lg-block">
-                  <h4>+10</h4>
+                  <h4>+2</h4>
                   <span>Años de experiencia</span>
               </div>
             </div>

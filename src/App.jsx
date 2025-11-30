@@ -12,6 +12,8 @@ import Footer from './components/Footer';
 import Admin from './pages/Admin';
 import Compra from './pages/Compra';
 import Importante from './pages/Importante';
+import Firma from './pages/Firma';
+import NotFound from './pages/NotFound';
 
 export default function App() {
   return (
@@ -29,9 +31,10 @@ export default function App() {
         <Route path="/admin" element={<Admin />} />
         <Route path="/compra" element={<Compra />} />
         <Route path="/importante" element={<Importante />} />
+        <Route path="/firma" element={<Firma />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
     </BrowserRouter>
-
   );
 }

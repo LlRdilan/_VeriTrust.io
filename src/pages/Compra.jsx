@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
-// Función de validación de tarjeta (Algoritmo de Luhn)
 export function validarNumeroTarjeta(numero) {
   if (typeof numero !== "string") return false;
   if (!/^\d{16}$/.test(numero)) return false;
@@ -26,10 +25,9 @@ export default function Compra() {
   const navigate = useNavigate();
   const servicio = location.state;
 
-  // Estados del formulario
   const [nombreTarjeta, setNombreTarjeta] = useState("");
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
-  const [tipoTarjeta, setTipoTarjeta] = useState(""); // Estado para guardar si es Visa/Master/etc
+  const [tipoTarjeta, setTipoTarjeta] = useState(""); 
   const [mesExpiracion, setMesExpiracion] = useState("");
   const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
@@ -42,7 +40,6 @@ export default function Compra() {
     }
   }, [servicio, navigate]);
 
-  // Lógica simple para detectar la tarjeta
   const detectarFranquicia = (numero) => {
     if (numero.startsWith("4")) return "visa";
     if (/^5[1-5]/.test(numero)) return "mastercard";
@@ -52,7 +49,6 @@ export default function Compra() {
 
   const manejarCambioNumero = (e) => {
     const valor = e.target.value;
-    // Permitir solo números
     if (/^\d*$/.test(valor)) {
         setNumeroTarjeta(valor);
         setTipoTarjeta(detectarFranquicia(valor));
@@ -91,17 +87,10 @@ export default function Compra() {
       return;
     }
 
-    alert(`¡Compra Exitosa! Has adquirido: ${servicio.nombre}`);
-    
-    setNombreTarjeta("");
-    setNumeroTarjeta("");
-    setTipoTarjeta("");
-    setMesExpiracion("");
-    setAnioExpiracion("");
-    setCvv("");
-    setMensajeError("");
-    setCaptchaToken(null);
-    navigate("/");
+    // --- EL CAMBIO IMPORTANTE ESTÁ AQUÍ ---
+    // En vez de solo avisar, redirigimos a la firma pasando los datos
+    alert(`Pago aceptado. Redirigiendo a firma de documentos...`);
+    navigate("/firma", { state: { servicio: servicio } });
   };
 
   if (!servicio) return null;
@@ -116,7 +105,6 @@ export default function Compra() {
 
             <div className="card" style={{ padding: "30px", boxShadow: "0 5px 20px rgba(0,0,0,0.05)", borderRadius: "20px", background: "#fff", border: "none" }}>
                 
-                {/* Resumen */}
                 <div style={{ backgroundColor: "#f7fafc", padding: "20px", borderRadius: "15px", marginBottom: "30px", borderLeft: "5px solid #0FB3D1" }}>
                     <h3 style={{color: "#1f235e", fontWeight: "700", fontSize: "20px", marginBottom: "15px"}}>
                         Resumen del Pedido
@@ -125,18 +113,24 @@ export default function Compra() {
                         <span>Servicio:</span>
                         <span style={{fontWeight: "600"}}>{servicio.nombre}</span>
                     </div>
-                    <div style={{display: "flex", justifyContent: "space-between", marginBottom: "5px", color: "#666"}}>
-                        <span>Precio Neto:</span>
-                        <span>${servicio.neto.toLocaleString()}</span>
-                    </div>
-                    <div style={{display: "flex", justifyContent: "space-between", marginBottom: "10px", color: "#666"}}>
-                        <span>IVA (19%):</span>
-                        <span>${servicio.iva.toLocaleString()}</span>
-                    </div>
+                    {/* Verificamos que servicio.neto exista antes de usarlo para evitar errores si entras directo */}
+                    {servicio.neto && (
+                      <>
+                        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "5px", color: "#666"}}>
+                            <span>Precio Neto:</span>
+                            <span>${servicio.neto.toLocaleString()}</span>
+                        </div>
+                        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "10px", color: "#666"}}>
+                            <span>IVA (19%):</span>
+                            <span>${servicio.iva.toLocaleString()}</span>
+                        </div>
+                      </>
+                    )}
                     <hr style={{margin: "10px 0"}}/>
                     <div style={{display: "flex", justifyContent: "space-between", fontSize: "22px", fontWeight: "bold", color: "#1f235e"}}>
                         <span>Total a Pagar:</span>
-                        <span>${servicio.total.toLocaleString()}</span>
+                        {/* Si existe servicio.total lo muestra, si no (en caso raro) muestra el precio base */}
+                        <span>${(servicio.total || servicio.price || 0).toLocaleString()}</span>
                     </div>
                 </div>
 
@@ -145,77 +139,34 @@ export default function Compra() {
                 <form onSubmit={manejarEnvio}>
                 <div className="form-group mb-3">
                     <label>Nombre en la tarjeta</label>
-                    <input
-                    type="text"
-                    className="form-control"
-                    value={nombreTarjeta}
-                    onChange={(e) => setNombreTarjeta(e.target.value)}
-                    required
-                    />
+                    <input type="text" className="form-control" value={nombreTarjeta} onChange={(e) => setNombreTarjeta(e.target.value)} required />
                 </div>
 
                 <div className="form-group mb-3">
                     <div className="d-flex justify-content-between align-items-center">
                         <label>Numero de tarjeta</label>
-                        {/* ICONOS DE TARJETAS */}
                         <div style={{fontSize: '24px'}}>
-                            <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} 
-                               style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
-                            
-                            <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} 
-                               style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
-                            
-                            <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} 
-                               style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
+                            <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
+                            <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
+                            <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
                         </div>
                     </div>
-                    <input
-                        type="text"
-                        maxLength={16}
-                        className="form-control"
-                        placeholder="0000 0000 0000 0000"
-                        value={numeroTarjeta}
-                        onChange={manejarCambioNumero} // Usamos la nueva función aquí
-                        required
-                    />
+                    <input type="text" maxLength={16} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
                 </div>
 
                 <div className="row">
                     <div className="col-md-6 form-group mb-3">
                     <label>Mes (MM)</label>
-                    <input
-                        type="text"
-                        maxLength={2}
-                        placeholder="MM"
-                        className="form-control"
-                        value={mesExpiracion}
-                        onChange={(e) => setMesExpiracion(e.target.value)}
-                        required
-                    />
+                    <input type="text" maxLength={2} placeholder="MM" className="form-control" value={mesExpiracion} onChange={(e) => setMesExpiracion(e.target.value)} required />
                     </div>
                     <div className="col-md-6 form-group mb-3">
                     <label>Año (AAAA)</label>
-                    <input
-                        type="text"
-                        maxLength={4}
-                        placeholder="AAAA"
-                        className="form-control"
-                        value={anioExpiracion}
-                        onChange={(e) => setAnioExpiracion(e.target.value)}
-                        required
-                    />
+                    <input type="text" maxLength={4} placeholder="AAAA" className="form-control" value={anioExpiracion} onChange={(e) => setAnioExpiracion(e.target.value)} required />
                     </div>
                 </div>
                 <div className="form-group mb-4">
                     <label>CVV</label>
-                    <input
-                    type="text"
-                    maxLength={3}
-                    className="form-control"
-                    value={cvv}
-                    onChange={(e) => setCvv(e.target.value)}
-                    required
-                    />
+                    <input type="text" maxLength={3} className="form-control" value={cvv} onChange={(e) => setCvv(e.target.value)} required />
                 </div>
 
                 <div className="col-md-12 mb-4 justify-content-center d-flex">
@@ -224,7 +175,7 @@ export default function Compra() {
 
                 <div className="form-group text-center">
                     <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}}>
-                        Pagar ${servicio.total.toLocaleString()}
+                        Pagar
                     </button>
                 </div>
 
