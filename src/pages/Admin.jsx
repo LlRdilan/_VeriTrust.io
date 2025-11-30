@@ -2,254 +2,172 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 export function ComprobarServicio(servicio) {
-  if (!servicio || typeof servicio !== "object") {
-    throw new Error("Servicio invalido");
-  }
+  if (!servicio || typeof servicio !== "object") throw new Error("Servicio invalido");
 
-  // aceptar claves en español o inglés
-  const nombre = (servicio.nombre ?? servicio.name ?? "").toString();
-  const descripcion = (servicio.descripcion ?? servicio.desc ?? "").toString();
+  const { name, desc, price, details } = servicio;
 
-  // precio puede venir como string o number, en clave precio o price
-  let precio = servicio.precio ?? servicio.price;
-  if (typeof precio === "string") precio = parseFloat(precio);
-
-  // detalles puede venir como array (detalles) o string con saltos de linea (longDesc / detalles)
-  let detalles = [];
-  if (Array.isArray(servicio.detalles)) {
-    detalles = servicio.detalles;
-  } else if (typeof servicio.longDesc === "string") {
-    detalles = servicio.longDesc.split("\n");
-  } else if (typeof servicio.detalles === "string") {
-    detalles = servicio.detalles.split("\n");
-  } else {
-    detalles = [];
-  }
-
-  if (!nombre.trim() || !descripcion.trim()) {
+  if (!name?.trim() || !desc?.trim()) {
     throw new Error("Nombre y descripcion son obligatorios");
   }
 
-  if (typeof precio !== "number" || !Number.isFinite(precio) || precio <= 0 || precio % 1 !== 0) {
-    throw new Error("El precio debe ser un numero entero positivo");
+  if (typeof price !== "number" || price <= 0) {
+    throw new Error("El precio debe ser un numero positivo");
   }
 
-  const detallesValidos = Array.isArray(detalles) ? detalles.filter(d => typeof d === "string" && d.trim() !== "") : [];
-  if (detallesValidos.length < 3) {
-    throw new Error("La descripcion larga debe tener al menos 3 lineas");
+  if (!Array.isArray(details) || details.length < 3) {
+    throw new Error("La descripcion larga debe tener al menos 3 lineas (detalles)");
   }
-
   return true;
 }
 
 export default function Admin() {
   const navegar = useNavigate();
-
   const [servicios, setServicios] = useState([]);
-  const [formulario, setFormulario] = useState({ nombre: "", descripcion: "", precio: "", detalles: [] });
+  const [form, setForm] = useState({ name: "", desc: "", price: "", details: "" });
   const [indiceEditar, setIndiceEditar] = useState(null);
 
   useEffect(() => {
     if (!localStorage.getItem("adminLogged")) {
       navegar("/login");
     }
-
     const guardados = JSON.parse(localStorage.getItem("services")) || [
-      { nombre: "Firma Electronica Simple", descripcion: "Certificado Digital", precio: 15390, detalles: [] },
-      { nombre: "Firma Avanzada Online", descripcion: "e-token", precio: 21990, detalles: [] },
-      { nombre: "Firma Avanzada Notario", descripcion: "Uso profesional", precio: 42990, detalles: [] },
+        { name: "Firma Simple", desc: "Certificado Digital", price: 15390, details: ["Rápida", "Segura", "Económica"] },
+        { name: "Firma Avanzada", desc: "e-Token", price: 21990, details: ["Profesional", "USB Token", "Legal"] }
     ];
     setServicios(guardados);
   }, [navegar]);
 
-  const guardarEnStorage = (datos) => {
-    const normalizados = datos.map((s) => ({
-      name: s.nombre ?? s.name ?? "",
-      desc: s.descripcion ?? s.desc ?? "",
-      price:
-        typeof (s.precio ?? s.price) === "string"
-          ? parseFloat(s.precio ?? s.price)
-          : (s.precio ?? s.price) ?? 0,
-      details: Array.isArray(s.detalles)
-        ? s.detalles
-        : typeof s.detalles === "string"
-        ? s.detalles.split("\n")
-        : s.details ?? [],
-    }));
-
-    localStorage.setItem("services", JSON.stringify(normalizados));
-    // Mantener el estado del admin con las claves en español para el formulario
-    setServicios(datos);
+  const guardarCambios = (nuevosServicios) => {
+    localStorage.setItem("services", JSON.stringify(nuevosServicios));
+    setServicios(nuevosServicios);
   };
 
   const manejarEnvio = (e) => {
     e.preventDefault();
-
     try {
-      const precioParseado = parseFloat(formulario.precio);
-      ComprobarServicio({ ...formulario, precio: precioParseado });
+      const detallesArray = form.details.split("\n").filter(d => d.trim() !== "");
+      const servicioNormalizado = {
+        name: form.name,
+        desc: form.desc,
+        price: parseFloat(form.price),
+        details: detallesArray
+      };
+
+      ComprobarServicio(servicioNormalizado);
+
+      let actualizados;
+      if (indiceEditar !== null) {
+        actualizados = servicios.map((s, i) => (i === indiceEditar ? servicioNormalizado : s));
+      } else {
+        actualizados = [...servicios, servicioNormalizado];
+      }
+
+      guardarCambios(actualizados);
+      setForm({ name: "", desc: "", price: "", details: "" });
+      setIndiceEditar(null);
+      alert("Operación exitosa");
+
     } catch (error) {
       alert(error.message);
-      return;
     }
-
-    const nuevoServicio = {
-      ...formulario,
-      precio: parseFloat(formulario.precio),
-      detalles: formulario.detalles.filter(d => d.trim() !== "")
-    };
-
-    const serviciosActualizados =
-      indiceEditar !== null
-        ? servicios.map((s, i) => (i === indiceEditar ? nuevoServicio : s))
-        : [...servicios, nuevoServicio];
-
-    guardarEnStorage(serviciosActualizados);
-    setFormulario({ nombre: "", descripcion: "", precio: "", detalles: [] });
-    setIndiceEditar(null);
-
-    alert("Servicio creado o actualizado correctamente");
   };
 
-  const manejarEditar = (indice) => {
-    setFormulario(servicios[indice]);
-    setIndiceEditar(indice);
+  const cargarParaEditar = (i) => {
+    const s = servicios[i];
+    setForm({
+      name: s.name,
+      desc: s.desc,
+      price: s.price,
+      details: Array.isArray(s.details) ? s.details.join("\n") : s.details
+    });
+    setIndiceEditar(i);
   };
 
-  const manejarEliminar = (indice) => {
-    if (!window.confirm("Deseas eliminar este servicio?")) return;
-    const serviciosActualizados = servicios.filter((_, i) => i !== indice);
-    guardarEnStorage(serviciosActualizados);
-  };
-
-  const cerrarSesion = () => {
-    localStorage.removeItem("adminLogged");
-    navegar("/login");
-  };
-
-  const verServiciosPublicos = () => {
-    navegar("/servicios");
+  const eliminar = (i) => {
+    if (window.confirm("¿Eliminar servicio?")) {
+      const actualizados = servicios.filter((_, index) => index !== i);
+      guardarCambios(actualizados);
+    }
   };
 
   return (
-    <div id="admin" className="service">
+    <div className="service" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
       <div className="container">
-        <div className="row">
-          <div className="col-md-12">
-            <div className="titlepage">
-              <h2>Administracion de Servicios</h2>
-              <p>Administra los servicios disponibles en el sitio web.</p>
-            </div>
-          </div>
+        <div className="titlepage">
+            <h2>Panel de Administración</h2>
         </div>
-        <div className="row">
-          <div className="col-md-12">
-            <div className="backoffice_section">
-              <form onSubmit={manejarEnvio}>
-                <div className="row g-3">
-                  <div className="col-md-3">
-                    <label htmlFor="nombreServicio" className="form-label">Nombre</label>
-                    <input
-                      type="text"
-                      id="nombreServicio"
-                      className="form-control"
-                      value={formulario.nombre}
-                      onChange={(e) => setFormulario({ ...formulario, nombre: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-3">
-                    <label htmlFor="descripcionServicio" className="form-label">Descripcion</label>
-                    <input
-                      type="text"
-                      id="descripcionServicio"
-                      className="form-control"
-                      value={formulario.descripcion}
-                      onChange={(e) => setFormulario({ ...formulario, descripcion: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-2">
-                    <label htmlFor="precioServicio" className="form-label">Precio</label>
-                    <input
-                      type="number"
-                      id="precioServicio"
-                      className="form-control"
-                      value={formulario.precio}
-                      onChange={(e) => setFormulario({ ...formulario, precio: e.target.value })}
-                      required
-                    />
-                  </div>
-                  <div className="col-md-4">
-                    <label htmlFor="detallesServicio" className="form-label">Detalles (1 por linea)</label>
-                    <textarea
-                      id="detallesServicio"
-                      className="form-control"
-                      value={formulario.detalles ? formulario.detalles.join("\n") : ""}
-                      onChange={(e) =>
-                        setFormulario({ ...formulario, detalles: e.target.value.split("\n") })
-                      }
-                      placeholder="Ingresa cada detalle en una linea"
-                      rows={4}
-                    ></textarea>
-                  </div>
-                  <div className="col-md-12 mt-2">
-                    <button type="submit" className="btn_primary w-100">
-                      {indiceEditar !== null ? "Actualizar" : "Guardar"}
-                    </button>
-                  </div>
-                </div>
-              </form>
+        
+        {/* Formulario */}
+        <div className="backoffice_section">
+          <h4 style={{borderBottom: '2px solid #0FB3D1', paddingBottom: '10px', marginBottom: '20px'}}>
+            {indiceEditar !== null ? "Editar Servicio" : "Nuevo Servicio"}
+          </h4>
+          <form onSubmit={manejarEnvio}>
+            <div className="row">
+              <div className="col-md-3">
+                <label>Nombre</label>
+                <input className="form-control" placeholder="Nombre" value={form.name} onChange={e => setForm({...form, name: e.target.value})} />
+              </div>
+              <div className="col-md-3">
+                <label>Descripción</label>
+                <input className="form-control" placeholder="Desc. Corta" value={form.desc} onChange={e => setForm({...form, desc: e.target.value})} />
+              </div>
+              <div className="col-md-2">
+                <label>Precio Neto</label>
+                <input type="number" className="form-control" placeholder="Precio sin IVA" value={form.price} onChange={e => setForm({...form, price: e.target.value})} />
+              </div>
+              <div className="col-md-4">
+                <label>Detalles (Enter para nueva línea)</label>
+                <textarea className="form-control" rows="1" value={form.details} onChange={e => setForm({...form, details: e.target.value})} ></textarea>
+              </div>
+              <div className="col-12 mt-4">
+                <button className="btn_primary w-100">{indiceEditar !== null ? "Actualizar" : "Crear"}</button>
+                {indiceEditar !== null && <button type="button" onClick={() => {setIndiceEditar(null); setForm({name:"", desc:"", price:"", details:""})}} className="btn btn-secondary mt-2 w-100">Cancelar</button>}
+              </div>
             </div>
-          </div>
+          </form>
         </div>
-        <div className="row">
-          <div className="col-md-12">
-            <div className="backoffice_section mt-4">
-              <h4>Servicios registrados</h4>
-              <table className="table table-striped align-middle">
+
+        {/* Tabla */}
+        <div className="backoffice_section">
+          <h4>Listado de Servicios</h4>
+          <div className="table-responsive">
+            <table className="table">
                 <thead>
-                  <tr>
+                <tr>
                     <th>Nombre</th>
-                    <th>Descripcion</th>
-                    <th>Precio</th>
-                    <th style={{ width: "150px" }}>Acciones</th>
-                  </tr>
+                    <th>Descripción</th>
+                    <th>Precio Neto</th>
+                    <th>Precio Final (+19%)</th>
+                    <th className="text-right">Acciones</th>
+                </tr>
                 </thead>
                 <tbody>
-                  {servicios.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" className="text-center">No hay servicios registrados.</td>
-                    </tr>
-                  ) : (
-                    servicios.map((s, i) => (
-                      <tr key={i}>
-                        <td>{s.nombre}</td>
-                        <td>{s.descripcion}</td>
-                        <td>${Number(s.precio).toLocaleString()}</td>
-                        <td>
-                          <button className="btn btn-warning btn-sm me-2" onClick={() => manejarEditar(i)}>
-                            <i className="fa fa-edit"></i>
-                          </button>
-                          <button className="btn btn-danger btn-sm" onClick={() => manejarEliminar(i)}>
-                            <i className="fa fa-trash"></i>
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                {servicios.map((s, i) => {
+                    // Cálculo para mostrar en la tabla
+                    const neto = Number(s.price);
+                    const total = Math.round(neto * 1.19);
+
+                    return (
+                        <tr key={i}>
+                            <td style={{fontWeight: 'bold', color: '#1f235e'}}>{s.name}</td>
+                            <td>{s.desc}</td>
+                            <td>${neto.toLocaleString()}</td>
+                            <td style={{fontWeight: 'bold', color: '#0FB3D1'}}>${total.toLocaleString()}</td>
+                            <td className="text-right">
+                            <button onClick={() => cargarParaEditar(i)} className="btn btn-sm btn-warning mr-2"><i className="fa fa-edit"></i></button>
+                            <button onClick={() => eliminar(i)} className="btn btn-sm btn-danger"><i className="fa fa-trash"></i></button>
+                            </td>
+                        </tr>
+                    );
+                })}
                 </tbody>
-              </table>
-            </div>
-            <div className="text-center mt-4 d-flex justify-content-center gap-3">
-              <button onClick={verServiciosPublicos} className="btn_primary">
-                <i className="fa fa-eye"></i> Ver servicios publicos
-              </button>
-              <button onClick={cerrarSesion} className="btn btn-secondary ms-2">
-                <i className="fa fa-sign-out"></i> Cerrar sesion
-              </button>
-            </div>
+            </table>
           </div>
+        </div>
+        
+        <div className="text-center mt-4">
+            <button onClick={() => {localStorage.removeItem("adminLogged"); navegar("/login")}} className="btn btn-secondary">Cerrar Sesión</button>
         </div>
       </div>
     </div>
