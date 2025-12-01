@@ -5,27 +5,13 @@ export default function Servicios() {
   const [servicios, setServicios] = useState([]);
 
   useEffect(() => {
-    const guardados = JSON.parse(localStorage.getItem("services")) || [
-      {
-        name: "Firma Electrónica Simple",
-        desc: "Certificado Digital",
-        price: 15390,
-        details: ["Facturación SII", "Centralización", "Compra Rápida", "Docs Tributarios", "1 año gratis"]
-      },
-      {
-        name: "Firma Avanzada Online",
-        desc: "e-token",
-        price: 21990,
-        details: ["Documentos Ilimitados", "100% Online", "ClaveÚnica", "Validez Legal"]
-      },
-      {
-        name: "Firma Avanzada Notario",
-        desc: "Uso profesional",
-        price: 42990,
-        details: ["Corte Apelaciones", "Token Físico", "Alta Seguridad", "Soporte"]
-      },
-    ];
-    setServicios(guardados);
+    // Petición directa al Backend. Sin datos falsos de respaldo.
+    fetch("http://localhost:8080/servicios")
+      .then((res) => res.json())
+      .then((data) => {
+        setServicios(data);
+      })
+      .catch((err) => console.error("Error conectando al backend:", err));
   }, []);
 
   return (
@@ -39,7 +25,7 @@ export default function Servicios() {
           </div>
         </div>
 
-        {/* --- NUEVO BANNER DECORATIVO --- */}
+        {/* --- BANNER DECORATIVO --- */}
         <div className="row mb-5">
             <div className="col-md-12">
                 <div style={{
@@ -68,23 +54,26 @@ export default function Servicios() {
             </div>
         </div>
 
+        {/* --- LISTA DE SERVICIOS REALES DE LA BD --- */}
         <div className="row">
-          {servicios.map((s, i) => {
-            // Cálculo del IVA
-            const neto = Number(s.price);
+          {servicios.map((s) => {
+            // Cálculos directos con los datos que vengan de Java
+            const neto = Number(s.precio);
             const valorIva = Math.round(neto * 0.19);
             const total = neto + valorIva;
 
             return (
-              <div key={i} className="col-md-4 col-sm-6">
+              <div key={s.id} className="col-md-4 col-sm-6">
                 <div id="ho_color" className="service_box">
-                  <h3>{s.name}</h3>
-                  <h4 className="subtitle">{s.desc}</h4>
+                  <h3>{s.nombre}</h3>
+                  <h4 className="subtitle">{s.descripcion}</h4>
+                  
                   <ul>
-                    {s.details && s.details.length > 0 ? (
-                      s.details.map((d, idx) => <li key={idx}>{d}</li>)
+                    {/* Si Java manda la lista 'detalles', la mostramos. Si no, mostramos aviso */}
+                    {s.detalles && s.detalles.length > 0 ? (
+                      s.detalles.map((d, idx) => <li key={idx}>{d}</li>)
                     ) : (
-                      <li>Servicio sin descripción detallada.</li>
+                      <li>Sin detalles específicos.</li>
                     )}
                   </ul>
                   
@@ -94,15 +83,15 @@ export default function Servicios() {
                     </strong>
                   </div>
                   
-                  {/* Enviamos los datos completos a Compra */}
                   <Link 
                     className="comprar_btn" 
                     to="/compra" 
                     state={{ 
-                        nombre: s.name, 
+                        nombre: s.nombre, 
                         neto: neto, 
                         iva: valorIva, 
-                        total: total 
+                        total: total,
+                        id: s.id 
                     }}
                   >
                     Comprar
@@ -112,6 +101,14 @@ export default function Servicios() {
             );
           })}
         </div>
+        
+        {/* Aviso si la lista está vacía */}
+        {servicios.length === 0 && (
+            <div className="text-center w-100">
+                <p style={{color: '#888'}}>No hay servicios cargados en la base de datos o el servidor está apagado.</p>
+            </div>
+        )}
+
       </div>
     </div>
   );

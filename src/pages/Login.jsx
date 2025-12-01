@@ -2,11 +2,14 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
+// Función para validar RUT chileno
 export const validarRut = (rutCompleto) => {
-  let rutSinPuntos = rutCompleto.replace(/\./g, "").replace("-", "");
-  if (rutSinPuntos.length < 2) return false;
-  let cuerpo = rutSinPuntos.slice(0, -1);
-  let dv = rutSinPuntos.slice(-1).toUpperCase();
+  if (!rutCompleto) return false;
+  let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
+  if (rutLimpio.length < 2) return false;
+  
+  let cuerpo = rutLimpio.slice(0, -1);
+  let dv = rutLimpio.slice(-1).toUpperCase();
 
   if (!/^\d+$/.test(cuerpo)) return false;
 
@@ -29,46 +32,60 @@ export const validarRut = (rutCompleto) => {
 export default function Login() {
   const [rut, setRut] = useState("");
   const [contraseña, setContraseña] = useState("");
-  const [errorRut, setErrorRut] = useState("");
-  const [errorContraseña, setErrorContraseña] = useState("");
+  const [error, setError] = useState("");
+  const [cargando, setCargando] = useState(false);
   const [captchaValido, setCaptchaValido] = useState(false);
 
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorRut("");
-    setErrorContraseña("");
+    setError("");
 
     if (!captchaValido) {
       alert("Debes completar el reCAPTCHA");
       return;
     }
 
+    // Validamos el formato del RUT antes de enviar
     if (!validarRut(rut)) {
-      setErrorRut("RUT inválido");
+      setError("RUT inválido");
       return;
     }
 
-    if (rut === "21867698-7" && contraseña === "admin") {
-      
-      // --- CREAMOS LA SESIÓN (TOKEN SIMULADO) ---
-      const sessionData = {
-        nombre: "Dilan Admin", // Nombre que saldrá en el Header
-        token: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9", // Token falso
-        rol: "admin",
-        loginTime: new Date().getTime()
-      };
+    setCargando(true);
 
-      // Guardamos el objeto en localStorage
-      localStorage.setItem("user_session", JSON.stringify(sessionData));
-      
-      // Limpiamos rastros antiguos
-      localStorage.removeItem("adminLogged"); 
+    try {
+      // Petición al Backend Java
+      const response = await fetch("http://localhost:8080/usuarios/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ 
+            rut: rut, // Enviamos RUT en lugar de email
+            contraseña: contraseña 
+        }),
+      });
 
-      navigate("/admin");
-    } else {
-      setErrorContraseña("Usuario o contraseña incorrectos");
+      if (response.ok) {
+        const usuario = await response.json();
+        
+        const sessionData = {
+          id: usuario.id,
+          nombre: usuario.nombre,
+          email: usuario.email,
+          rut: usuario.rut,
+          rol: "user"
+        };
+
+        localStorage.setItem("user_session", JSON.stringify(sessionData));
+        navigate("/admin"); 
+      } else {
+        setError("RUT o contraseña incorrectos");
+      }
+    } catch (err) {
+      setError("Error de conexión con el servidor");
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -82,40 +99,33 @@ export default function Login() {
         <div className="row">
           <div className="col-md-8 offset-md-2">
             <div className="titlepage">
-              <h2>
-                <strong className="yellow">Iniciar Sesión</strong>
-                <br />
-                Accede a tu cuenta
-              </h2>
+              <h2><strong className="yellow">Iniciar Sesión</strong></h2>
             </div>
             <form className="contact_form" onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-md-12">
-                  <label htmlFor="InputRut">RUT/RUN (Sin punto, pero con guion)</label>
+                  <label>RUT (Sin puntos y con guion)</label>
                   <input
                     type="text"
                     className="contact_control"
-                    id="InputRut"
                     placeholder="Ej: 12345678-9"
                     value={rut}
                     onChange={(e) => setRut(e.target.value)}
                     required
                   />
-                  {errorRut && <small className="error" style={{ color: "red" }}>{errorRut}</small>}
                 </div>
 
                 <div className="col-md-12">
-                  <label htmlFor="InputContraseña">Contraseña</label>
+                  <label>Contraseña</label>
                   <input
                     type="password"
                     className="contact_control"
-                    id="InputContraseña"
                     placeholder="Ingresa tu contraseña"
                     value={contraseña}
                     onChange={(e) => setContraseña(e.target.value)}
                     required
                   />
-                  {errorContraseña && <small className="error" style={{ color: "red" }}>{errorContraseña}</small>}
+                  {error && <small className="error" style={{ color: "red" }}>{error}</small>}
                 </div>
 
                 <div className="col-md-12 mt-3 justify-content-center d-flex">
@@ -123,11 +133,12 @@ export default function Login() {
                 </div>
 
                 <div className="col-md-12 mt-3">
-                  <button type="submit" className="send_btn">Ingresar</button>
+                  <button type="submit" className="send_btn" disabled={cargando}>
+                    {cargando ? "Cargando..." : "Ingresar"}
+                  </button>
                 </div>
                 <div className="col-md-12 mt-3 text-center">
                   <p>¿No tienes cuenta? <Link to="/registro">Regístrate aquí</Link></p>
-                  <p><Link to="/importante">¿Olvidaste tu contraseña?</Link></p>
                 </div>
               </div>
             </form>

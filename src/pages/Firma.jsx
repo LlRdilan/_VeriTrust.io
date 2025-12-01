@@ -1,27 +1,41 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import jsPDF from "jspdf";
 
 export default function Firma() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Datos del servicio comprado (o fallback si entras directo)
   const servicioComprado = location.state?.servicio || { 
     nombre: "Firma Digital (Modo Prueba)", 
     precio: 0 
   };
 
+  // Datos del Usuario (Sesión)
+  const session = JSON.parse(localStorage.getItem("user_session"));
+  const nombreUsuario = session ? session.nombre : "Usuario Invitado";
+  const rutUsuario = session?.rut || "11.111.111-1"; 
+  
+  // Limpiamos el nombre para usarlo en el archivo (sin espacios)
+  const nombreSanitizado = nombreUsuario.replace(/\s+/g, '_');
+
   const [archivo, setArchivo] = useState(null);
-  const [archivoUrl, setArchivoUrl] = useState(null); // Nuevo estado para la vista previa
+  const [archivoUrl, setArchivoUrl] = useState(null); // URL para el iframe
   const [cargando, setCargando] = useState(false);
   const [firmado, setFirmado] = useState(false);
+  
+  // Metadatos para el certificado
+  const [hashDocumento, setHashDocumento] = useState("");
+  const [fechaFirma, setFechaFirma] = useState("");
 
   const manejarArchivo = (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
       setArchivo(file);
-      setFirmado(false);
+      setFirmado(false); 
       
-      // Creamos una URL temporal para visualizar el PDF
+      // Creamos URL temporal para visualizar el PDF
       const url = window.URL.createObjectURL(file);
       setArchivoUrl(url);
     }
@@ -30,27 +44,86 @@ export default function Firma() {
   const procesarFirma = () => {
     if (!archivo) return;
     setCargando(true);
+
+    // Simulación de proceso criptográfico (3 segundos)
     setTimeout(() => {
       setCargando(false);
       setFirmado(true);
+      // Generar datos aleatorios que parezcan reales
+      setHashDocumento(Math.random().toString(36).substring(2, 20).toUpperCase() + Math.random().toString(36).substring(2, 20).toUpperCase());
+      setFechaFirma(new Date().toLocaleString());
     }, 3000);
   };
 
   const descargarArchivo = () => {
     if (!archivo) return;
+    const url = window.URL.createObjectURL(archivo);
     const link = document.createElement('a');
-    link.href = archivoUrl; // Usamos la URL que ya creamos
-    link.setAttribute('download', `FIRMADO_${archivo.name}`);
+    link.href = url;
+    link.setAttribute('download', `FIRMADO-${nombreSanitizado}.pdf`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+  };
+
+  const descargarBoleta = () => {
+    const doc = new jsPDF();
+
+    // -- Diseño de la Boleta PDF --
+    // Encabezado Azul
+    doc.setFillColor(31, 35, 94);
+    doc.rect(0, 0, 210, 40, 'F');
+    
+    // Logo Texto
+    doc.setTextColor(255, 255, 255);
+    doc.setFontSize(22);
+    doc.setFont("helvetica", "bold");
+    doc.text("VeriTrust", 20, 25);
+    
+    doc.setFontSize(12);
+    doc.text("Comprobante de Servicio", 20, 32);
+
+    // Cuerpo
+    doc.setTextColor(0, 0, 0);
+    doc.setFontSize(16);
+    doc.text("BOLETA ELECTRÓNICA", 105, 60, null, null, "center");
+
+    doc.setFontSize(11);
+    doc.setFont("helvetica", "normal");
+    
+    let y = 80;
+    doc.text(`Cliente: ${nombreUsuario}`, 20, y); y += 10;
+    doc.text(`RUT: ${rutUsuario}`, 20, y); y += 10;
+    doc.text(`Fecha: ${fechaFirma || new Date().toLocaleString()}`, 20, y); y += 20;
+    
+    doc.setDrawColor(0);
+    doc.line(20, y, 190, y); y += 10;
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("Descripción", 20, y);
+    doc.text("Total", 170, y); y += 10;
+    
+    doc.setFont("helvetica", "normal");
+    doc.text(servicioComprado.nombre, 20, y);
+    
+    // Precio
+    const precioFinal = location.state?.total || servicioComprado.precio || 0;
+    doc.text(`$${precioFinal.toLocaleString()}`, 170, y); y += 20;
+
+    doc.line(20, y, 190, y); y += 15;
+    
+    doc.setFont("helvetica", "bold");
+    doc.text("TOTAL PAGADO", 120, y);
+    doc.text(`$${precioFinal.toLocaleString()}`, 170, y);
+
+    doc.save(`boleta-${nombreSanitizado}.pdf`);
   };
 
   return (
     <div className="service" style={{ padding: "80px 0", minHeight: "100vh" }}>
       <div className="container">
         <div className="row justify-content-center">
-          <div className="col-md-10"> {/* Aumenté el ancho a 10 para que quepa el PDF */}
+          <div className="col-md-10">
             <div className="titlepage">
               <h2>Firma de Documentos</h2>
               <p>Servicio activo: <strong style={{color: '#0FB3D1'}}>{servicioComprado.nombre}</strong></p>
@@ -60,13 +133,14 @@ export default function Firma() {
               
               {!firmado && !cargando && (
                 <>
+                  <i className="fa fa-cloud-upload" style={{fontSize: '50px', color: '#1f235e', marginBottom: '20px'}}></i>
                   <h3 style={{marginBottom: '20px', fontWeight: '600'}}>1. Sube tu documento (PDF)</h3>
                   
                   <div className="form-group mb-4">
                     <input 
                       type="file" 
                       className="form-control" 
-                      accept=".pdf" // Limitamos a PDF para asegurar visualización
+                      accept=".pdf" 
                       onChange={manejarArchivo} 
                       style={{padding: '10px', height: 'auto'}}
                     />
@@ -74,14 +148,16 @@ export default function Firma() {
 
                   {/* VISTA PREVIA DEL PDF */}
                   {archivoUrl && (
-                    <div style={{marginBottom: '30px', border: '1px solid #ddd', borderRadius: '10px', overflow: 'hidden'}}>
-                        <h5 style={{background:'#f7fafc', padding:'10px', margin:0, borderBottom:'1px solid #ddd'}}>Vista Previa del Documento</h5>
+                    <div className="mb-4" style={{border: '1px solid #ddd', borderRadius: '10px', overflow: 'hidden'}}>
+                        <div style={{background: '#f1f1f1', padding: '10px', borderBottom: '1px solid #ddd', fontWeight: 'bold', color: '#333'}}>
+                            Vista Previa: {archivo.name}
+                        </div>
                         <iframe 
                             src={archivoUrl} 
                             width="100%" 
                             height="500px" 
                             style={{border: 'none'}}
-                            title="Vista Previa"
+                            title="Vista Previa PDF"
                         ></iframe>
                     </div>
                   )}
@@ -96,29 +172,40 @@ export default function Firma() {
 
               {cargando && (
                 <div style={{padding: '60px 0'}}>
-                   <div className="spinner-border text-primary" role="status" style={{width: '4rem', height: '4rem', color: '#0FB3D1 !important'}}></div>
-                  <h3 style={{marginTop: '30px', color: '#1f235e'}}>Firmando documento...</h3>
-                  <p>Incrustando certificado digital y sellado de tiempo.</p>
+                   <div className="spinner-border text-primary" role="status" style={{width: '3rem', height: '3rem', color: '#0FB3D1 !important'}}>
+                    <span className="sr-only">Cargando...</span>
+                  </div>
+                  <h4 style={{marginTop: '20px', color: '#1f235e'}}>Firmando documento...</h4>
+                  <p>Incrustando certificado digital de: <strong>{nombreUsuario}</strong></p>
                 </div>
               )}
 
               {firmado && (
                 <div className="animate__animated animate__fadeIn">
-                  <i className="fa fa-check-circle" style={{fontSize: '80px', color: '#28a745', marginBottom: '20px'}}></i>
-                  <h2 style={{color: '#1f235e', fontWeight: 'bold'}}>¡Documento Firmado!</h2>
+                  <i className="fa fa-check-circle" style={{fontSize: '70px', color: '#28a745', marginBottom: '20px'}}></i>
+                  <h3 style={{color: '#1f235e', fontWeight: 'bold'}}>¡Documento Firmado con Éxito!</h3>
                   
                   <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#f0fdf4', borderRadius: '15px', border: '1px solid #28a745', textAlign: 'left'}}>
-                    <p><strong>Archivo:</strong> FIRMADO_{archivo.name}</p>
-                    <p><strong>Hash SHA-256:</strong> {Math.random().toString(36).substring(2, 20).toUpperCase()}</p>
-                    <p><strong>Sello de Tiempo:</strong> {new Date().toLocaleString()}</p>
+                    <p style={{marginBottom: '5px'}}><strong>Archivo Generado:</strong> FIRMADO-{nombreSanitizado}.pdf</p>
+                    <p style={{marginBottom: '5px'}}><strong>Hash de Seguridad:</strong> {hashDocumento}</p>
+                    <p style={{marginBottom: '0'}}><strong>Fecha:</strong> {fechaFirma}</p>
                   </div>
 
-                  <button onClick={descargarArchivo} className="btn_primary mt-4" style={{background: '#28a745', width: '100%', maxWidth: '400px', border: 'none'}}>
-                    <i className="fa fa-download"></i> Descargar Ahora
-                  </button>
+                  {/* BOTONES DE ACCIÓN */}
+                  <div className="d-flex justify-content-center gap-3 mt-4" style={{gap: '15px', flexWrap: 'wrap'}}>
+                    <button onClick={descargarArchivo} className="btn_primary" style={{background: '#28a745', border: 'none', minWidth: '220px'}}>
+                        <i className="fa fa-download"></i> Descargar Documento
+                    </button>
+
+                    <button onClick={descargarBoleta} className="btn_primary" style={{background: '#1f235e', border: 'none', minWidth: '220px'}}>
+                        <i className="fa fa-file-text-o"></i> Descargar Boleta
+                    </button>
+                  </div>
                   
                   <br/>
-                  <button onClick={() => navigate("/")} className="btn btn-link mt-3" style={{color: '#666'}}>Volver al inicio</button>
+                  <button onClick={() => navigate("/")} className="btn btn-link mt-3" style={{color: '#666', textDecoration: 'none'}}>
+                    Volver al inicio
+                  </button>
                 </div>
               )}
 
