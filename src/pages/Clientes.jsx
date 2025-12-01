@@ -36,7 +36,6 @@ export default function Clientes() {
     setActiveIndex(index);
   };
 
-  // Auto-advance carousel (opcional)
   useEffect(() => {
     const interval = setInterval(nextSlide, 5000);
     return () => clearInterval(interval);
@@ -80,7 +79,6 @@ export default function Clientes() {
                   <div className="row">
                     <div className="col-md-6 offset-md-3">
                       <div className="test_box">
-                        {/* AQUI ESTA EL CAMBIO: borderRadius agregado al párrafo */}
                         <p style={{ borderRadius: '20px', padding: '30px' }}>{testimonio.texto}</p>
                         <i>
                           <img 

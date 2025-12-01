@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 
 export default function Inicio() {
     
-    // Estilo para redondear las imágenes del carrusel
     const roundedStyle = {
         borderRadius: '20px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)', // Sombra suave para destacar
+        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
         transition: 'transform 0.3s ease'
     };
 

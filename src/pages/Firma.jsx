@@ -6,13 +6,11 @@ export default function Firma() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Recuperamos el servicio. Si entras directo, usa un precio base de prueba (15000)
   const servicioComprado = location.state?.servicio || { 
     nombre: "Firma Digital (Modo Prueba)", 
     precio: 15000 
   };
 
-  // Datos del Usuario
   const session = JSON.parse(localStorage.getItem("user_session"));
   const nombreUsuario = session ? session.nombre : "Usuario Invitado";
   const rutUsuario = session?.rut || "11.111.111-1"; 
@@ -57,17 +55,14 @@ export default function Firma() {
     document.body.removeChild(link);
   };
 
-  // --- FUNCIÓN DE BOLETA CORREGIDA ---
   const descargarBoleta = () => {
     const doc = new jsPDF();
 
-    // 1. CÁLCULOS MATEMÁTICOS PARA LA BOLETA
     const precioNeto = Number(servicioComprado.precio) || 0;
     const valorIVA = Math.round(precioNeto * 0.19);
     const precioTotal = precioNeto + valorIVA;
 
-    // 2. DISEÑO DEL PDF
-    // Encabezado
+
     doc.setFillColor(31, 35, 94);
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
@@ -77,7 +72,6 @@ export default function Firma() {
     doc.setFontSize(12);
     doc.text("Comprobante Electrónico", 20, 32);
 
-    // Título
     doc.setTextColor(0, 0, 0);
     doc.setFontSize(16);
     doc.text("BOLETA DE VENTA Y SERVICIOS", 105, 60, null, null, "center");
@@ -85,46 +79,38 @@ export default function Firma() {
     doc.setFontSize(11);
     doc.setFont("helvetica", "normal");
     
-    // Datos Cliente
     let y = 80;
     doc.text(`Cliente: ${nombreUsuario}`, 20, y); 
     doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 150, y); y += 10;
     doc.text(`RUT: ${rutUsuario}`, 20, y); y += 20;
     
-    // Línea separadora
     doc.setDrawColor(0);
     doc.line(20, y, 190, y); y += 10;
     
-    // Encabezados de Tabla
     doc.setFont("helvetica", "bold");
     doc.text("Descripción", 20, y);
     doc.text("Valor", 190, y, { align: "right" }); y += 10;
     
-    // Detalle del Servicio
     doc.setFont("helvetica", "normal");
     doc.text(servicioComprado.nombre, 20, y);
     doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 20;
 
     doc.line(20, y, 190, y); y += 10;
-    
-    // --- TOTALES Y DESGLOSE ---
-    // Neto
+
+
     doc.setFont("helvetica", "normal");
     doc.text("Neto:", 140, y);
     doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 8;
 
-    // IVA
     doc.text("IVA (19%):", 140, y);
     doc.text(`$${valorIVA.toLocaleString()}`, 190, y, { align: "right" }); y += 10;
 
-    // Total Grande
     doc.setFont("helvetica", "bold");
     doc.setFontSize(14);
-    doc.setTextColor(31, 35, 94); // Azul corporativo
+    doc.setTextColor(31, 35, 94);
     doc.text("TOTAL:", 140, y);
     doc.text(`$${precioTotal.toLocaleString()}`, 190, y, { align: "right" });
 
-    // Pie de página
     doc.setTextColor(150);
     doc.setFontSize(10);
     doc.setFont("helvetica", "normal");

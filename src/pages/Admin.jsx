@@ -7,7 +7,6 @@ export default function Admin() {
   const [form, setForm] = useState({ nombre: "", descripcion: "", precio: "", detalles: "" });
   const [usuarioNombre, setUsuarioNombre] = useState("");
   
-  // Estado para saber qué servicio estamos editando (guardamos el ID real de la BD)
   const [idEdicion, setIdEdicion] = useState(null);
 
   const API_URL = "http://localhost:8080/servicios";
@@ -40,14 +39,12 @@ export default function Admin() {
         nombre: form.nombre,
         descripcion: form.descripcion,
         precio: parseInt(form.precio),
-        // Convertimos el texto de detalles en una lista para Java
         detalles: form.detalles.split("\n").filter(d => d.trim() !== "")
       };
 
       let url = API_URL;
       let method = "POST";
 
-      // Si estamos editando, cambiamos la URL y el método
       if (idEdicion !== null) {
         url = `${API_URL}/${idEdicion}`;
         method = "PUT";
@@ -61,10 +58,9 @@ export default function Admin() {
 
       if (res.ok) {
         alert(idEdicion !== null ? "Servicio actualizado correctamente" : "Servicio creado correctamente");
-        // Limpiamos el formulario
         setForm({ nombre: "", descripcion: "", precio: "", detalles: "" });
         setIdEdicion(null);
-        cargarServicios(); // Recargamos la lista
+        cargarServicios(); 
       } else {
         alert("Error al guardar en el servidor");
       }
@@ -73,16 +69,14 @@ export default function Admin() {
     }
   };
 
-  // Carga los datos en el formulario para editar
   const cargarParaEditar = (servicio) => {
     setForm({
       nombre: servicio.nombre,
       descripcion: servicio.descripcion,
       precio: servicio.precio,
-      // Convertimos la lista de vuelta a texto para el textarea
       detalles: servicio.detalles ? servicio.detalles.join("\n") : ""
     });
-    setIdEdicion(servicio.id); // Guardamos el ID para saber a quién hacerle el PUT
+    setIdEdicion(servicio.id);
   };
 
   const cancelarEdicion = () => {
@@ -114,7 +108,6 @@ export default function Admin() {
             <p>Conectado como: <strong>{usuarioNombre}</strong></p>
         </div>
         
-        {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
         <div className="backoffice_section">
           <h4 style={{borderBottom: '2px solid #0FB3D1', paddingBottom: '10px', marginBottom: '20px'}}>
             {idEdicion !== null ? "Editar Servicio" : "Crear Nuevo Servicio"}
@@ -153,7 +146,6 @@ export default function Admin() {
           </form>
         </div>
 
-        {/* TABLA DE SERVICIOS */}
         <div className="backoffice_section">
           <h4>Servicios Actuales (Base de Datos)</h4>
           <div className="table-responsive">
@@ -176,7 +168,6 @@ export default function Admin() {
                             <td>{s.descripcion}</td>
                             <td>${Number(s.precio).toLocaleString()}</td>
                             <td className="text-right">
-                                {/* AQUÍ ESTÁ EL BOTÓN DE EDITAR QUE FALTABA */}
                                 <button onClick={() => cargarParaEditar(s)} className="btn btn-sm btn-warning mr-2" style={{color:'#fff'}}>
                                     <i className="fa fa-edit"></i>
                                 </button>

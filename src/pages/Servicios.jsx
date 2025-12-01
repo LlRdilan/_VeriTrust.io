@@ -5,7 +5,6 @@ export default function Servicios() {
   const [servicios, setServicios] = useState([]);
 
   useEffect(() => {
-    // Petición directa al Backend. Sin datos falsos de respaldo.
     fetch("http://localhost:8080/servicios")
       .then((res) => res.json())
       .then((data) => {
@@ -25,7 +24,6 @@ export default function Servicios() {
           </div>
         </div>
 
-        {/* --- BANNER DECORATIVO --- */}
         <div className="row mb-5">
             <div className="col-md-12">
                 <div style={{
@@ -54,10 +52,8 @@ export default function Servicios() {
             </div>
         </div>
 
-        {/* --- LISTA DE SERVICIOS REALES DE LA BD --- */}
         <div className="row">
           {servicios.map((s) => {
-            // Cálculos directos con los datos que vengan de Java
             const neto = Number(s.precio);
             const valorIva = Math.round(neto * 0.19);
             const total = neto + valorIva;
@@ -69,7 +65,6 @@ export default function Servicios() {
                   <h4 className="subtitle">{s.descripcion}</h4>
                   
                   <ul>
-                    {/* Si Java manda la lista 'detalles', la mostramos. Si no, mostramos aviso */}
                     {s.detalles && s.detalles.length > 0 ? (
                       s.detalles.map((d, idx) => <li key={idx}>{d}</li>)
                     ) : (
@@ -102,7 +97,6 @@ export default function Servicios() {
           })}
         </div>
         
-        {/* Aviso si la lista está vacía */}
         {servicios.length === 0 && (
             <div className="text-center w-100">
                 <p style={{color: '#888'}}>No hay servicios cargados en la base de datos o el servidor está apagado.</p>

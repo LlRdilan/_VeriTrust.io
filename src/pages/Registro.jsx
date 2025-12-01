@@ -8,7 +8,7 @@ export default function Registro() {
   const [form, setForm] = useState({
     rut: "",
     nombre: "",
-    fechaNac: "", // Cambié fecha a fechaNac para coincidir con tu Backend
+    fechaNac: "",
     telefono: "",
     email: "",
     contraseña: "",
@@ -28,7 +28,7 @@ export default function Registro() {
       const response = await fetch("http://localhost:8080/usuarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form), // Enviamos el formulario tal cual
+        body: JSON.stringify(form),
       });
 
       if (response.ok) {

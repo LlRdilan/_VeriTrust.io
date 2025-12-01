@@ -1,21 +1,17 @@
 import { useState } from 'react';
 
 export default function Contactanos() {
-  // Estado para controlar si el mensaje fue enviado
   const [mensajeEnviado, setMensajeEnviado] = useState(false);
 
   const manejarEnvio = (e) => {
-    e.preventDefault(); // Evita que se recargue la página
+    e.preventDefault();
     
-    // Aquí iría la lógica real de envío (backend), por ahora simulamos éxito
     setMensajeEnviado(true);
 
-    // Opcional: Ocultar el mensaje después de 5 segundos
     setTimeout(() => {
       setMensajeEnviado(false);
     }, 5000);
     
-    // Opcional: Limpiar el formulario
     e.target.reset();
   };
 
@@ -35,7 +31,6 @@ export default function Contactanos() {
 
         <div className="row">
           <div className="col-md-8 offset-md-2">
-            {/* Agregamos el evento onSubmit */}
             <form id="post_form" className="contact_form" onSubmit={manejarEnvio}>
               <div className="row">
                 <div className="col-md-12">
@@ -54,7 +49,6 @@ export default function Contactanos() {
                   <button className="send_btn"> Enviar </button>
                 </div>
                 
-                {/* AQUI ESTA EL MENSAJE DE CONFIRMACIÓN */}
                 {mensajeEnviado && (
                   <div className="col-md-12 mt-4">
                     <div className="alert alert-success text-center" role="alert" style={{ borderRadius: '15px', fontWeight: '600' }}>

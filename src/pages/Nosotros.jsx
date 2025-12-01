@@ -6,7 +6,6 @@ export default function Nosotros() {
       <div className="container">
         <div className="row d_flex align-items-center">
           
-          {/* Columna de Texto */}
           <div className="col-lg-6 col-md-12 mb-4 mb-lg-0">
             <div className="about_box_content">
               <div className="titlepage text-lg-left text-center">
@@ -34,7 +33,6 @@ export default function Nosotros() {
             </div>
           </div>
 
-          {/* Columna de Imagen */}
           <div className="col-lg-6 col-md-12">
             <div className="about_img_container">
               <figure>
@@ -45,7 +43,6 @@ export default function Nosotros() {
                 />
               </figure>
               
-              {/* Elemento flotante (Cuadro azul) */}
               <div className="floating_box d-none d-lg-block">
                   <h4>+2</h4>
                   <span>Años de experiencia</span>

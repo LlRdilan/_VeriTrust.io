@@ -6,7 +6,6 @@ export default function Header() {
     const location = useLocation(); 
     const [user, setUser] = useState(null);
 
-    // Escucha cambios de ruta para actualizar el header si el usuario se loguea/desloguea
     useEffect(() => {
         const storedSession = localStorage.getItem("user_session");
         if (storedSession) {
@@ -94,7 +93,6 @@ export default function Header() {
                                             <li className="nav-item"><Link className="nav-link" to="/clientes">Clientes</Link></li>
                                             <li className="nav-item"><Link className="nav-link" to="/contactanos">Contáctanos</Link></li>
                                             
-                                            {/* --- LOGICA DE SESION --- */}
                                             {user ? (
                                                 <li className="nav-item dropdown">
                                                     <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{color: '#fff', fontWeight: 'bold'}}>

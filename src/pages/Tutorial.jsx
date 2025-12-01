@@ -1,14 +1,13 @@
 import React from 'react';
 
 export default function Tutorial() {
-    // Estilo común para todas las tarjetas para asegurar consistencia
     const cardStyle = {
         borderRadius: '20px',
         overflow: 'hidden',
         border: 'none',
         boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-        height: '100%', // <--- ESTO ES LO CLAVE: Fuerza la altura igualada
-        display: 'flex',       // Asegura que el contenido se distribuya bien
+        height: '100%', 
+        display: 'flex',  
         flexDirection: 'column'
     };
 
@@ -25,10 +24,9 @@ export default function Tutorial() {
                     </div>
                 </div>
                 
-                {/* Agregamos align-items-stretch a la fila por seguridad, aunque Bootstrap suele hacerlo por defecto */}
                 <div className="row d-flex align-items-stretch">
                     
-                    <div className="col-md-4 mb-4"> {/* mb-4 para espacio en móvil */}
+                    <div className="col-md-4 mb-4"> 
                         <div className="card" style={cardStyle}>
                             <iframe 
                                 width="100%" 

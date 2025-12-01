@@ -87,8 +87,7 @@ export default function Compra() {
       return;
     }
 
-    // --- EL CAMBIO IMPORTANTE ESTÁ AQUÍ ---
-    // En vez de solo avisar, redirigimos a la firma pasando los datos
+
     alert(`Pago aceptado. Redirigiendo a firma de documentos...`);
     navigate("/firma", { state: { servicio: servicio } });
   };
@@ -113,7 +112,6 @@ export default function Compra() {
                         <span>Servicio:</span>
                         <span style={{fontWeight: "600"}}>{servicio.nombre}</span>
                     </div>
-                    {/* Verificamos que servicio.neto exista antes de usarlo para evitar errores si entras directo */}
                     {servicio.neto && (
                       <>
                         <div style={{display: "flex", justifyContent: "space-between", marginBottom: "5px", color: "#666"}}>
@@ -129,7 +127,6 @@ export default function Compra() {
                     <hr style={{margin: "10px 0"}}/>
                     <div style={{display: "flex", justifyContent: "space-between", fontSize: "22px", fontWeight: "bold", color: "#1f235e"}}>
                         <span>Total a Pagar:</span>
-                        {/* Si existe servicio.total lo muestra, si no (en caso raro) muestra el precio base */}
                         <span>${(servicio.total || servicio.price || 0).toLocaleString()}</span>
                     </div>
                 </div>
