@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
+import NotificationModal from "../components/ui/NotificacionModal"; // <-- Importado
 
 export function validarNumeroTarjeta(numero) {
   if (typeof numero !== "string") return false;
@@ -31,8 +32,12 @@ export default function Compra() {
   const [mesExpiracion, setMesExpiracion] = useState("");
   const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
-  const [mensajeError, setMensajeError] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
+  
+  // ESTADO PARA EL MODAL
+  const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
+  const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
+
 
   useEffect(() => {
     if (!servicio) {
@@ -55,41 +60,56 @@ export default function Compra() {
     }
   };
 
+  const mostrarError = (msg) => {
+    setModal({ show: true, title: "Error de Pago", message: msg, status: "error" });
+  };
+
+
   const manejarEnvio = (e) => {
     e.preventDefault();
-    setMensajeError("");
+    handleCloseModal();
 
     if (!captchaToken) {
-      alert("Por favor completa el captcha");
+      mostrarError("Por favor completa el captcha antes de pagar.");
       return;
     }
 
+    // Validaciones de Formulario
     if (!/^\d{16}$/.test(numeroTarjeta) || !validarNumeroTarjeta(numeroTarjeta)) {
-      setMensajeError("Numero de tarjeta invalido");
+      mostrarError("Número de tarjeta inválido.");
       return;
     }
 
     const mes = parseInt(mesExpiracion, 10);
     if (!/^\d{2}$/.test(mesExpiracion) || mes < 1 || mes > 12) {
-      setMensajeError("Mes de expiracion invalido");
+      mostrarError("Mes de expiración inválido (formato MM).");
       return;
     }
 
     const anioActual = new Date().getFullYear();
     const anio = parseInt(anioExpiracion, 10);
     if (!/^\d{4}$/.test(anioExpiracion) || anio < anioActual) {
-      setMensajeError("Anio de expiracion invalido");
+      mostrarError("Año de expiración inválido o expirado.");
       return;
     }
 
     if (!/^\d{3}$/.test(cvv)) {
-      setMensajeError("CVV invalido");
+      mostrarError("CVV inválido (debe tener 3 dígitos).");
       return;
     }
 
-
-    alert(`Pago aceptado. Redirigiendo a firma de documentos...`);
-    navigate("/firma", { state: { servicio: servicio } });
+    // SIMULACIÓN DE PAGO EXITOSO
+    setModal({
+        show: true,
+        title: "Pago Aceptado",
+        message: "¡La transacción ha sido procesada! Redirigiendo al proceso de firma...",
+        status: "success"
+    });
+    
+    // Navegamos al proceso de firma después de un pequeño delay
+    setTimeout(() => {
+        navigate("/firma", { state: { servicio: servicio } });
+    }, 1500); 
   };
 
   if (!servicio) return null;
@@ -134,6 +154,7 @@ export default function Compra() {
                 <h4 style={{color: "#0FB3D1", fontWeight: "600", marginBottom: "20px"}}>Datos de Pago</h4>
                 
                 <form onSubmit={manejarEnvio}>
+                {/* ... (Inputs del Formulario) ... */}
                 <div className="form-group mb-3">
                     <label>Nombre en la tarjeta</label>
                     <input type="text" className="form-control" value={nombreTarjeta} onChange={(e) => setNombreTarjeta(e.target.value)} required />
@@ -176,11 +197,20 @@ export default function Compra() {
                     </button>
                 </div>
 
-                {mensajeError && <div style={{ color: "red", marginTop: "15px", textAlign: "center", fontWeight: "bold" }}>{mensajeError}</div>}
+                {/* Ya no necesitamos el mensajeError inline aquí */}
                 </form>
             </div>
         </div>
       </div>
+
+      {/* RENDERIZADO DEL MODAL */}
+      <NotificationModal 
+        show={modal.show}
+        handleClose={handleCloseModal}
+        title={modal.title}
+        message={modal.message}
+        status={modal.status}
+      />
     </main>
   );
 }

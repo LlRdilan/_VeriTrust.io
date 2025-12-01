@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
+// Función para validar RUT chileno
 export const validarRut = (rutCompleto) => {
   if (!rutCompleto) return false;
   let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
@@ -54,7 +55,8 @@ export default function Login() {
     setCargando(true);
 
     try {
-      const response = await fetch("http://3.144.24.210:8080/usuarios/login", {
+      // APUNTANDO A LOCALHOST
+      const response = await fetch("http://localhost:8080/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -71,13 +73,15 @@ export default function Login() {
           nombre: usuario.nombre,
           email: usuario.email,
           rut: usuario.rut,
-          rol: "user"
+          rol: usuario.rol || "user"
         };
 
         localStorage.setItem("user_session", JSON.stringify(sessionData));
         navigate("/admin"); 
-      } else {
+      } else if (response.status === 401) {
         setError("RUT o contraseña incorrectos");
+      } else {
+        setError(`Error del servidor (${response.status})`);
       }
     } catch (err) {
       setError("Error de conexión con el servidor");
@@ -101,7 +105,7 @@ export default function Login() {
             <form className="contact_form" onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-md-12">
-                  <label>RUT (Sin puntos y ni guion)</label>
+                  <label>RUT (Sin puntos y con guion)</label>
                   <input
                     type="text"
                     className="contact_control"

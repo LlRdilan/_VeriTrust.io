@@ -3,10 +3,16 @@ import { Link } from 'react-router-dom';
 
 export default function Inicio() {
     
+    // CORRECCIÓN: Agregamos maxWidth y margin: '0 auto' para centrar y reducir el tamaño
     const roundedStyle = {
         borderRadius: '20px',
         boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-        transition: 'transform 0.3s ease'
+        transition: 'transform 0.3s ease',
+        width: '100%',
+        maxWidth: '180px', // <--- MÁXIMO TAMAÑO
+        height: 'auto',
+        margin: '0 auto',  // Centrar la imagen dentro de su contenedor
+        display: 'block'
     };
 
     return (
@@ -90,7 +96,8 @@ export default function Inicio() {
                         <div className="carousel-item active">
                             <div className="container">
                                 <div className="carousel-caption">
-                                    <div className="row">
+                                    {/* CLASE d-flex justify-content-center para centrar las imágenes pequeñas */}
+                                    <div className="row d-flex justify-content-center"> 
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
                                                 <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />
@@ -125,7 +132,8 @@ export default function Inicio() {
                         <div className="carousel-item">
                             <div className="container">
                                 <div className="carousel-caption">
-                                    <div className="row">
+                                    {/* CLASE d-flex justify-content-center para centrar las imágenes pequeñas */}
+                                    <div className="row d-flex justify-content-center"> 
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
                                                 <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />

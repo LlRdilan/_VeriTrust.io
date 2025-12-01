@@ -13,6 +13,7 @@ import Admin from './pages/Admin';
 import Compra from './pages/Compra';
 import Importante from './pages/Importante';
 import Firma from './pages/Firma';
+import ServicioDetalle from './pages/ServicioDetalle';
 import NotFound from './pages/NotFound';
 
 export default function App() {
@@ -32,6 +33,7 @@ export default function App() {
         <Route path="/compra" element={<Compra />} />
         <Route path="/importante" element={<Importante />} />
         <Route path="/firma" element={<Firma />} />
+        <Route path="/servicio/detalle/:id" element={<ServicioDetalle />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
       <Footer />
