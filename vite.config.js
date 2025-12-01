@@ -12,7 +12,7 @@ export default defineConfig({
       // Todas las llamadas a /api/* serán proxied a http://localhost:8080
       // Ajusta `rewrite` si tu backend no espera el prefijo `/api`.
       '/api': {
-        target: 'http://localhost:8080',
+        target: 'http://3.144.24.210:8080/',
         changeOrigin: true,
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),

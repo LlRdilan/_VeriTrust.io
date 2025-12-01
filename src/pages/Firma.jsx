@@ -6,11 +6,17 @@ export default function Firma() {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // 1. RECUPERAMOS EL SERVICIO
+  // Si viene de la compra, usamos 'location.state.servicio'.
+  // Si entras directo, usamos datos de prueba para que no salga $0.
   const servicioComprado = location.state?.servicio || { 
     nombre: "Firma Digital (Modo Prueba)", 
-    precio: 15000 
+    neto: 15000, 
+    iva: 2850,
+    total: 17850 
   };
 
+  // Datos del Usuario
   const session = JSON.parse(localStorage.getItem("user_session"));
   const nombreUsuario = session ? session.nombre : "Usuario Invitado";
   const rutUsuario = session?.rut || "11.111.111-1"; 
@@ -55,14 +61,25 @@ export default function Firma() {
     document.body.removeChild(link);
   };
 
+  // --- FUNCIÓN BOLETA CORREGIDA ---
   const descargarBoleta = () => {
     const doc = new jsPDF();
 
-    const precioNeto = Number(servicioComprado.precio) || 0;
-    const valorIVA = Math.round(precioNeto * 0.19);
-    const precioTotal = precioNeto + valorIVA;
+    // AQUI ESTABA EL ERROR: Ahora leemos las propiedades correctas (neto, total)
+    // Si por alguna razón faltan, calculamos al vuelo
+    let precioNeto = Number(servicioComprado.neto);
+    let precioTotal = Number(servicioComprado.total);
+    
+    // Si los datos vinieron incompletos (fallback de seguridad)
+    if (!precioNeto && servicioComprado.precio) {
+        precioNeto = Number(servicioComprado.precio);
+    }
+    if (!precioTotal) {
+        precioTotal = Math.round(precioNeto * 1.19);
+    }
+    const valorIVA = precioTotal - precioNeto;
 
-
+    // --- DISEÑO PDF ---
     doc.setFillColor(31, 35, 94);
     doc.rect(0, 0, 210, 40, 'F');
     doc.setTextColor(255, 255, 255);
@@ -96,8 +113,8 @@ export default function Firma() {
     doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 20;
 
     doc.line(20, y, 190, y); y += 10;
-
-
+    
+    // Totales
     doc.setFont("helvetica", "normal");
     doc.text("Neto:", 140, y);
     doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 8;
@@ -110,11 +127,6 @@ export default function Firma() {
     doc.setTextColor(31, 35, 94);
     doc.text("TOTAL:", 140, y);
     doc.text(`$${precioTotal.toLocaleString()}`, 190, y, { align: "right" });
-
-    doc.setTextColor(150);
-    doc.setFontSize(10);
-    doc.setFont("helvetica", "normal");
-    doc.text("Gracias por confiar en VeriTrust", 105, 280, null, null, "center");
 
     doc.save(`boleta-${nombreSanitizado}.pdf`);
   };

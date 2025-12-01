@@ -25,7 +25,7 @@ export default function Registro() {
     }
 
     try {
-      const response = await fetch("http://localhost:8080/usuarios", {
+      const response = await fetch("http://3.144.24.210:8080/usuarios", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(form),
@@ -60,7 +60,7 @@ export default function Registro() {
                   <div className="row">
                     <div className="col-md-6">
                       <label>RUT</label>
-                      <input type="text" className="contact_control" placeholder="12345678-9" 
+                      <input type="text" className="contact_control" placeholder="12.345.678-9 (Sin puntos ni guion)" 
                         value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} required />
                     </div>
                     <div className="col-md-6">

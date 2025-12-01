@@ -5,7 +5,7 @@ export default function Servicios() {
   const [servicios, setServicios] = useState([]);
 
   useEffect(() => {
-    fetch("http://localhost:8080/servicios")
+    fetch("http://3.144.24.210:8080/servicios")
       .then((res) => res.json())
       .then((data) => {
         setServicios(data);

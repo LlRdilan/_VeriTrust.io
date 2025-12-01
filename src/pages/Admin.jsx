@@ -9,7 +9,7 @@ export default function Admin() {
   
   const [idEdicion, setIdEdicion] = useState(null);
 
-  const API_URL = "http://localhost:8080/servicios";
+  const API_URL = "http://3.144.24.210:8080/servicios";
 
   useEffect(() => {
     const session = localStorage.getItem("user_session");

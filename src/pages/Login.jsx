@@ -54,7 +54,7 @@ export default function Login() {
     setCargando(true);
 
     try {
-      const response = await fetch("http://localhost:8080/usuarios/login", {
+      const response = await fetch("http://3.144.24.210:8080/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ 
@@ -101,7 +101,7 @@ export default function Login() {
             <form className="contact_form" onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-md-12">
-                  <label>RUT (Sin puntos y con guion)</label>
+                  <label>RUT (Sin puntos y ni guion)</label>
                   <input
                     type="text"
                     className="contact_control"
