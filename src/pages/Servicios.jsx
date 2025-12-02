@@ -2,11 +2,9 @@ import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 export default function Servicios() {
-  // Inicializamos con un array vacío (Sin datos de respaldo)
   const [servicios, setServicios] = useState([]);
 
   useEffect(() => {
-    // Petición directa al Backend. Si falla, el catch solo registra el error.
     fetch("http://localhost:8080/servicios")
       .then((res) => res.json())
       .then((data) => {
@@ -26,7 +24,6 @@ export default function Servicios() {
           </div>
         </div>
 
-        {/* --- BANNER DECORATIVO --- */}
         <div className="row mb-5">
             <div className="col-md-12">
                 <div style={{
@@ -55,7 +52,6 @@ export default function Servicios() {
             </div>
         </div>
 
-        {/* --- LISTA DE SERVICIOS REALES (Si está vacía, no muestra nada) --- */}
         <div className="row">
           {servicios.map((s, i) => {
             if (!s) return null; 

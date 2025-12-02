@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
-import NotificationModal from "../components/ui/NotificacionModal"; // <-- Importado
+import NotificationModal from "../components/ui/NotificacionModal";
 
 export function validarNumeroTarjeta(numero) {
   if (typeof numero !== "string") return false;
@@ -34,7 +34,6 @@ export default function Compra() {
   const [cvv, setCvv] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
   
-  // ESTADO PARA EL MODAL
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
 
@@ -74,7 +73,6 @@ export default function Compra() {
       return;
     }
 
-    // Validaciones de Formulario
     if (!/^\d{16}$/.test(numeroTarjeta) || !validarNumeroTarjeta(numeroTarjeta)) {
       mostrarError("Número de tarjeta inválido.");
       return;
@@ -98,7 +96,6 @@ export default function Compra() {
       return;
     }
 
-    // SIMULACIÓN DE PAGO EXITOSO
     setModal({
         show: true,
         title: "Pago Aceptado",
@@ -106,7 +103,6 @@ export default function Compra() {
         status: "success"
     });
     
-    // Navegamos al proceso de firma después de un pequeño delay
     setTimeout(() => {
         navigate("/firma", { state: { servicio: servicio } });
     }, 1500); 
@@ -154,7 +150,6 @@ export default function Compra() {
                 <h4 style={{color: "#0FB3D1", fontWeight: "600", marginBottom: "20px"}}>Datos de Pago</h4>
                 
                 <form onSubmit={manejarEnvio}>
-                {/* ... (Inputs del Formulario) ... */}
                 <div className="form-group mb-3">
                     <label>Nombre en la tarjeta</label>
                     <input type="text" className="form-control" value={nombreTarjeta} onChange={(e) => setNombreTarjeta(e.target.value)} required />
@@ -197,13 +192,11 @@ export default function Compra() {
                     </button>
                 </div>
 
-                {/* Ya no necesitamos el mensajeError inline aquí */}
                 </form>
             </div>
         </div>
       </div>
 
-      {/* RENDERIZADO DEL MODAL */}
       <NotificationModal 
         show={modal.show}
         handleClose={handleCloseModal}

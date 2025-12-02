@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 
-// Función para validar RUT chileno
 export const validarRut = (rutCompleto) => {
   if (!rutCompleto) return false;
   let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
@@ -55,7 +54,6 @@ export default function Login() {
     setCargando(true);
 
     try {
-      // APUNTANDO A LOCALHOST
       const response = await fetch("http://localhost:8080/usuarios/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

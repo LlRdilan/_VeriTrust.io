@@ -1,10 +1,8 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationModal from "../components/ui/NotificacionModal"; 
-// Asumo que este componente ya lo creaste e instalaste react-quill:
-import RichTextEditor from "../components/RichTextEditor.jsx"; 
+import RichTextEditor from "../components/RichTextEditor"; 
 
-// --- VALIDACIÓN DE SERVICIO EN FRONTEND ---
 export function ComprobarServicio(servicio) {
   if (!servicio || typeof servicio !== "object") {
     throw new Error("Servicio inválido");
@@ -27,19 +25,17 @@ export function ComprobarServicio(servicio) {
   return true;
 }
 
-// ---------------------------------------------------------------------
 
 export default function Admin() {
   const navegar = useNavigate();
   const [servicios, setServicios] = useState([]);
   
-  // ESTADO COMPLETO: Incluye descripcionCompleta
   const [form, setForm] = useState({ 
     nombre: "", 
     descripcion: "", 
     precio: "", 
     detalles: "", 
-    descripcionCompleta: ""
+    descripcionCompleta: "",
   });
   
   const [usuarioNombre, setUsuarioNombre] = useState("");
@@ -76,14 +72,17 @@ export default function Admin() {
     e.preventDefault();
     
     const detallesArray = form.detalles.split("\n");
+
+    const cleanedDescription = form.descripcionCompleta 
+        ? form.descripcionCompleta.replace(/<p>\s*<br\s*\/?>\s*<\/p>/g, '').trim()
+        : "";
     
     const servicioData = {
         nombre: form.nombre,
         descripcion: form.descripcion,
         precio: parseFloat(form.precio),
         detalles: detallesArray.filter(d => d.trim() !== ""),
-        // CAMBIO: Incluimos la nueva descripción rica
-        descripcionCompleta: form.descripcionCompleta 
+        descripcionCompleta: cleanedDescription,
     };
 
     try {
@@ -112,7 +111,7 @@ export default function Admin() {
         setModal({ 
             show: true, 
             title: "Operación Exitosa", 
-            message: idEdicion !== null ? "Servicio actualizado en BD." : "Servicio creado correctamente en BD.", 
+            message: idEdicion !== null ? "Servicio actualizado correctamente en BD." : "Servicio creado correctamente en BD.", 
             status: "success" 
         });
         setForm({ nombre: "", descripcion: "", precio: "", detalles: "", descripcionCompleta: "" });
@@ -131,7 +130,6 @@ export default function Admin() {
     }
   };
 
-  // Lógica para mostrar el modal de confirmación de borrado
   const manejarEliminarClick = (id) => {
     setServicioAEliminar(id); 
     setModal({
@@ -165,7 +163,6 @@ export default function Admin() {
     handleCloseModal(); 
   };
 
-  // Carga los datos en el formulario para editar
   const cargarParaEditar = (servicio) => {
     setIdEdicion(servicio.id);
     setForm({
@@ -173,8 +170,7 @@ export default function Admin() {
       descripcion: servicio.descripcion,
       precio: servicio.precio,
       detalles: servicio.detalles ? servicio.detalles.join("\n") : "",
-      // Mapeamos el campo existente al editor
-      descripcionCompleta: servicio.descripcionCompleta || '' 
+      descripcionCompleta: servicio.descripcionCompleta || '',
     });
   };
 
@@ -196,34 +192,32 @@ export default function Admin() {
             <p>Conectado como: <strong>{usuarioNombre}</strong></p>
         </div>
         
-        {/* FORMULARIO DE CREACIÓN / EDICIÓN */}
         <div className="backoffice_section">
           <h4 style={{borderBottom: '2px solid #0FB3D1', paddingBottom: '10px', marginBottom: '20px'}}>
             {idEdicion !== null ? "Editar Servicio" : "Crear Nuevo Servicio"}
           </h4>
           <form onSubmit={manejarEnvio}>
             <div className="row">
-              {/* PRIMERA FILA: Campos cortos */}
-              <div className="col-md-3">
+              <div className="col-md-4">
                 <label>Nombre</label>
                 <input className="form-control" placeholder="Ej: Firma Avanzada" value={form.nombre} onChange={e => setForm({...form, nombre: e.target.value})} required />
               </div>
               <div className="col-md-3">
-                <label>Descripción Corta</label>
-                <input className="form-control" placeholder="Ej: 100% Online" value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} required />
-              </div>
-              <div className="col-md-2">
                 <label>Precio (Entero)</label>
                 <input type="number" className="form-control" placeholder="15000" value={form.precio} onChange={e => setForm({...form, precio: e.target.value})} required />
               </div>
-              <div className="col-md-4">
+              <div className="col-md-5">
+                <label>Descripción Corta</label>
+                <input className="form-control" placeholder="Ej: Certificado Digital" value={form.descripcion} onChange={e => setForm({...form, descripcion: e.target.value})} required />
+              </div>
+              
+              <div className="col-md-4 mt-4">
                 <label>Detalles (Líneas)</label>
                 <textarea className="form-control" rows="1" placeholder="Detalle 1..." value={form.detalles} onChange={e => setForm({...form, detalles: e.target.value})} ></textarea>
               </div>
-              
-              {/* SEGUNDA FILA: EDITOR DE CONTENIDO ENRIQUECIDO */}
-              <div className="col-md-12 mt-4">
-                <label>Descripción Completa (Editor)</label>
+
+              <div className="col-md-8 mt-4">
+                <label>Descripción Completa (CKEditor)</label>
                 <RichTextEditor
                     value={form.descripcionCompleta}
                     onChange={(content) => setForm({...form, descripcionCompleta: content})}
@@ -246,7 +240,6 @@ export default function Admin() {
           </form>
         </div>
 
-        {/* TABLA DE SERVICIOS (Resto del código igual) */}
         <div className="backoffice_section">
           <h4>Servicios Actuales (Base de Datos)</h4>
           <div className="table-responsive">
@@ -256,24 +249,27 @@ export default function Admin() {
                     <th>Nombre</th>
                     <th>Descripción</th>
                     <th>Precio Neto</th>
-                    <th>Con IVA (+19%)</th>
+                    <th>IVA (19%)</th>
+                    <th>Total</th>
                     <th className="text-right">Acciones</th>
                 </tr>
                 </thead>
                 <tbody>
                 {servicios.length === 0 ? (
-                    <tr><td colSpan="5" className="text-center">No hay servicios registrados.</td></tr>
+                    <tr><td colSpan="6" className="text-center">No hay servicios registrados.</td></tr>
                 ) : (
                     servicios.map((s) => {
                         const neto = Number(s.precio);
-                        const total = Math.round(neto * 1.19);
+                        const iva = Math.round(neto * 0.19);
+                        const total = neto + iva;
 
                         return (
                             <tr key={s.id}>
                                 <td style={{fontWeight: 'bold', color: '#1f235e'}}>{s.nombre}</td>
                                 <td>{s.descripcion}</td>
                                 <td>${neto.toLocaleString()}</td>
-                                <td style={{fontWeight: 'bold', color: '#0FB3D1'}}>${total.toLocaleString()}</td>
+                                <td>${iva.toLocaleString()}</td> 
+                                <td style={{fontWeight: 'bold', color: '#0FB3D1'}}>${total.toLocaleString()}</td> 
                                 <td className="text-right">
                                     <button onClick={() => cargarParaEditar(s)} className="btn btn-sm btn-warning mr-2" style={{color:'#fff'}}>
                                         <i className="fa fa-edit"></i>
@@ -296,7 +292,6 @@ export default function Admin() {
         </div>
       </div>
 
-      {/* RENDERIZADO DEL MODAL */}
       <NotificationModal 
         show={modal.show}
         handleClose={modal.isConfirmation ? handleCancelarEliminacion : handleCloseModal} 

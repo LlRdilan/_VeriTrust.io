@@ -17,7 +17,6 @@ export default function ServicioDetalle() {
     useEffect(() => {
         const fetchServicio = async () => {
             try {
-                // Fetch del servicio completo desde el backend
                 const res = await fetch(`${API_URL}/${id}`);
                 
                 if (!res.ok) {
@@ -49,7 +48,6 @@ export default function ServicioDetalle() {
     const iniciarCompra = () => {
         if (!servicio) return;
         
-        // Calculamos IVA y Total
         const neto = Number(servicio.precio);
         const valorIva = Math.round(neto * 0.19);
         const total = neto + valorIva;
@@ -73,7 +71,6 @@ export default function ServicioDetalle() {
         return <div className="service text-center" style={{padding: '100px'}}>Servicio no disponible.</div>;
     }
 
-    // --- Renderizado del Detalle ---
     const netoFinal = Number(servicio.precio);
     const ivaFinal = Math.round(netoFinal * 0.19);
     const totalFinal = netoFinal + ivaFinal;
@@ -92,7 +89,6 @@ export default function ServicioDetalle() {
 
                 <div className="row">
                     
-                    {/* Sección de Precio y Botón (Columna Derecha/Pegajosa) */}
                     <div className="col-md-4">
                         <div className="backoffice_section" style={{padding: '30px', position: 'sticky', top: '100px'}}>
                             <h2 style={{color: '#1f235e', fontWeight: 'bold', fontSize: '30px'}}>
@@ -117,7 +113,6 @@ export default function ServicioDetalle() {
                         </div>
                     </div>
 
-                    {/* Sección de Descripción Completa (Columna Izquierda) */}
                     <div className="col-md-8">
                         <div className="backoffice_section" style={{padding: '40px', background: '#fff'}}>
                             <h1 style={{color: '#0FB3D1', marginBottom: '20px', fontSize: '40px', paddingBottom: '0'}}>{servicio.nombre}</h1>
@@ -130,7 +125,6 @@ export default function ServicioDetalle() {
                                 className="full-description-content"
                                 style={{lineHeight: '1.8', color: '#333'}}
                             >
-                                {/* AQUÍ SE RENDERIZA EL CONTENIDO HTML GENERADO POR EL EDITOR */}
                                 {servicio.descripcionCompleta ? (
                                     <div dangerouslySetInnerHTML={{ __html: servicio.descripcionCompleta }} />
                                 ) : (

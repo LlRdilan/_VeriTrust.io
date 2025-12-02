@@ -3,7 +3,6 @@ import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 import NotificationModal from "../components/ui/NotificacionModal"; 
 
-// Función para validar RUT chileno (restaurada)
 export const validarRut = (rutCompleto) => {
   if (!rutCompleto) return false;
   let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
@@ -33,40 +32,34 @@ export const validarRut = (rutCompleto) => {
 export default function Registro() {
   const navigate = useNavigate();
 
-  // ESTADO COMPLETO DEL FORMULARIO (Restaurado a la versión original)
   const [form, setForm] = useState({
     rut: "",
     nombre: "",
     fechaNac: "",
     telefono: "",
     email: "",
-    confirmarEmail: "", // Necesario para la validación de front
+    confirmarEmail: "",
     contraseña: "",
-    confirmarContraseña: "", // Necesario para la validación de front
-    terminos: false, // Necesario para la validación de términos
+    confirmarContraseña: "",
+    terminos: false,
   });
   
   const [errores, setErrores] = useState({});
   const [captchaValido, setCaptchaValido] = useState(false);
   
-  // ESTADO DEL MODAL
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
 
-  // --- FUNCIÓN DE VALIDACIÓN DEL FRONTEND ---
   const validateForm = () => {
     const nuevosErrores = {};
     let valido = true;
 
-    // Check 1: RUT (usamos el validador)
     if (!validarRut(form.rut)) {
         nuevosErrores.rut = "RUT inválido"; valido = false;
     }
-    // Check 2: Nombre
     if (form.nombre.length < 3) {
         nuevosErrores.nombre = "Ingresa un nombre válido"; valido = false;
     }
-    // Check 3: Mayoría de Edad (para el campo 'fechaNac' que ahora es type=date)
     if (!form.fechaNac) {
         nuevosErrores.fechaNac = "Ingresa tu fecha de nacimiento"; valido = false;
     } else {
@@ -77,15 +70,12 @@ export default function Registro() {
             nuevosErrores.fechaNac = "Debes ser mayor de 18 años"; valido = false;
         }
     }
-    // Check 4: Email y Confirmación
     if (!form.email.includes("@")) { nuevosErrores.email = "Correo inválido"; valido = false; }
     if (form.email !== form.confirmarEmail) { nuevosErrores.confirmarEmail = "Los correos no coinciden"; valido = false; }
     
-    // Check 5: Contraseñas y Confirmación
     if (form.contraseña.length < 6) { nuevosErrores.contraseña = "Mínimo 6 caracteres"; valido = false; }
     if (form.contraseña !== form.confirmarContraseña) { nuevosErrores.confirmarContraseña = "Las contraseñas no coinciden"; valido = false; }
     
-    // Check 6: Términos y Condiciones (Restaurado)
     if (!form.terminos) {
         nuevosErrores.terminos = "Debes aceptar los términos y condiciones"; valido = false;
     }
@@ -93,7 +83,6 @@ export default function Registro() {
     setErrores(nuevosErrores);
     return valido;
   };
-  // --- FIN FUNCIÓN DE VALIDACIÓN ---
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -104,14 +93,12 @@ export default function Registro() {
       return;
     }
 
-    // Ejecutar validación del frontend antes de enviar
     if (!validateForm()) {
         setModal({ show: true, title: "Verifica el Formulario", message: "Existen errores en los datos ingresados. Revisa los campos marcados.", status: "warning" });
         return;
     }
 
     try {
-      // Nota: Solo enviamos los campos que necesita Java (no confirmaciones ni terminos)
       const userData = {
           rut: form.rut,
           nombre: form.nombre,
@@ -214,7 +201,6 @@ export default function Registro() {
                         <input type="checkbox" className="form-check-input" id="Terminos" 
                           checked={form.terminos} onChange={(e) => setForm({ ...form, terminos: e.target.checked })} />
                         
-                        {/* ENLACE HACIA /IMPORTANTE (Restaurado) */}
                         <label className="form-check-label" htmlFor="Terminos">
                           Acepto los <Link to="/importante" target="_blank" style={{color: '#0FB3D1', fontWeight: 'bold'}}>términos y condiciones</Link>
                         </label>
@@ -236,7 +222,6 @@ export default function Registro() {
         </div>
       </div>
       
-      {/* RENDERIZADO DEL MODAL */}
       <NotificationModal 
         show={modal.show}
         handleClose={handleCloseModal}

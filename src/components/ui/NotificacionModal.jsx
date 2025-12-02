@@ -1,6 +1,5 @@
 import React from 'react';
 
-// Aceptamos las nuevas propiedades: isConfirmation y onConfirm
 export default function NotificationModal({ show, handleClose, title, message, status, isConfirmation, onConfirm }) {
     
     if (!show) {
@@ -27,7 +26,7 @@ export default function NotificationModal({ show, handleClose, title, message, s
             icon = "fa fa-exclamation-triangle";
             buttonClass = "btn btn-warning";
             break;
-        default: // info o default
+        default: 
             headerClass += " bg-primary text-white";
             icon = "fa fa-info-circle";
             buttonClass = "btn btn-primary";
@@ -68,7 +67,6 @@ export default function NotificationModal({ show, handleClose, title, message, s
                         <p>{message}</p>
                     </div>
                     
-                    {/* LÓGICA DE DOS BOTONES: Si es confirmación, muestra Aceptar y Cancelar */}
                     <div className="modal-footer">
                         {isConfirmation ? (
                             <>

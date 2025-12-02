@@ -6,9 +6,6 @@ export default function Firma() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // 1. RECUPERAMOS EL SERVICIO
-  // Si viene de la compra, usamos 'location.state.servicio'.
-  // Si entras directo, usamos datos de prueba para que no salga $0.
   const servicioComprado = location.state?.servicio || { 
     nombre: "Firma Digital (Modo Prueba)", 
     neto: 15000, 
@@ -16,7 +13,6 @@ export default function Firma() {
     total: 17850 
   };
 
-  // Datos del Usuario
   const session = JSON.parse(localStorage.getItem("user_session"));
   const nombreUsuario = session ? session.nombre : "Usuario Invitado";
   const rutUsuario = session?.rut || "11.111.111-1"; 
@@ -26,6 +22,7 @@ export default function Firma() {
   const [archivoUrl, setArchivoUrl] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [firmado, setFirmado] = useState(false);
+  
   const [hashDocumento, setHashDocumento] = useState("");
   const [fechaFirma, setFechaFirma] = useState("");
 
@@ -42,6 +39,7 @@ export default function Firma() {
   const procesarFirma = () => {
     if (!archivo) return;
     setCargando(true);
+
     setTimeout(() => {
       setCargando(false);
       setFirmado(true);
@@ -55,81 +53,105 @@ export default function Firma() {
     const url = window.URL.createObjectURL(archivo);
     const link = document.createElement('a');
     link.href = url;
-    link.setAttribute('download', `FIRMADO-${nombreSanitizado}.pdf`);
+    link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
 
-  // --- FUNCIÓN BOLETA CORREGIDA ---
+  const descargarCertificado = () => {
+    const doc = new jsPDF();
+    const anchoPagina = doc.internal.pageSize.getWidth();
+    
+    doc.setFillColor(31, 35, 94); doc.rect(0, 0, anchoPagina, 20, 'F');
+    doc.setTextColor(255, 255, 255); doc.setFontSize(14); doc.setFont("helvetica", "bold");
+    doc.text("VERITRUST", 10, 14);
+
+    doc.setTextColor(31, 35, 94); doc.setFontSize(26); doc.setFont("helvetica", "bold");
+    doc.text("CERTIFICADO DE FIRMA ELECTRÓNICA", anchoPagina / 2, 50, null, null, "center");
+    
+    doc.setDrawColor(31, 35, 94); doc.setLineWidth(1.5);
+    doc.circle(anchoPagina / 2, 100, 30); 
+    doc.setFontSize(10);
+    doc.text("FIRMA ELECTRÓNICA AVANZADA", anchoPagina / 2, 100, null, null, "center");
+    doc.text("VALIDADO POR VERITRUST", anchoPagina / 2, 108, null, null, "center");
+
+    let y = 140;
+    doc.setFontSize(12); doc.setFont("helvetica", "bold");
+    doc.text("Detalles de la Firma Digital:", 20, y); y += 10;
+    
+    doc.setDrawColor(200); doc.line(20, y, anchoPagina - 20, y); y += 5;
+    
+    doc.setFont("helvetica", "normal");
+    
+    doc.text(`Documento Firmado: ${archivo.name}`, 25, y); y += 7;
+    doc.text(`Firmante (RUT): ${nombreUsuario} (${rutUsuario})`, 25, y); y += 7;
+    doc.text(`Fecha y Hora de Sello: ${fechaFirma}`, 25, y); y += 7;
+
+    doc.setFont("helvetica", "bold");
+    doc.text("Hash de Integridad (SHA-256):", 25, y + 5);
+    doc.setFont("courier", "normal");
+    doc.text(hashDocumento.substring(0, 32), 25, y + 12);
+    doc.text(hashDocumento.substring(32), 25, y + 17);
+
+    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(150);
+    doc.text("Este certificado es una página adjunta al documento original y prueba su validez legal.", anchoPagina / 2, 280, null, null, "center");
+
+    doc.save(`CERTIFICADO_FIRMA_${nombreSanitizado}.pdf`);
+  };
+
   const descargarBoleta = () => {
     const doc = new jsPDF();
+    const anchoPagina = doc.internal.pageSize.getWidth();
+    let y = 20;
 
-    // AQUI ESTABA EL ERROR: Ahora leemos las propiedades correctas (neto, total)
-    // Si por alguna razón faltan, calculamos al vuelo
-    let precioNeto = Number(servicioComprado.neto);
-    let precioTotal = Number(servicioComprado.total);
-    
-    // Si los datos vinieron incompletos (fallback de seguridad)
-    if (!precioNeto && servicioComprado.precio) {
-        precioNeto = Number(servicioComprado.precio);
-    }
-    if (!precioTotal) {
-        precioTotal = Math.round(precioNeto * 1.19);
-    }
-    const valorIVA = precioTotal - precioNeto;
-
-    // --- DISEÑO PDF ---
-    doc.setFillColor(31, 35, 94);
-    doc.rect(0, 0, 210, 40, 'F');
-    doc.setTextColor(255, 255, 255);
-    doc.setFontSize(22);
-    doc.setFont("helvetica", "bold");
-    doc.text("VeriTrust", 20, 25);
-    doc.setFontSize(12);
-    doc.text("Comprobante Electrónico", 20, 32);
-
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(16);
-    doc.text("BOLETA DE VENTA Y SERVICIOS", 105, 60, null, null, "center");
-
-    doc.setFontSize(11);
-    doc.setFont("helvetica", "normal");
-    
-    let y = 80;
-    doc.text(`Cliente: ${nombreUsuario}`, 20, y); 
-    doc.text(`Fecha: ${new Date().toLocaleDateString()}`, 150, y); y += 10;
-    doc.text(`RUT: ${rutUsuario}`, 20, y); y += 20;
-    
-    doc.setDrawColor(0);
-    doc.line(20, y, 190, y); y += 10;
-    
-    doc.setFont("helvetica", "bold");
-    doc.text("Descripción", 20, y);
-    doc.text("Valor", 190, y, { align: "right" }); y += 10;
-    
-    doc.setFont("helvetica", "normal");
-    doc.text(servicioComprado.nombre, 20, y);
-    doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 20;
-
-    doc.line(20, y, 190, y); y += 10;
-    
-    // Totales
-    doc.setFont("helvetica", "normal");
-    doc.text("Neto:", 140, y);
-    doc.text(`$${precioNeto.toLocaleString()}`, 190, y, { align: "right" }); y += 8;
-
-    doc.text("IVA (19%):", 140, y);
-    doc.text(`$${valorIVA.toLocaleString()}`, 190, y, { align: "right" }); y += 10;
-
-    doc.setFont("helvetica", "bold");
-    doc.setFontSize(14);
+    doc.setFontSize(22); doc.setFont("helvetica", "bold");
     doc.setTextColor(31, 35, 94);
-    doc.text("TOTAL:", 140, y);
-    doc.text(`$${precioTotal.toLocaleString()}`, 190, y, { align: "right" });
+    doc.text("Boleta Electrónica VeriTrust", anchoPagina / 2, y, null, null, "center"); y += 15;
 
-    doc.save(`boleta-${nombreSanitizado}.pdf`);
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text(`Folio de Venta: ${Math.floor(Math.random() * 90000000) + 10000000}`, 20, y); y += 5;
+    doc.text(`Fecha de Emisión: ${new Date().toLocaleDateString()}`, 20, y); y += 5;
+    doc.text(`RUT Vendedor: 76.543.210-K`, 20, y); y += 15;
+
+    doc.setFontSize(14); doc.setFont("helvetica", "bold");
+    doc.text("Detalles del Cliente", 20, y); y += 5;
+    doc.setDrawColor(200); doc.line(20, y, anchoPagina - 20, y); y += 10;
+    
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text(`Nombre: ${nombreUsuario}`, 25, y); y += 5;
+    doc.text(`RUT Cliente: ${rutUsuario}`, 25, y); y += 10;
+
+    doc.setFontSize(14); doc.setFont("helvetica", "bold");
+    doc.text("Detalle de Servicios", 20, y); y += 5;
+    doc.line(20, y, anchoPagina - 20, y); y += 10;
+    
+    doc.setFontSize(12); doc.setFont("helvetica", "bold");
+    doc.text("Servicio", 25, y);
+    doc.text("Neto", 140, y);
+    doc.text("Total", 170, y); y += 8;
+
+    doc.setFontSize(10); doc.setFont("helvetica", "normal");
+    doc.text(servicioComprado.nombre, 25, y);
+    doc.text(`$${servicioComprado.neto.toLocaleString()}`, 140, y);
+    doc.text(`$${servicioComprado.total.toLocaleString()}`, 170, y); y += 15;
+
+    doc.setFontSize(12); doc.setFont("helvetica", "normal");
+    doc.text(`NETO:`, 140, y); doc.text(`$${servicioComprado.neto.toLocaleString()}`, 170, y); y += 7;
+    doc.text(`IVA (19%):`, 140, y); doc.text(`$${servicioComprado.iva.toLocaleString()}`, 170, y); y += 7;
+    
+    doc.setFontSize(14); doc.setFont("helvetica", "bold");
+    doc.setTextColor(208, 67, 49);
+    doc.text(`TOTAL:`, 140, y); doc.text(`$${servicioComprado.total.toLocaleString()}`, 170, y); y += 15;
+
+    doc.setFontSize(10); doc.setFont("helvetica", "italic");
+    doc.setTextColor(150);
+    doc.text("Documento no válido como factura. Para fines tributarios, revise la documentación adjunta.", anchoPagina / 2, 280, null, null, "center");
+
+
+    doc.save(`BOLETA_VENTA_${nombreSanitizado}.pdf`);
   };
+
 
   return (
     <div className="service" style={{ padding: "80px 0", minHeight: "100vh" }}>
@@ -191,24 +213,30 @@ export default function Firma() {
                 </div>
               )}
 
+
               {firmado && (
                 <div className="animate__animated animate__fadeIn">
                   <i className="fa fa-check-circle" style={{fontSize: '70px', color: '#28a745', marginBottom: '20px'}}></i>
                   <h3 style={{color: '#1f235e', fontWeight: 'bold'}}>¡Documento Firmado con Éxito!</h3>
                   
                   <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#f0fdf4', borderRadius: '15px', border: '1px solid #28a745', textAlign: 'left'}}>
-                    <p style={{marginBottom: '5px'}}><strong>Archivo Generado:</strong> FIRMADO-{nombreSanitizado}.pdf</p>
+                    <p style={{marginBottom: '5px'}}><strong>Archivo Generado:</strong> DOCUMENTO_FIRMADO_{nombreSanitizado}.pdf</p>
                     <p style={{marginBottom: '5px'}}><strong>Hash de Seguridad:</strong> {hashDocumento}</p>
                     <p style={{marginBottom: '0'}}><strong>Fecha:</strong> {fechaFirma}</p>
                   </div>
 
                   <div className="d-flex justify-content-center gap-3 mt-4" style={{gap: '15px', flexWrap: 'wrap'}}>
+                    
                     <button onClick={descargarArchivo} className="btn_primary" style={{background: '#28a745', border: 'none', minWidth: '220px'}}>
                         <i className="fa fa-download"></i> Descargar Documento
                     </button>
 
-                    <button onClick={descargarBoleta} className="btn_primary" style={{background: '#1f235e', border: 'none', minWidth: '220px'}}>
-                        <i className="fa fa-file-text-o"></i> Descargar Boleta
+                    <button onClick={descargarCertificado} className="btn_primary" style={{background: '#1f235e', border: 'none', minWidth: '220px'}}>
+                        <i className="fa fa-file-text-o"></i> Descargar Certificado
+                    </button>
+                    
+                    <button onClick={descargarBoleta} className="btn_primary" style={{background: '#0FB3D1', border: 'none', minWidth: '220px'}}>
+                        <i className="fa fa-receipt"></i> Descargar Boleta
                     </button>
                   </div>
                   

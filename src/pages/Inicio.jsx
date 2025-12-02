@@ -3,15 +3,14 @@ import { Link } from 'react-router-dom';
 
 export default function Inicio() {
     
-    // CORRECCIÓN: Agregamos maxWidth y margin: '0 auto' para centrar y reducir el tamaño
     const roundedStyle = {
         borderRadius: '20px',
         boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
         transition: 'transform 0.3s ease',
         width: '100%',
-        maxWidth: '180px', // <--- MÁXIMO TAMAÑO
+        maxWidth: '180px',
         height: 'auto',
-        margin: '0 auto',  // Centrar la imagen dentro de su contenedor
+        margin: '0 auto',
         display: 'block'
     };
 
@@ -132,7 +131,6 @@ export default function Inicio() {
                         <div className="carousel-item">
                             <div className="container">
                                 <div className="carousel-caption">
-                                    {/* CLASE d-flex justify-content-center para centrar las imágenes pequeñas */}
                                     <div className="row d-flex justify-content-center"> 
                                         <div className="col-md-3 col-sm-6">
                                             <div className="portfolio_img">
