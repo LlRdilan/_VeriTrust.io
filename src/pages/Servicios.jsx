@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 
 export default function Servicios() {
   const [servicios, setServicios] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetch("http://localhost:8080/servicios")
@@ -12,6 +13,20 @@ export default function Servicios() {
       })
       .catch((err) => console.error("Error conectando al backend:", err));
   }, []);
+
+  const manejarClickCompra = (servicio, neto, iva, total) => {
+    const session = localStorage.getItem("user_session");
+
+    if (!session) {
+      navigate("/login");
+      return;
+    }
+
+    navigate(`/servicio/detalle/${servicio.id}`, {
+      state: { servicio, neto, iva, total },
+    });
+  };
+
 
   return (
     <div id="service" className="service">
@@ -83,19 +98,12 @@ export default function Servicios() {
                       Desde ${precioBase.toLocaleString()} + ${valorIva.toLocaleString()} (IVA)
                     </strong>
                   </div>
-                  
-                  <Link 
-                    className="comprar_btn" 
-                    to={`/servicio/detalle/${s.id}`} 
-                    state={{ 
-                        servicio: s, 
-                        neto: precioBase, 
-                        iva: valorIva, 
-                        total: total,
-                    }}
-                  >
-                    Ver Detalles
-                  </Link>
+                    <button
+                      className="comprar_btn"
+                      onClick={() => manejarClickCompra(s, precioBase, valorIva, total)}
+                    >
+                      Ver Detalles
+                    </button>
                 </div>
               </div>
             );

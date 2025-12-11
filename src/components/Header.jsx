@@ -99,7 +99,8 @@ export default function Header() {
                                                         <i className="fa fa-user-circle" style={{marginRight: '5px'}}></i> {user.nombre}
                                                     </a>
                                                     <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                        <Link className="dropdown-item" to="/admin">Ir al Panel</Link>
+                                                        {user.rol === "admin" && (<Link className="dropdown-item" to="/admin">Ir al Panel</Link>)}
+                                                        {user.rol !== "admin" && (<Link className="dropdown-item" to="/servicios">Perfil</Link>)}
                                                         <div className="dropdown-divider"></div>
                                                         <button className="dropdown-item text-danger" onClick={cerrarSesion} style={{cursor:'pointer'}}>Cerrar Sesión</button>
                                                     </div>

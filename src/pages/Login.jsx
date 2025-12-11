@@ -75,7 +75,13 @@ export default function Login() {
         };
 
         localStorage.setItem("user_session", JSON.stringify(sessionData));
-        navigate("/admin"); 
+
+        if (sessionData.rol === "admin") {
+            navigate("/admin");
+        } else {
+            navigate("/servicios");
+        }
+
       } else if (response.status === 401) {
         setError("RUT o contraseña incorrectos");
       } else {

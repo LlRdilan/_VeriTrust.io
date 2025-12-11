@@ -50,11 +50,16 @@ export default function Admin() {
   useEffect(() => {
     const session = localStorage.getItem("user_session");
     if (!session) {
-      navegar("/login");
+        navegar("/login");
     } else {
-      const user = JSON.parse(session);
-      setUsuarioNombre(user.nombre);
+        const user = JSON.parse(session);
+        if (user.rol !== "admin") {
+            navegar("/servicios"); 
+            return;
+        }
+        setUsuarioNombre(user.nombre);
     }
+
     cargarServicios();
   }, [navegar]);
 
