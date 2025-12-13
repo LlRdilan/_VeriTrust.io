@@ -11,7 +11,6 @@ export const validarRut = (rutCompleto) => {
   let dv = rutLimpio.slice(-1).toUpperCase();
 
   if (!/^\d+$/.test(cuerpo)) return false;
-
   let suma = 0;
   let multiplo = 2;
 
@@ -52,7 +51,6 @@ export default function Login() {
     }
 
     setCargando(true);
-
     try {
       const response = await fetch("http://localhost:8080/usuarios/login", {
         method: "POST",
@@ -64,14 +62,19 @@ export default function Login() {
       });
 
       if (response.ok) {
-        const usuario = await response.json();
+        const data = await response.json();
         
+        // La respuesta del backend ahora trae "token" y "usuario"
+        const usuario = data.usuario;
+        const token = data.token;
+
         const sessionData = {
           id: usuario.id,
           nombre: usuario.nombre,
           email: usuario.email,
           rut: usuario.rut,
-          rol: usuario.rol || "user"
+          rol: usuario.rol || "user",
+          token: token // Guardamos el token en la sesión local
         };
 
         localStorage.setItem("user_session", JSON.stringify(sessionData));

@@ -6,7 +6,6 @@ import NotificationModal from "../components/ui/NotificacionModal";
 export function validarNumeroTarjeta(numero) {
   if (typeof numero !== "string") return false;
   if (!/^\d{16}$/.test(numero)) return false;
-
   let suma = 0;
   let doble = false;
   for (let i = numero.length - 1; i >= 0; i--) {
@@ -24,7 +23,7 @@ export function validarNumeroTarjeta(numero) {
 export default function Compra() {
   const location = useLocation();
   const navigate = useNavigate();
-  const servicio = location.state;
+  const servicio = location.state; // Datos que vienen de la pagina anterior
 
   const [nombreTarjeta, setNombreTarjeta] = useState("");
   const [numeroTarjeta, setNumeroTarjeta] = useState("");
@@ -33,10 +32,9 @@ export default function Compra() {
   const [anioExpiracion, setAnioExpiracion] = useState("");
   const [cvv, setCvv] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
-  
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
+  
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
-
 
   useEffect(() => {
     if (!servicio) {
@@ -63,8 +61,7 @@ export default function Compra() {
     setModal({ show: true, title: "Error de Pago", message: msg, status: "error" });
   };
 
-
-  const manejarEnvio = (e) => {
+  const manejarEnvio = async (e) => {
     e.preventDefault();
     handleCloseModal();
 
@@ -96,16 +93,52 @@ export default function Compra() {
       return;
     }
 
-    setModal({
-        show: true,
-        title: "Pago Aceptado",
-        message: "¡La transacción ha sido procesada! Redirigiendo al proceso de firma...",
-        status: "success"
-    });
+    // --- INTEGRACION CON BACKEND (NUEVO) ---
+    const session = JSON.parse(localStorage.getItem("user_session"));
     
-    setTimeout(() => {
-        navigate("/firma", { state: { servicio: servicio } });
-    }, 1500); 
+    // Si no hay sesión, mandamos a login
+    if (!session || !session.token) {
+        mostrarError("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
+        setTimeout(() => navigate("/login"), 2000);
+        return;
+    }
+
+    // Preparamos los datos para el Backend (CompraDTO)
+    const compraData = {
+        usuarioId: session.id,
+        servicioId: servicio.id || servicio.servicioId, // Ajuste segun como venga el objeto
+        fechaCompra: new Date().toLocaleDateString('es-CL').replace(/\//g, '-'), // Formato DD-MM-YYYY
+        monto: servicio.total || servicio.price
+    };
+
+    try {
+        const response = await fetch("http://localhost:8080/compras", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${session.token}` // ENVIAMOS EL TOKEN
+            },
+            body: JSON.stringify(compraData)
+        });
+
+        if (response.ok) {
+            setModal({
+                show: true,
+                title: "Pago Aceptado",
+                message: "¡La transacción ha sido procesada y guardada! Redirigiendo al proceso de firma...",
+                status: "success"
+            });
+        
+            setTimeout(() => {
+                navigate("/firma", { state: { servicio: servicio } });
+            }, 1500);
+        } else {
+            mostrarError("Error al procesar la compra en el servidor.");
+        }
+
+    } catch (error) {
+        mostrarError("No se pudo conectar con el servidor de pagos.");
+    }
   };
 
   if (!servicio) return null;
@@ -150,47 +183,47 @@ export default function Compra() {
                 <h4 style={{color: "#0FB3D1", fontWeight: "600", marginBottom: "20px"}}>Datos de Pago</h4>
                 
                 <form onSubmit={manejarEnvio}>
-                <div className="form-group mb-3">
-                    <label>Nombre en la tarjeta</label>
-                    <input type="text" className="form-control" value={nombreTarjeta} onChange={(e) => setNombreTarjeta(e.target.value)} required />
-                </div>
+                    <div className="form-group mb-3">
+                        <label>Nombre en la tarjeta</label>
+                        <input type="text" className="form-control" value={nombreTarjeta} onChange={(e) => setNombreTarjeta(e.target.value)} required />
+                    </div>
 
-                <div className="form-group mb-3">
-                    <div className="d-flex justify-content-between align-items-center">
-                        <label>Numero de tarjeta</label>
-                        <div style={{fontSize: '24px'}}>
-                            <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
-                            <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
-                            <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
+                    <div className="form-group mb-3">
+                        <div className="d-flex justify-content-between align-items-center">
+                            <label>Numero de tarjeta</label>
+                            <div style={{fontSize: '24px'}}>
+                                <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
+                                <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
+                                <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
+                            </div>
+                        </div>
+                        <input type="text" maxLength={16} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
+                    </div>
+
+                    <div className="row">
+                        <div className="col-md-6 form-group mb-3">
+                        <label>Mes (MM)</label>
+                        <input type="text" maxLength={2} placeholder="MM" className="form-control" value={mesExpiracion} onChange={(e) => setMesExpiracion(e.target.value)} required />
+                        </div>
+                        <div className="col-md-6 form-group mb-3">
+                        <label>Año (AAAA)</label>
+                        <input type="text" maxLength={4} placeholder="AAAA" className="form-control" value={anioExpiracion} onChange={(e) => setAnioExpiracion(e.target.value)} required />
                         </div>
                     </div>
-                    <input type="text" maxLength={16} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
-                </div>
-
-                <div className="row">
-                    <div className="col-md-6 form-group mb-3">
-                    <label>Mes (MM)</label>
-                    <input type="text" maxLength={2} placeholder="MM" className="form-control" value={mesExpiracion} onChange={(e) => setMesExpiracion(e.target.value)} required />
+                    <div className="form-group mb-4">
+                        <label>CVV</label>
+                        <input type="text" maxLength={3} className="form-control" value={cvv} onChange={(e) => setCvv(e.target.value)} required />
                     </div>
-                    <div className="col-md-6 form-group mb-3">
-                    <label>Año (AAAA)</label>
-                    <input type="text" maxLength={4} placeholder="AAAA" className="form-control" value={anioExpiracion} onChange={(e) => setAnioExpiracion(e.target.value)} required />
+
+                    <div className="col-md-12 mb-4 justify-content-center d-flex">
+                        <ReCAPTCHA onChange={(token) => setCaptchaToken(token)} />
                     </div>
-                </div>
-                <div className="form-group mb-4">
-                    <label>CVV</label>
-                    <input type="text" maxLength={3} className="form-control" value={cvv} onChange={(e) => setCvv(e.target.value)} required />
-                </div>
 
-                <div className="col-md-12 mb-4 justify-content-center d-flex">
-                    <ReCAPTCHA onChange={(token) => setCaptchaToken(token)} />
-                </div>
-
-                <div className="form-group text-center">
-                    <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}}>
-                        Pagar
-                    </button>
-                </div>
+                    <div className="form-group text-center">
+                        <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}}>
+                            Pagar
+                        </button>
+                    </div>
 
                 </form>
             </div>

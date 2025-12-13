@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationModal from "../components/ui/NotificacionModal"; 
-import RichTextEditor from "../components/RichTextEditor"; 
+import RichTextEditor from "../components/RichTextEditor";
 
 export function ComprobarServicio(servicio) {
   if (!servicio || typeof servicio !== "object") {
@@ -11,7 +11,6 @@ export function ComprobarServicio(servicio) {
   const nombre = (servicio.nombre ?? "").toString();
   const descripcion = (servicio.descripcion ?? "").toString();
   let precio = servicio.precio;
-
   if (typeof precio === "string") precio = parseFloat(precio);
   
   if (!nombre.trim() || !descripcion.trim()) {
@@ -37,14 +36,11 @@ export default function Admin() {
     detalles: "", 
     descripcionCompleta: "",
   });
-  
   const [usuarioNombre, setUsuarioNombre] = useState("");
   const [idEdicion, setIdEdicion] = useState(null);
-  
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info', isConfirmation: false });
   const [servicioAEliminar, setServicioAEliminar] = useState(null); 
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info', isConfirmation: false });
-
   const API_URL = "http://localhost:8080/servicios"; 
 
   useEffect(() => {
@@ -77,11 +73,10 @@ export default function Admin() {
     e.preventDefault();
     
     const detallesArray = form.detalles.split("\n");
-
     const cleanedDescription = form.descripcionCompleta 
         ? form.descripcionCompleta.replace(/<p>\s*<br\s*\/?>\s*<\/p>/g, '').trim()
         : "";
-    
+
     const servicioData = {
         nombre: form.nombre,
         descripcion: form.descripcion,
@@ -97,10 +92,13 @@ export default function Admin() {
         return;
     }
 
+    // OBTENEMOS EL TOKEN
+    const session = JSON.parse(localStorage.getItem("user_session"));
+    const token = session ? session.token : "";
+
     try {
       let url = API_URL;
       let method = "POST";
-
       if (idEdicion !== null) {
         url = `${API_URL}/${idEdicion}`;
         method = "PUT";
@@ -108,10 +106,13 @@ export default function Admin() {
 
       const res = await fetch(url, {
         method: method,
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${token}` // ENVIAMOS EL TOKEN
+        },
         body: JSON.stringify(servicioData)
       });
-
+      
       if (res.ok) {
         setModal({ 
             show: true, 
@@ -126,7 +127,7 @@ export default function Admin() {
         setModal({ 
             show: true, 
             title: "Error del Servidor", 
-            message: "Fallo al guardar o actualizar. Revisa el log de Java.", 
+            message: "Fallo al guardar o actualizar. Posiblemente sesión expirada.", 
             status: "error" 
         });
       }
@@ -136,7 +137,7 @@ export default function Admin() {
   };
 
   const manejarEliminarClick = (id) => {
-    setServicioAEliminar(id); 
+    setServicioAEliminar(id);
     setModal({
         show: true,
         title: "¿Confirmar Eliminación?",
@@ -150,10 +151,19 @@ export default function Admin() {
     const id = servicioAEliminar;
     handleCloseModal(); 
 
-    if (!id) return; 
+    if (!id) return;
+
+    // OBTENEMOS EL TOKEN
+    const session = JSON.parse(localStorage.getItem("user_session"));
+    const token = session ? session.token : "";
 
     try {
-        await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+        await fetch(`${API_URL}/${id}`, { 
+            method: "DELETE",
+            headers: {
+                "Authorization": `Bearer ${token}` // ENVIAMOS EL TOKEN
+            } 
+        });
         setModal({ show: true, title: "Eliminado", message: "El servicio fue eliminado de la Base de Datos.", status: "success" });
         cargarServicios();
     } catch (error) {
@@ -237,7 +247,7 @@ export default function Admin() {
                 
                 {idEdicion !== null && (
                     <button type="button" onClick={cancelarEdicion} className="btn btn-secondary mt-2 w-100">
-                        Cancelar Edición
+                      Cancelar Edición
                     </button>
                 )}
               </div>
@@ -269,7 +279,7 @@ export default function Admin() {
                         const total = neto + iva;
 
                         return (
-                            <tr key={s.id}>
+                          <tr key={s.id}>
                                 <td style={{fontWeight: 'bold', color: '#1f235e'}}>{s.nombre}</td>
                                 <td>{s.descripcion}</td>
                                 <td>${neto.toLocaleString()}</td>
@@ -283,7 +293,7 @@ export default function Admin() {
                                         <i className="fa fa-trash"></i>
                                     </button>
                                 </td>
-                            </tr>
+                          </tr>
                         );
                     })
                 )}
