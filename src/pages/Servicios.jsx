@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import {useNavigate } from "react-router-dom";
+import { calcularIVA, calcularTotalConIVA } from "../utils/calculos";
+import { getSession } from "../services/auth";
 
 export default function Servicios() {
   const [servicios, setServicios] = useState([]);
@@ -15,7 +17,7 @@ export default function Servicios() {
   }, []);
 
   const manejarClickCompra = (servicio, neto, iva, total) => {
-    const session = localStorage.getItem("user_session");
+    const session = getSession();
 
     if (!session) {
       navigate("/login");
@@ -76,8 +78,8 @@ export default function Servicios() {
             const descServicio = s.descripcion || "Descripción no disponible";
             const listaDetalles = Array.isArray(s.detalles) ? s.detalles : [];
 
-            const valorIva = Math.round(precioBase * 0.19);
-            const total = precioBase + valorIva;
+            const valorIva = calcularIVA(precioBase);
+            const total = calcularTotalConIVA(precioBase);
 
             return (
               <div key={s.id || i} className="col-md-4 col-sm-6">

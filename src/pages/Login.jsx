@@ -1,31 +1,10 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
-
-export const validarRut = (rutCompleto) => {
-  if (!rutCompleto) return false;
-  let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
-  if (rutLimpio.length < 2) return false;
-  
-  let cuerpo = rutLimpio.slice(0, -1);
-  let dv = rutLimpio.slice(-1).toUpperCase();
-
-  if (!/^\d+$/.test(cuerpo)) return false;
-  let suma = 0;
-  let multiplo = 2;
-
-  for (let i = cuerpo.length - 1; i >= 0; i--) {
-    suma += parseInt(cuerpo[i], 10) * multiplo;
-    multiplo = multiplo < 7 ? multiplo + 1 : 2;
-  }
-
-  let dvEsperado = 11 - (suma % 11);
-  if (dvEsperado === 11) dvEsperado = "0";
-  else if (dvEsperado === 10) dvEsperado = "K";
-  else dvEsperado = dvEsperado.toString();
-
-  return dv === dvEsperado;
-};
+import NotificationModal from "../components/ui/NotificacionModal";
+import { validarRut } from "../utils/validaciones";
+import { setSession } from "../services/auth";
+import { handleError, handleHttpError } from "../services/errorHandler";
 
 export default function Login() {
   const [rut, setRut] = useState("");
@@ -33,15 +12,17 @@ export default function Login() {
   const [error, setError] = useState("");
   const [cargando, setCargando] = useState(false);
   const [captchaValido, setCaptchaValido] = useState(false);
+  const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
 
   const navigate = useNavigate();
+  const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
 
     if (!captchaValido) {
-      alert("Debes completar el reCAPTCHA");
+      setModal({ show: true, title: "Error de Seguridad", message: "Debes completar el reCAPTCHA", status: "warning" });
       return;
     }
 
@@ -77,7 +58,7 @@ export default function Login() {
           token: token // Guardamos el token en la sesión local
         };
 
-        localStorage.setItem("user_session", JSON.stringify(sessionData));
+        setSession(sessionData);
 
         if (sessionData.rol === "admin") {
             navigate("/admin");
@@ -85,13 +66,81 @@ export default function Login() {
             navigate("/servicios");
         }
 
-      } else if (response.status === 401) {
-        setError("RUT o contraseña incorrectos");
       } else {
-        setError(`Error del servidor (${response.status})`);
+        // Manejo específico para errores de login
+        let errorTitle = "Error al Iniciar Sesión";
+        let errorMessage = "No se pudo iniciar sesión.";
+        let errorStatus = "error";
+
+        // Intentar obtener el mensaje del servidor
+        try {
+          const errorData = await response.text();
+          let serverMessage = errorData;
+          
+          try {
+            const parsed = JSON.parse(errorData);
+            serverMessage = parsed.message || parsed.error || errorData;
+          } catch {
+            // Si no es JSON, usar el texto directamente
+          }
+
+          // Convertir mensaje a minúsculas para buscar palabras clave
+          const messageLower = serverMessage.toLowerCase();
+
+          // Mensajes específicos según el código de estado
+          if (response.status === 401) {
+            // Intentar detectar si el usuario no existe o si la contraseña es incorrecta
+            if (messageLower.includes("no encontrado") || 
+                messageLower.includes("no existe") || 
+                messageLower.includes("usuario no encontrado") ||
+                messageLower.includes("no se encontró")) {
+              errorTitle = "Usuario No Encontrado";
+              errorMessage = "No existe una cuenta registrada con este RUT. ¿Deseas registrarte?";
+              errorStatus = "warning";
+            } else if (messageLower.includes("contraseña") || 
+                       messageLower.includes("password") ||
+                       messageLower.includes("incorrecta")) {
+              errorTitle = "Contraseña Incorrecta";
+              errorMessage = "La contraseña ingresada es incorrecta. Verifica tu contraseña e intenta nuevamente.";
+              errorStatus = "warning";
+            } else {
+              // Por defecto, asumir que el usuario no existe (más seguro)
+              errorTitle = "Usuario No Encontrado";
+              errorMessage = "No existe una cuenta registrada con este RUT. Si ya tienes cuenta, verifica que hayas ingresado correctamente tu RUT y contraseña. ¿Deseas registrarte?";
+              errorStatus = "warning";
+            }
+          } else if (response.status === 404) {
+            errorTitle = "Usuario No Encontrado";
+            errorMessage = "No existe una cuenta con este RUT. ¿Deseas registrarte?";
+            errorStatus = "warning";
+          } else if (response.status === 400) {
+            errorTitle = "Error de Validación";
+            errorMessage = serverMessage || "Los datos proporcionados no son válidos.";
+            errorStatus = "warning";
+          } else {
+            errorMessage = serverMessage || `Error del servidor (${response.status})`;
+          }
+        } catch {
+          // Si no se puede leer el error, usar mensajes por defecto
+          if (response.status === 401) {
+            // Por defecto, asumir que el usuario no existe
+            errorTitle = "Usuario No Encontrado";
+            errorMessage = "No existe una cuenta registrada con este RUT. Si ya tienes cuenta, verifica que hayas ingresado correctamente tu RUT y contraseña. ¿Deseas registrarte?";
+            errorStatus = "warning";
+          } else if (response.status === 404) {
+            errorTitle = "Usuario No Encontrado";
+            errorMessage = "No existe una cuenta con este RUT. ¿Deseas registrarte?";
+            errorStatus = "warning";
+          }
+        }
+
+        setModal({ show: true, title: errorTitle, message: errorMessage, status: errorStatus });
+        setError(errorMessage);
       }
     } catch (err) {
-      setError("Error de conexión con el servidor");
+      const errorInfo = handleError(err);
+      setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+      setError(errorInfo.message);
     } finally {
       setCargando(false);
     }
@@ -153,6 +202,14 @@ export default function Login() {
           </div>
         </div>
       </div>
+
+      <NotificationModal 
+        show={modal.show}
+        handleClose={handleCloseModal}
+        title={modal.title}
+        message={modal.message}
+        status={modal.status}
+      />
     </div>
   );
 }

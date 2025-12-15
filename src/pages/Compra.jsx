@@ -2,6 +2,8 @@ import { useState, useEffect } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 import NotificationModal from "../components/ui/NotificacionModal";
+import { getSession } from "../services/auth";
+import { handleError, handleHttpError } from "../services/errorHandler";
 
 export function validarNumeroTarjeta(numero) {
   if (typeof numero !== "string") return false;
@@ -33,6 +35,7 @@ export default function Compra() {
   const [cvv, setCvv] = useState("");
   const [captchaToken, setCaptchaToken] = useState(null);
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
+  const [cargando, setCargando] = useState(false);
   
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
 
@@ -81,10 +84,19 @@ export default function Compra() {
       return;
     }
 
-    const anioActual = new Date().getFullYear();
+    const hoy = new Date();
+    const anioActual = hoy.getFullYear();
+    const mesActual = hoy.getMonth() + 1; // getMonth() devuelve 0-11
     const anio = parseInt(anioExpiracion, 10);
+    
     if (!/^\d{4}$/.test(anioExpiracion) || anio < anioActual) {
       mostrarError("Año de expiración inválido o expirado.");
+      return;
+    }
+    
+    // Si el año es el actual, validar que el mes no haya expirado
+    if (anio === anioActual && mes < mesActual) {
+      mostrarError("La tarjeta ha expirado este mes.");
       return;
     }
 
@@ -94,7 +106,7 @@ export default function Compra() {
     }
 
     // --- INTEGRACION CON BACKEND (NUEVO) ---
-    const session = JSON.parse(localStorage.getItem("user_session"));
+    const session = getSession();
     
     // Si no hay sesión, mandamos a login
     if (!session || !session.token) {
@@ -102,6 +114,8 @@ export default function Compra() {
         setTimeout(() => navigate("/login"), 2000);
         return;
     }
+
+    setCargando(true);
 
     // Preparamos los datos para el Backend (CompraDTO)
     const compraData = {
@@ -133,11 +147,15 @@ export default function Compra() {
                 navigate("/firma", { state: { servicio: servicio } });
             }, 1500);
         } else {
-            mostrarError("Error al procesar la compra en el servidor.");
+            const errorInfo = await handleHttpError(response);
+            mostrarError(errorInfo.message);
         }
 
     } catch (error) {
-        mostrarError("No se pudo conectar con el servidor de pagos.");
+        const errorInfo = handleError(error);
+        mostrarError(errorInfo.message);
+    } finally {
+        setCargando(false);
     }
   };
 
@@ -220,8 +238,8 @@ export default function Compra() {
                     </div>
 
                     <div className="form-group text-center">
-                        <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}}>
-                            Pagar
+                        <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}} disabled={cargando}>
+                            {cargando ? "Procesando..." : "Pagar"}
                         </button>
                     </div>
 

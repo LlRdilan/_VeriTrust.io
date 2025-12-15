@@ -1,33 +1,9 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
-import NotificationModal from "../components/ui/NotificacionModal"; 
-
-export const validarRut = (rutCompleto) => {
-  if (!rutCompleto) return false;
-  let rutLimpio = rutCompleto.replace(/\./g, "").replace("-", "");
-  if (rutLimpio.length < 2) return false;
-  
-  let cuerpo = rutLimpio.slice(0, -1);
-  let dv = rutLimpio.slice(-1).toUpperCase();
-
-  if (!/^\d+$/.test(cuerpo)) return false;
-
-  let suma = 0;
-  let multiplo = 2;
-
-  for (let i = cuerpo.length - 1; i >= 0; i--) {
-    suma += parseInt(cuerpo[i], 10) * multiplo;
-    multiplo = multiplo < 7 ? multiplo + 1 : 2;
-  }
-
-  let dvEsperado = 11 - (suma % 11);
-  if (dvEsperado === 11) dvEsperado = "0";
-  else if (dvEsperado === 10) dvEsperado = "K";
-  else dvEsperado = dvEsperado.toString();
-
-  return dv === dvEsperado;
-};
+import NotificationModal from "../components/ui/NotificacionModal";
+import { validarRut, validarEmail, calcularEdad } from "../utils/validaciones";
+import { handleError, handleHttpError } from "../services/errorHandler";
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -63,14 +39,12 @@ export default function Registro() {
     if (!form.fechaNac) {
         nuevosErrores.fechaNac = "Ingresa tu fecha de nacimiento"; valido = false;
     } else {
-        const FechaNac = new Date(form.fechaNac);
-        const hoy = new Date();
-        let edad = hoy.getFullYear() - FechaNac.getFullYear();
+        const edad = calcularEdad(form.fechaNac);
         if (edad < 18) {
             nuevosErrores.fechaNac = "Debes ser mayor de 18 años"; valido = false;
         }
     }
-    if (!form.email.includes("@")) { nuevosErrores.email = "Correo inválido"; valido = false; }
+    if (!validarEmail(form.email)) { nuevosErrores.email = "Correo inválido"; valido = false; }
     if (form.email !== form.confirmarEmail) { nuevosErrores.confirmarEmail = "Los correos no coinciden"; valido = false; }
     
     if (form.contraseña.length < 6) { nuevosErrores.contraseña = "Mínimo 6 caracteres"; valido = false; }
@@ -118,16 +92,17 @@ export default function Registro() {
         setModal({ show: true, title: "Registro Exitoso", message: "¡Tu cuenta ha sido creada! Ahora puedes iniciar sesión.", status: "success" });
         setTimeout(() => navigate("/login"), 1500); 
       } else {
-        const errorData = await response.text();
+        const errorInfo = await handleHttpError(response);
         setModal({ 
             show: true, 
-            title: "Error al Registrar", 
-            message: `No fue posible completar el registro. Detalles: ${errorData || 'Error desconocido del servidor.'}`, 
-            status: "error" 
+            title: errorInfo.title, 
+            message: errorInfo.message, 
+            status: errorInfo.status 
         });
       }
     } catch (error) {
-      setModal({ show: true, title: "Error de Conexión", message: "No se pudo conectar con el servidor. Verifica tu conexión.", status: "error" });
+      const errorInfo = handleError(error);
+      setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
     }
   };
 

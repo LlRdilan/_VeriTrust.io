@@ -2,6 +2,9 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import NotificationModal from "../components/ui/NotificacionModal"; 
 import RichTextEditor from "../components/RichTextEditor";
+import { getSession, removeSession } from "../services/auth";
+import { calcularIVA, calcularTotalConIVA } from "../utils/calculos";
+import { handleError, handleHttpError } from "../services/errorHandler";
 
 export function ComprobarServicio(servicio) {
   if (!servicio || typeof servicio !== "object") {
@@ -39,38 +42,49 @@ export default function Admin() {
   const [usuarioNombre, setUsuarioNombre] = useState("");
   const [idEdicion, setIdEdicion] = useState(null);
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info', isConfirmation: false });
-  const [servicioAEliminar, setServicioAEliminar] = useState(null); 
+  const [servicioAEliminar, setServicioAEliminar] = useState(null);
+  const [cargandoServicios, setCargandoServicios] = useState(false);
+  const [cargandoForm, setCargandoForm] = useState(false);
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info', isConfirmation: false });
   const API_URL = "http://localhost:8080/servicios"; 
 
   useEffect(() => {
-    const session = localStorage.getItem("user_session");
+    const session = getSession();
     if (!session) {
         navegar("/login");
     } else {
-        const user = JSON.parse(session);
-        if (user.rol !== "admin") {
+        if (session.rol !== "admin") {
             navegar("/servicios"); 
             return;
         }
-        setUsuarioNombre(user.nombre);
+        setUsuarioNombre(session.nombre);
     }
 
     cargarServicios();
   }, [navegar]);
 
   const cargarServicios = async () => {
+    setCargandoServicios(true);
     try {
       const res = await fetch(API_URL);
+      if (!res.ok) {
+        const errorInfo = await handleHttpError(res);
+        setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+        return;
+      }
       const data = await res.json();
       setServicios(data);
     } catch (error) {
-      console.error("Error al cargar servicios (BD):", error);
+      const errorInfo = handleError(error);
+      setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+    } finally {
+      setCargandoServicios(false);
     }
   };
 
   const manejarEnvio = async (e) => {
     e.preventDefault();
+    setCargandoForm(true);
     
     const detallesArray = form.detalles.split("\n");
     const cleanedDescription = form.descripcionCompleta 
@@ -89,11 +103,12 @@ export default function Admin() {
         ComprobarServicio(servicioData);
     } catch (error) {
         setModal({ show: true, title: "Error de Formulario", message: error.message, status: "warning" });
+        setCargandoForm(false);
         return;
     }
 
     // OBTENEMOS EL TOKEN
-    const session = JSON.parse(localStorage.getItem("user_session"));
+    const session = getSession();
     const token = session ? session.token : "";
 
     try {
@@ -124,15 +139,19 @@ export default function Admin() {
         setIdEdicion(null);
         cargarServicios();
       } else {
+        const errorInfo = await handleHttpError(res);
         setModal({ 
             show: true, 
-            title: "Error del Servidor", 
-            message: "Fallo al guardar o actualizar. Posiblemente sesión expirada.", 
-            status: "error" 
+            title: errorInfo.title, 
+            message: errorInfo.message, 
+            status: errorInfo.status 
         });
       }
     } catch (error) {
-      setModal({ show: true, title: "Error de Conexión", message: "No se pudo alcanzar la API.", status: "error" });
+      const errorInfo = handleError(error);
+      setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+    } finally {
+      setCargandoForm(false);
     }
   };
 
@@ -154,20 +173,27 @@ export default function Admin() {
     if (!id) return;
 
     // OBTENEMOS EL TOKEN
-    const session = JSON.parse(localStorage.getItem("user_session"));
+    const session = getSession();
     const token = session ? session.token : "";
 
     try {
-        await fetch(`${API_URL}/${id}`, { 
+        const res = await fetch(`${API_URL}/${id}`, { 
             method: "DELETE",
             headers: {
                 "Authorization": `Bearer ${token}` // ENVIAMOS EL TOKEN
             } 
         });
-        setModal({ show: true, title: "Eliminado", message: "El servicio fue eliminado de la Base de Datos.", status: "success" });
-        cargarServicios();
+        
+        if (res.ok) {
+            setModal({ show: true, title: "Eliminado", message: "El servicio fue eliminado de la Base de Datos.", status: "success" });
+            cargarServicios();
+        } else {
+            const errorInfo = await handleHttpError(res);
+            setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+        }
     } catch (error) {
-        setModal({ show: true, title: "Error", message: "Fallo al eliminar el servicio.", status: "error" });
+        const errorInfo = handleError(error);
+        setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
     } finally {
         setServicioAEliminar(null);
     }
@@ -195,7 +221,18 @@ export default function Admin() {
   };
 
   const cerrarSesion = () => {
-    localStorage.removeItem("user_session");
+    setModal({
+        show: true,
+        title: "¿Cerrar Sesión?",
+        message: "¿Estás seguro de que deseas cerrar sesión?",
+        status: "warning",
+        isConfirmation: true,
+    });
+  };
+
+  const handleConfirmarCerrarSesion = () => {
+    removeSession();
+    handleCloseModal();
     navegar("/login");
   };
 
@@ -241,8 +278,8 @@ export default function Admin() {
               </div>
 
               <div className="col-12 mt-5">
-                <button className="btn_primary w-100">
-                    {idEdicion !== null ? "Guardar Cambios" : "Crear Servicio"}
+                <button className="btn_primary w-100" disabled={cargandoForm}>
+                    {cargandoForm ? "Guardando..." : (idEdicion !== null ? "Guardar Cambios" : "Crear Servicio")}
                 </button>
                 
                 {idEdicion !== null && (
@@ -257,6 +294,11 @@ export default function Admin() {
 
         <div className="backoffice_section">
           <h4>Servicios Actuales (Base de Datos)</h4>
+          {cargandoServicios && (
+            <div className="text-center mb-3">
+              <p>Cargando servicios...</p>
+            </div>
+          )}
           <div className="table-responsive">
             <table className="table">
                 <thead>
@@ -275,8 +317,8 @@ export default function Admin() {
                 ) : (
                     servicios.map((s) => {
                         const neto = Number(s.precio);
-                        const iva = Math.round(neto * 0.19);
-                        const total = neto + iva;
+                        const iva = calcularIVA(neto);
+                        const total = calcularTotalConIVA(neto);
 
                         return (
                           <tr key={s.id}>
@@ -309,12 +351,12 @@ export default function Admin() {
 
       <NotificationModal 
         show={modal.show}
-        handleClose={modal.isConfirmation ? handleCancelarEliminacion : handleCloseModal} 
+        handleClose={modal.isConfirmation ? (modal.title === "¿Cerrar Sesión?" ? handleCloseModal : handleCancelarEliminacion) : handleCloseModal} 
         title={modal.title}
         message={modal.message}
         status={modal.status}
         isConfirmation={modal.isConfirmation} 
-        onConfirm={handleAceptarEliminar} 
+        onConfirm={modal.title === "¿Cerrar Sesión?" ? handleConfirmarCerrarSesion : handleAceptarEliminar} 
       />
     </div>
   );

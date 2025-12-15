@@ -1,6 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
-import NotificationModal from "../components/ui/NotificacionModal"; 
+import NotificationModal from "../components/ui/NotificacionModal";
+import DOMPurify from 'dompurify';
+import { calcularIVA, calcularTotalConIVA } from "../utils/calculos";
+import { handleError, handleHttpError } from "../services/errorHandler"; 
 
 export default function ServicioDetalle() {
     const { id } = useParams();
@@ -20,17 +23,26 @@ export default function ServicioDetalle() {
                 const res = await fetch(`${API_URL}/${id}`);
                 
                 if (!res.ok) {
-                    throw new Error("Servicio no encontrado");
+                    const errorInfo = await handleHttpError(res);
+                    setModal({ 
+                        show: true, 
+                        title: errorInfo.title, 
+                        message: errorInfo.message, 
+                        status: errorInfo.status 
+                    });
+                    setTimeout(() => navigate('/servicios'), 2000);
+                    return;
                 }
                 
                 const data = await res.json();
                 setServicio(data);
             } catch (error) {
+                const errorInfo = handleError(error);
                 setModal({ 
                     show: true, 
-                    title: "Error de Carga", 
-                    message: "No se pudo encontrar el detalle del servicio.", 
-                    status: "error" 
+                    title: errorInfo.title, 
+                    message: errorInfo.message, 
+                    status: errorInfo.status 
                 });
                 setTimeout(() => navigate('/servicios'), 2000);
             } finally {
@@ -49,8 +61,8 @@ export default function ServicioDetalle() {
         if (!servicio) return;
         
         const neto = Number(servicio.precio);
-        const valorIva = Math.round(neto * 0.19);
-        const total = neto + valorIva;
+        const valorIva = calcularIVA(neto);
+        const total = calcularTotalConIVA(neto);
 
         navigate('/compra', {
             state: { 
@@ -72,8 +84,8 @@ export default function ServicioDetalle() {
     }
 
     const netoFinal = Number(servicio.precio);
-    const ivaFinal = Math.round(netoFinal * 0.19);
-    const totalFinal = netoFinal + ivaFinal;
+    const ivaFinal = calcularIVA(netoFinal);
+    const totalFinal = calcularTotalConIVA(netoFinal);
 
 
     return (
@@ -126,7 +138,7 @@ export default function ServicioDetalle() {
                                 style={{lineHeight: '1.8', color: '#333'}}
                             >
                                 {servicio.descripcionCompleta ? (
-                                    <div dangerouslySetInnerHTML={{ __html: servicio.descripcionCompleta }} />
+                                    <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(servicio.descripcionCompleta) }} />
                                 ) : (
                                     <>
                                         <p><strong>{servicio.descripcion}</strong></p>

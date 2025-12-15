@@ -15,6 +15,7 @@ import Importante from './pages/Importante';
 import Firma from './pages/Firma';
 import ServicioDetalle from './pages/ServicioDetalle';
 import NotFound from './pages/NotFound';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export default function App() {
   return (
@@ -29,10 +30,22 @@ export default function App() {
         <Route path="/contactanos" element={<Contactanos />} />
         <Route path="/login" element={<Login />} />
         <Route path="/registro" element={<Registro />} />
-        <Route path="/admin" element={<Admin />} />
-        <Route path="/compra" element={<Compra />} />
+        <Route path="/admin" element={
+          <ProtectedRoute requireAdmin={true}>
+            <Admin />
+          </ProtectedRoute>
+        } />
+        <Route path="/compra" element={
+          <ProtectedRoute>
+            <Compra />
+          </ProtectedRoute>
+        } />
         <Route path="/importante" element={<Importante />} />
-        <Route path="/firma" element={<Firma />} />
+        <Route path="/firma" element={
+          <ProtectedRoute>
+            <Firma />
+          </ProtectedRoute>
+        } />
         <Route path="/servicio/detalle/:id" element={<ServicioDetalle />} />
         <Route path="*" element={<NotFound />} />
       </Routes>

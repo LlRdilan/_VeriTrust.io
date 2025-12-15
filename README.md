@@ -72,11 +72,21 @@ veritrust-app
    ```
 
 ## Usage
-To start the application, run:
+To start the development server, run:
 ```
-npm start
+npm run dev
 ```
-This will launch the application in your default web browser.
+This will launch the application in your default web browser at `http://localhost:5173`.
+
+To build the application for production:
+```
+npm run build
+```
+
+To preview the production build:
+```
+npm run preview
+```
 
 ## Contributing
 Contributions are welcome! Please submit a pull request or open an issue for any enhancements or bug fixes.
