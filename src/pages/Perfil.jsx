@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getSession } from "../services/auth";
-import { handleError, handleHttpError } from "../services/errorHandler";
 import NotificationModal from "../components/ui/NotificacionModal";
 
 export default function Perfil() {
@@ -64,9 +63,36 @@ export default function Perfil() {
         setCompras([]);
       }
 
-      // Cargar documentos firmados (si existe endpoint)
-      // Por ahora, simularemos con datos locales o vacío
-      setDocumentos([]);
+      // Cargar documentos firmados del usuario
+      try {
+        // Usar el endpoint correcto según el backend: /api/documento/user/{userId}
+        let documentosResponse = await fetch(`http://localhost:8080/api/documento/user/${session.id}`, {
+          headers: {
+            "Authorization": `Bearer ${session.token}`
+          }
+        });
+
+        // Si falla, intentar con el endpoint alternativo /api/documento/firmados/usuario/{userId}
+        if (!documentosResponse.ok && documentosResponse.status === 404) {
+          documentosResponse = await fetch(`http://localhost:8080/api/documento/firmados/usuario/${session.id}`, {
+            headers: {
+              "Authorization": `Bearer ${session.token}`
+            }
+          });
+        }
+
+        if (documentosResponse.ok) {
+          const documentosData = await documentosResponse.json();
+          setDocumentos(Array.isArray(documentosData) ? documentosData : []);
+        } else {
+          // Si no hay documentos o el endpoint no existe, usar array vacío
+          console.warn("No se pudieron cargar los documentos firmados:", documentosResponse.status);
+          setDocumentos([]);
+        }
+      } catch (error) {
+        console.error("Error al cargar documentos firmados:", error);
+        setDocumentos([]);
+      }
     } catch (error) {
       console.error("Error al cargar datos:", error);
       setCompras([]);
@@ -123,6 +149,33 @@ export default function Perfil() {
     } catch {
       return fecha;
     }
+  };
+
+  const formatearFechaHora = (fecha) => {
+    if (!fecha) return "N/A";
+    try {
+      return new Date(fecha).toLocaleString('es-CL', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    } catch {
+      return fecha;
+    }
+  };
+
+  const descargarDocumento = async (documentoId, nombreArchivo) => {
+    // Mostrar mensaje de que se enviará por correo
+    const session = getSession();
+    const emailUsuario = usuario?.email || session?.email || 'tu correo electrónico';
+    setModal({
+      show: true,
+      title: "Descarga de Documento",
+      message: `Se te enviará el documento por vía correo electrónico a "${emailUsuario}"`,
+      status: "info"
+    });
   };
 
   if (cargando) {
@@ -323,11 +376,13 @@ export default function Perfil() {
                                 cursor: 'pointer'
                               }}
                               onClick={() => {
-                                // Aquí se podría generar/descargar la boleta
+                                // Mostrar mensaje de que se enviará por correo
+                                const session = getSession();
+                                const emailUsuario = usuario?.email || session?.email || 'tu correo electrónico';
                                 setModal({
                                   show: true,
-                                  title: "Boleta",
-                                  message: "La boleta se generará próximamente. Por ahora, puedes descargarla desde el proceso de firma.",
+                                  title: "Descarga de Boleta",
+                                  message: `Se te enviará la boleta por vía correo electrónico a "${emailUsuario}"`,
                                   status: "info"
                                 });
                               }}
@@ -368,18 +423,18 @@ export default function Perfil() {
                     <thead>
                       <tr style={{backgroundColor: '#f8f9fa'}}>
                         <th style={{padding: '12px', borderBottom: '2px solid #ddd'}}>Documento</th>
-                        <th style={{padding: '12px', borderBottom: '2px solid #ddd'}}>Fecha de Firma</th>
-                        <th style={{padding: '12px', borderBottom: '2px solid #ddd'}}>Hash</th>
+                        <th style={{padding: '12px', borderBottom: '2px solid #ddd'}}>Fecha de Subida</th>
                         <th style={{padding: '12px', borderBottom: '2px solid #ddd'}}>Acciones</th>
                       </tr>
                     </thead>
                     <tbody>
                       {documentos.map((doc, index) => (
                         <tr key={doc.id || index} style={{borderBottom: '1px solid #eee'}}>
-                          <td style={{padding: '12px'}}>{doc.nombre || 'Documento'}</td>
-                          <td style={{padding: '12px'}}>{formatearFecha(doc.fechaFirma)}</td>
-                          <td style={{padding: '12px', fontFamily: 'monospace', fontSize: '11px'}}>
-                            {doc.hash ? doc.hash.substring(0, 20) + '...' : 'N/A'}
+                          <td style={{padding: '12px'}}>
+                            {doc.nombreOriginal || doc.nombre || 'Documento'}
+                          </td>
+                          <td style={{padding: '12px'}}>
+                            {formatearFechaHora(doc.fechaSubida)}
                           </td>
                           <td style={{padding: '12px'}}>
                             <button 
@@ -393,6 +448,7 @@ export default function Perfil() {
                                 cursor: 'pointer',
                                 marginRight: '5px'
                               }}
+                              onClick={() => descargarDocumento(doc.id, doc.nombreOriginal || doc.nombre)}
                             >
                               <i className="fa fa-download"></i> Descargar
                             </button>

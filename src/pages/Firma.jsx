@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import { PDFDocument, rgb } from "pdf-lib";
+import { getToken } from "../services/auth";
 
 export default function Firma() {
   const location = useLocation();
@@ -80,13 +81,71 @@ export default function Firma() {
     setTimeout(() => {
       setCargando(false);
       setFirmado(true);
-      setHashDocumento(Math.random().toString(36).substring(2, 20).toUpperCase() + Math.random().toString(36).substring(2, 20).toUpperCase());
-      setFechaFirma(new Date().toLocaleString());
+      // El hash real se calculará cuando se genere el PDF firmado
+      setHashDocumento(""); // Se establecerá después
+      setFechaFirma(new Date().toISOString().slice(0, 19));
     }, 3000);
   };
 
+  // Calcular hash SHA-256
+  const calcularHashSHA256 = async (arrayBuffer) => {
+    const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+  };
+
+  // Enviar solo los metadatos del documento al backend (sin archivo)
+  const enviarMetadatosAlBackend = async (hash, nombreArchivo) => {
+    try {
+      // Obtener el token y datos de la sesión
+      const sessionActual = JSON.parse(localStorage.getItem("user_session") || "null");
+      const token = sessionActual?.token || getToken();
+
+      if (!token) {
+        console.error('No se encontró el token de autenticación');
+        return;
+      }
+
+      // Usar la fecha del estado (ya en formato ISO 8601) o generar una nueva
+      const fechaFirmaISO = fechaFirma || new Date().toISOString().slice(0, 19);
+      const fechaActual = new Date().toISOString();
+
+      // Preparar datos según DocumentoDTO (todos los campos requeridos)
+      const documentoData = {
+        nombreOriginal: nombreArchivo,
+        nombreAlmacenado: `metadatos_${hash.substring(0, 8)}_${Date.now()}.pdf`, // Nombre único temporal
+        tipoContenido: 'application/pdf',
+        tamano: 0, // Sin archivo físico, usar 0
+        fechaSubida: fechaActual,
+        firmado: true,
+        usuarioId: sessionActual?.id
+      };
+
+      const response = await fetch('http://localhost:8080/api/documento', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(documentoData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log('Metadatos del documento guardados exitosamente:', result);
+      } else {
+        const errorData = await response.json().catch(() => ({ error: 'Error al guardar metadatos' }));
+        console.error('Error al guardar metadatos:', errorData);
+      }
+    } catch (error) {
+      console.error('Error al enviar metadatos al backend:', error);
+      // No mostramos error al usuario, solo lo registramos en consola
+    }
+  };
+
+
   // Función auxiliar para generar el certificado como PDF usando pdf-lib
-  const generarCertificadoPDF = async () => {
+  const generarCertificadoPDF = async (hashParaCertificado = null) => {
     const pdfDoc = await PDFDocument.create();
     const page = pdfDoc.addPage([595, 842]); // Tamaño A4
     const { width, height } = page.getSize();
@@ -208,8 +267,9 @@ export default function Firma() {
       font: helveticaBoldFont,
     });
     
+    const hashParaMostrar = hashParaCertificado || hashDocumento || 'Calculando...';
     y -= 12; // Más espacio antes del hash
-    page.drawText(hashDocumento.substring(0, 32), {
+    page.drawText(hashParaMostrar.substring(0, 32), {
       x: 25,
       y: y,
       size: 9,
@@ -218,7 +278,7 @@ export default function Firma() {
     });
     
     y -= 10; // Más espacio entre líneas del hash
-    page.drawText(hashDocumento.substring(32), {
+    page.drawText(hashParaMostrar.substring(32) || '', {
       x: 25,
       y: y,
       size: 9,
@@ -378,82 +438,58 @@ export default function Firma() {
     
     try {
       let pdfDoc;
+      let pdfOriginalBytes;
       
       // Si es PDF, cargarlo directamente
       if (tipoArchivo === 'pdf') {
         const arrayBuffer = await archivo.arrayBuffer();
+        pdfOriginalBytes = new Uint8Array(arrayBuffer);
         pdfDoc = await PDFDocument.load(arrayBuffer);
       } else {
         // Convertir otros tipos a PDF
-        const pdfBytes = await convertirArchivoAPDF();
-        pdfDoc = await PDFDocument.load(pdfBytes);
+        pdfOriginalBytes = await convertirArchivoAPDF();
+        pdfDoc = await PDFDocument.load(pdfOriginalBytes);
       }
       
-      // Generar el certificado
-      const certificadoBytes = await generarCertificadoPDF();
+      // Calcular hash SHA-256 del PDF original (sin certificado) para mostrar en el certificado
+      const hashOriginal = await calcularHashSHA256(pdfOriginalBytes);
+      
+      // Generar el certificado con el hash del PDF original
+      const certificadoBytes = await generarCertificadoPDF(hashOriginal);
       const certificadoDoc = await PDFDocument.load(certificadoBytes);
       
       // Copiar la página del certificado al documento
       const [certificadoPage] = await pdfDoc.copyPages(certificadoDoc, [0]);
       pdfDoc.addPage(certificadoPage);
       
-      // Guardar el PDF combinado
-      const pdfBytes = await pdfDoc.save();
-      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      // Guardar el PDF combinado (con certificado)
+      const pdfBytesFinal = await pdfDoc.save();
+      
+      // Calcular hash SHA-256 del PDF final (con certificado)
+      const hashFinal = await calcularHashSHA256(pdfBytesFinal);
+      // Actualizar el hash en el estado para mostrar el hash del PDF final
+      setHashDocumento(hashFinal);
+      
+      // Descargar el archivo localmente
+      const blob = new Blob([pdfBytesFinal], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
+      const nombreArchivo = `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`;
       link.href = url;
-      link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
+      link.setAttribute('download', nombreArchivo);
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
+      
+      // Enviar solo los metadatos al backend (sin el archivo)
+      await enviarMetadatosAlBackend(hashFinal, nombreArchivo);
     } catch (error) {
       console.error('Error al procesar archivo:', error);
       alert('Error al procesar el archivo. Por favor, intenta con otro formato.');
     }
   };
 
-  const descargarCertificado = () => {
-    const doc = new jsPDF();
-    const anchoPagina = doc.internal.pageSize.getWidth();
-    
-    doc.setFillColor(31, 35, 94); doc.rect(0, 0, anchoPagina, 20, 'F');
-    doc.setTextColor(255, 255, 255); doc.setFontSize(14); doc.setFont("helvetica", "bold");
-    doc.text("VERITRUST", 10, 14);
-
-    doc.setTextColor(31, 35, 94); doc.setFontSize(26); doc.setFont("helvetica", "bold");
-    doc.text("CERTIFICADO DE FIRMA ELECTRÓNICA", anchoPagina / 2, 50, null, null, "center");
-    
-    doc.setDrawColor(31, 35, 94); doc.setLineWidth(1.5);
-    doc.circle(anchoPagina / 2, 100, 30); 
-    doc.setFontSize(10);
-    doc.text("FIRMA ELECTRÓNICA AVANZADA", anchoPagina / 2, 100, null, null, "center");
-    doc.text("VALIDADO POR VERITRUST", anchoPagina / 2, 108, null, null, "center");
-
-    let y = 140;
-    doc.setFontSize(12); doc.setFont("helvetica", "bold");
-    doc.text("Detalles de la Firma Digital:", 20, y); y += 10;
-    
-    doc.setDrawColor(200); doc.line(20, y, anchoPagina - 20, y); y += 5;
-    
-    doc.setFont("helvetica", "normal");
-    
-    doc.text(`Documento Firmado: ${archivo.name}`, 25, y); y += 7;
-    doc.text(`Firmante (RUT): ${nombreUsuario} (${rutUsuario})`, 25, y); y += 7;
-    doc.text(`Fecha y Hora de Sello: ${fechaFirma}`, 25, y); y += 7;
-
-    doc.setFont("helvetica", "bold");
-    doc.text("Hash de Integridad (SHA-256):", 25, y + 5);
-    doc.setFont("courier", "normal");
-    doc.text(hashDocumento.substring(0, 32), 25, y + 12);
-    doc.text(hashDocumento.substring(32), 25, y + 17);
-
-    doc.setFont("helvetica", "normal"); doc.setFontSize(9); doc.setTextColor(150);
-    doc.text("Este certificado es una página adjunta al documento original y prueba su validez legal.", anchoPagina / 2, 280, null, null, "center");
-
-    doc.save(`CERTIFICADO_FIRMA_${nombreSanitizado}.pdf`);
-  };
 
   const descargarBoleta = () => {
     const doc = new jsPDF();
@@ -630,17 +666,25 @@ export default function Firma() {
                   
                   <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#f0fdf4', borderRadius: '15px', border: '1px solid #28a745', textAlign: 'left'}}>
                     <p style={{marginBottom: '5px'}}><strong>Archivo Generado:</strong> DOCUMENTO_FIRMADO_{nombreSanitizado}.pdf</p>
-                    <p style={{marginBottom: '5px'}}><strong>Hash de Seguridad:</strong> {hashDocumento}</p>
+                    <p style={{marginBottom: '5px'}}><strong>Hash de Seguridad (SHA-256):</strong> {hashDocumento || 'Se calculará al descargar'}</p>
                     <p style={{marginBottom: '0'}}><strong>Fecha:</strong> {fechaFirma}</p>
                   </div>
 
                   <div className="d-flex justify-content-center gap-3 mt-4" style={{gap: '15px', flexWrap: 'wrap'}}>
                     
-                    <button onClick={descargarArchivo} className="btn_primary" style={{background: '#28a745', border: 'none', minWidth: '220px'}}>
+                    <button 
+                      onClick={descargarArchivo} 
+                      className="btn_primary" 
+                      style={{background: '#28a745', border: 'none', minWidth: '220px'}}
+                    >
                         <i className="fa fa-download"></i> Descargar Documento + Certificado
                     </button>
                     
-                    <button onClick={descargarBoleta} className="btn_primary" style={{background: '#0FB3D1', border: 'none', minWidth: '220px'}}>
+                    <button 
+                      onClick={descargarBoleta} 
+                      className="btn_primary" 
+                      style={{background: '#0FB3D1', border: 'none', minWidth: '220px'}}
+                    >
                         <i className="fa fa-receipt"></i> Descargar Boleta
                     </button>
                   </div>

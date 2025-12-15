@@ -43,24 +43,6 @@ export const removeSession = () => {
 };
 
 /**
- * Verifica si el usuario está autenticado
- * @returns {boolean} - true si hay una sesión válida
- */
-export const isAuthenticated = () => {
-  const session = getSession();
-  return session !== null && session.token !== undefined;
-};
-
-/**
- * Verifica si el usuario es administrador
- * @returns {boolean} - true si el usuario es admin
- */
-export const isAdmin = () => {
-  const session = getSession();
-  return session !== null && session.rol === "admin";
-};
-
-/**
  * Obtiene el token de autenticación
  * @returns {string|null} - Token o null si no existe
  */

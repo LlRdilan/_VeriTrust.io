@@ -100,8 +100,7 @@ export default function Registro() {
           telefono: form.telefono,
           email: form.email,
           contraseña: form.contraseña,
-          region: form.region,
-          comuna: form.comuna,
+          // region y comuna no están en el UsuarioDTO del backend, se eliminan
       };
 
       const response = await fetch("http://localhost:8080/usuarios", {
