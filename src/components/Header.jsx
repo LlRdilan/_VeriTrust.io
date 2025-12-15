@@ -99,10 +99,19 @@ export default function Header() {
                                                         <i className="fa fa-user-circle" style={{marginRight: '5px'}}></i> {user.nombre}
                                                     </a>
                                                     <div className="dropdown-menu" aria-labelledby="navbarDropdown">
-                                                        {user.rol === "admin" && (<Link className="dropdown-item" to="/admin">Ir al Panel</Link>)}
-                                                        {user.rol !== "admin" && (<Link className="dropdown-item" to="/servicios">Perfil</Link>)}
+                                                        {user.rol === "admin" ? (
+                                                            <Link className="dropdown-item" to="/admin">
+                                                                <i className="fa fa-cog" style={{marginRight: '8px'}}></i> Editar Servicios
+                                                            </Link>
+                                                        ) : (
+                                                            <Link className="dropdown-item" to="/perfil">
+                                                                <i className="fa fa-user" style={{marginRight: '8px'}}></i> Perfil
+                                                            </Link>
+                                                        )}
                                                         <div className="dropdown-divider"></div>
-                                                        <button className="dropdown-item text-danger" onClick={cerrarSesion} style={{cursor:'pointer'}}>Cerrar Sesión</button>
+                                                        <button className="dropdown-item text-danger" onClick={cerrarSesion} style={{cursor:'pointer'}}>
+                                                            <i className="fa fa-sign-out" style={{marginRight: '8px'}}></i> Cerrar Sesión
+                                                        </button>
                                                     </div>
                                                 </li>
                                             ) : (

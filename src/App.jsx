@@ -14,6 +14,7 @@ import Compra from './pages/Compra';
 import Importante from './pages/Importante';
 import Firma from './pages/Firma';
 import ServicioDetalle from './pages/ServicioDetalle';
+import Perfil from './pages/Perfil';
 import NotFound from './pages/NotFound';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -44,6 +45,11 @@ export default function App() {
         <Route path="/firma" element={
           <ProtectedRoute>
             <Firma />
+          </ProtectedRoute>
+        } />
+        <Route path="/perfil" element={
+          <ProtectedRoute>
+            <Perfil />
           </ProtectedRoute>
         } />
         <Route path="/servicio/detalle/:id" element={<ServicioDetalle />} />
