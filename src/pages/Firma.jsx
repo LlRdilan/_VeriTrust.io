@@ -21,19 +21,55 @@ export default function Firma() {
 
   const [archivo, setArchivo] = useState(null);
   const [archivoUrl, setArchivoUrl] = useState(null);
+  const [tipoArchivo, setTipoArchivo] = useState(null);
+  const [contenidoTexto, setContenidoTexto] = useState(null);
   const [cargando, setCargando] = useState(false);
   const [firmado, setFirmado] = useState(false);
   
   const [hashDocumento, setHashDocumento] = useState("");
   const [fechaFirma, setFechaFirma] = useState("");
 
-  const manejarArchivo = (e) => {
+  const obtenerTipoArchivo = (file) => {
+    const extension = file.name.split('.').pop().toLowerCase();
+    const tipoMIME = file.type;
+    
+    if (tipoMIME === 'application/pdf' || extension === 'pdf') return 'pdf';
+    if (tipoMIME.includes('image/') || ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(extension)) return 'imagen';
+    if (tipoMIME.includes('text/') || extension === 'txt') return 'texto';
+    if (tipoMIME.includes('word') || ['doc', 'docx'].includes(extension)) return 'word';
+    if (extension === 'rtf') return 'rtf';
+    return 'otro';
+  };
+
+  const manejarArchivo = async (e) => {
     if (e.target.files[0]) {
       const file = e.target.files[0];
       setArchivo(file);
-      setFirmado(false); 
-      const url = window.URL.createObjectURL(file);
-      setArchivoUrl(url);
+      setFirmado(false);
+      
+      const tipo = obtenerTipoArchivo(file);
+      setTipoArchivo(tipo);
+      
+      // Para PDFs e imágenes, usar URL directa
+      if (tipo === 'pdf' || tipo === 'imagen') {
+        const url = window.URL.createObjectURL(file);
+        setArchivoUrl(url);
+        setContenidoTexto(null);
+      } 
+      // Para archivos de texto, leer el contenido
+      else if (tipo === 'texto') {
+        const reader = new FileReader();
+        reader.onload = (event) => {
+          setContenidoTexto(event.target.result);
+          setArchivoUrl(null);
+        };
+        reader.readAsText(file);
+      }
+      // Para otros tipos, mostrar información
+      else {
+        setArchivoUrl(null);
+        setContenidoTexto(null);
+      }
     }
   };
 
@@ -204,19 +240,160 @@ export default function Firma() {
     return await pdfDoc.save();
   };
 
+  // Función para convertir archivo a PDF
+  const convertirArchivoAPDF = async () => {
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595, 842]); // A4
+    const { width, height } = page.getSize();
+    
+    const helveticaFont = await pdfDoc.embedFont('Helvetica');
+    const helveticaBoldFont = await pdfDoc.embedFont('Helvetica-Bold');
+    
+    let y = height - 40;
+    const margin = 40;
+    const fontSize = 11;
+    const lineHeight = 14;
+    
+    // Título del documento
+    page.drawText(`Documento: ${archivo.name}`, {
+      x: margin,
+      y: y,
+      size: 14,
+      font: helveticaBoldFont,
+      color: rgb(0.122, 0.137, 0.369),
+    });
+    y -= 25;
+    
+    // Contenido según el tipo
+    let currentPage = page;
+    
+    if (tipoArchivo === 'texto' && contenidoTexto) {
+      // Dividir el texto en líneas que quepan en la página
+      const maxWidth = width - (margin * 2);
+      const lines = contenidoTexto.split('\n');
+      
+      for (const line of lines) {
+        if (y < margin + 20) {
+          // Nueva página si es necesario
+          currentPage = pdfDoc.addPage([595, 842]);
+          y = height - 40;
+        }
+        
+        // Si la línea es muy larga, dividirla
+        const words = line.split(' ');
+        let currentLine = '';
+        
+        for (const word of words) {
+          const testLine = currentLine ? `${currentLine} ${word}` : word;
+          const textWidth = helveticaFont.widthOfTextAtSize(testLine, fontSize);
+          
+          if (textWidth > maxWidth && currentLine) {
+            currentPage.drawText(currentLine, {
+              x: margin,
+              y: y,
+              size: fontSize,
+              font: helveticaFont,
+            });
+            y -= lineHeight;
+            if (y < margin + 20) {
+              currentPage = pdfDoc.addPage([595, 842]);
+              y = height - 40;
+            }
+            currentLine = word;
+          } else {
+            currentLine = testLine;
+          }
+        }
+        
+        if (currentLine) {
+          currentPage.drawText(currentLine, {
+            x: margin,
+            y: y,
+            size: fontSize,
+            font: helveticaFont,
+          });
+          y -= lineHeight;
+        }
+      }
+    } else if (tipoArchivo === 'imagen' && archivoUrl) {
+      // Para imágenes, cargar y agregar
+      try {
+        const imageBytes = await fetch(archivoUrl).then(res => res.arrayBuffer());
+        let image;
+        
+        const extension = archivo.name.split('.').pop().toLowerCase();
+        if (['jpg', 'jpeg'].includes(extension)) {
+          image = await pdfDoc.embedJpg(imageBytes);
+        } else {
+          image = await pdfDoc.embedPng(imageBytes);
+        }
+        
+        const imageDims = image.scale(0.5);
+        const imageWidth = Math.min(imageDims.width, width - (margin * 2));
+        const imageHeight = (imageDims.height * imageWidth) / imageDims.width;
+        
+        currentPage.drawImage(image, {
+          x: margin,
+          y: y - imageHeight,
+          width: imageWidth,
+          height: imageHeight,
+        });
+      } catch (error) {
+        currentPage.drawText('No se pudo cargar la imagen', {
+          x: margin,
+          y: y,
+          size: fontSize,
+          font: helveticaFont,
+        });
+      }
+    } else {
+      // Para otros tipos, mostrar información
+      currentPage.drawText('Tipo de archivo: ' + tipoArchivo, {
+        x: margin,
+        y: y,
+        size: fontSize,
+        font: helveticaFont,
+      });
+      y -= lineHeight * 2;
+      currentPage.drawText('Nombre: ' + archivo.name, {
+        x: margin,
+        y: y,
+        size: fontSize,
+        font: helveticaFont,
+      });
+      y -= lineHeight;
+      currentPage.drawText('Tamaño: ' + (archivo.size / 1024).toFixed(2) + ' KB', {
+        x: margin,
+        y: y,
+        size: fontSize,
+        font: helveticaFont,
+      });
+    }
+    
+    return await pdfDoc.save();
+  };
+
   const descargarArchivo = async () => {
     if (!archivo) return;
     
     try {
-      // Leer el archivo PDF original
-      const arrayBuffer = await archivo.arrayBuffer();
-      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      let pdfDoc;
+      
+      // Si es PDF, cargarlo directamente
+      if (tipoArchivo === 'pdf') {
+        const arrayBuffer = await archivo.arrayBuffer();
+        pdfDoc = await PDFDocument.load(arrayBuffer);
+      } else {
+        // Convertir otros tipos a PDF
+        const pdfBytes = await convertirArchivoAPDF();
+        pdfDoc = await PDFDocument.load(pdfBytes);
+      }
       
       // Generar el certificado
       const certificadoBytes = await generarCertificadoPDF();
       const certificadoDoc = await PDFDocument.load(certificadoBytes);
       
-      // Copiar la página del certificado al documento original
+      // Copiar la página del certificado al documento
       const [certificadoPage] = await pdfDoc.copyPages(certificadoDoc, [0]);
       pdfDoc.addPage(certificadoPage);
       
@@ -232,15 +409,8 @@ export default function Firma() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al combinar PDFs:', error);
-      // Fallback: descargar solo el archivo original si hay error
-      const url = window.URL.createObjectURL(archivo);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      console.error('Error al procesar archivo:', error);
+      alert('Error al procesar el archivo. Por favor, intenta con otro formato.');
     }
   };
 
@@ -353,30 +523,84 @@ export default function Firma() {
               {!firmado && !cargando && (
                 <>
                   <i className="fa fa-cloud-upload" style={{fontSize: '50px', color: '#1f235e', marginBottom: '20px'}}></i>
-                  <h3 style={{marginBottom: '20px', fontWeight: '600'}}>1. Sube tu documento (PDF)</h3>
+                  <h3 style={{marginBottom: '20px', fontWeight: '600'}}>1. Sube tu documento</h3>
+                  <p style={{marginBottom: '20px', color: '#666', fontSize: '14px'}}>
+                    Formatos soportados: PDF, Word (.doc, .docx), Texto (.txt), Imágenes (.jpg, .png, .gif, etc.)
+                  </p>
                   
                   <div className="form-group mb-4">
                     <input 
                       type="file" 
                       className="form-control" 
-                      accept=".pdf" 
+                      accept=".pdf,.doc,.docx,.txt,.rtf,image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp" 
                       onChange={manejarArchivo} 
                       style={{padding: '10px', height: 'auto'}}
                     />
                   </div>
 
-                  {archivoUrl && (
+                  {archivo && (
                     <div className="mb-4" style={{border: '1px solid #ddd', borderRadius: '10px', overflow: 'hidden'}}>
                         <div style={{background: '#f1f1f1', padding: '10px', borderBottom: '1px solid #ddd', fontWeight: 'bold', color: '#333'}}>
                             Vista Previa: {archivo.name}
+                            <span style={{float: 'right', fontSize: '12px', fontWeight: 'normal', color: '#666'}}>
+                              Tipo: {tipoArchivo?.toUpperCase() || 'Desconocido'}
+                            </span>
                         </div>
-                        <iframe 
+                        
+                        {/* Vista previa para PDF */}
+                        {tipoArchivo === 'pdf' && archivoUrl && (
+                          <iframe 
                             src={archivoUrl} 
                             width="100%" 
                             height="500px" 
                             style={{border: 'none'}}
                             title="Vista Previa PDF"
-                        ></iframe>
+                          ></iframe>
+                        )}
+                        
+                        {/* Vista previa para imágenes */}
+                        {tipoArchivo === 'imagen' && archivoUrl && (
+                          <div style={{padding: '20px', textAlign: 'center', backgroundColor: '#fff'}}>
+                            <img 
+                              src={archivoUrl} 
+                              alt="Vista previa" 
+                              style={{maxWidth: '100%', maxHeight: '500px', borderRadius: '5px'}}
+                            />
+                          </div>
+                        )}
+                        
+                        {/* Vista previa para texto */}
+                        {tipoArchivo === 'texto' && contenidoTexto && (
+                          <div style={{padding: '20px', backgroundColor: '#fff', maxHeight: '500px', overflow: 'auto'}}>
+                            <pre style={{
+                              margin: 0,
+                              fontFamily: 'monospace',
+                              fontSize: '12px',
+                              whiteSpace: 'pre-wrap',
+                              wordWrap: 'break-word',
+                              color: '#333'
+                            }}>
+                              {contenidoTexto}
+                            </pre>
+                          </div>
+                        )}
+                        
+                        {/* Información para otros tipos */}
+                        {archivo && tipoArchivo !== 'pdf' && tipoArchivo !== 'imagen' && tipoArchivo !== 'texto' && (
+                          <div style={{padding: '40px', backgroundColor: '#fff', textAlign: 'center'}}>
+                            <i className="fa fa-file" style={{fontSize: '60px', color: '#1f235e', marginBottom: '20px'}}></i>
+                            <h4 style={{color: '#333', marginBottom: '10px'}}>{archivo.name}</h4>
+                            <p style={{color: '#666', marginBottom: '5px'}}>
+                              <strong>Tipo:</strong> {tipoArchivo?.toUpperCase() || 'Desconocido'}
+                            </p>
+                            <p style={{color: '#666', marginBottom: '5px'}}>
+                              <strong>Tamaño:</strong> {(archivo.size / 1024).toFixed(2)} KB
+                            </p>
+                            <p style={{color: '#999', fontSize: '12px', marginTop: '20px'}}>
+                              Este tipo de archivo será convertido a PDF al firmar
+                            </p>
+                          </div>
+                        )}
                     </div>
                   )}
 
