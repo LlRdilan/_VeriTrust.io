@@ -4,6 +4,12 @@ import ReCAPTCHA from "../components/api/ReCaptcha";
 import NotificationModal from "../components/ui/NotificacionModal";
 import { validarRut, validarEmail, calcularEdad } from "../utils/validaciones";
 import { handleError, handleHttpError } from "../services/errorHandler";
+import { 
+  obtenerRegiones, 
+  obtenerComunasPorRegion, 
+  obtenerRegionPorComuna,
+  validarComunaRegion 
+} from "../utils/regionesComunas";
 
 export default function Registro() {
   const navigate = useNavigate();
@@ -17,11 +23,15 @@ export default function Registro() {
     confirmarEmail: "",
     contraseña: "",
     confirmarContraseña: "",
+    region: "",
+    comuna: "",
     terminos: false,
   });
   
   const [errores, setErrores] = useState({});
   const [captchaValido, setCaptchaValido] = useState(false);
+  const [comunasDisponibles, setComunasDisponibles] = useState([]);
+  const [regionesDisponibles, setRegionesDisponibles] = useState(obtenerRegiones());
   
   const [modal, setModal] = useState({ show: false, title: '', message: '', status: 'info' });
   const handleCloseModal = () => setModal({ show: false, title: '', message: '', status: 'info' });
@@ -49,6 +59,16 @@ export default function Registro() {
     
     if (form.contraseña.length < 6) { nuevosErrores.contraseña = "Mínimo 6 caracteres"; valido = false; }
     if (form.contraseña !== form.confirmarContraseña) { nuevosErrores.confirmarContraseña = "Las contraseñas no coinciden"; valido = false; }
+    
+    if (!form.region) {
+        nuevosErrores.region = "Debes seleccionar una región"; valido = false;
+    }
+    
+    if (!form.comuna) {
+        nuevosErrores.comuna = "Debes seleccionar una comuna"; valido = false;
+    } else if (form.region && !validarComunaRegion(form.comuna, form.region)) {
+        nuevosErrores.comuna = "La comuna seleccionada no pertenece a la región seleccionada"; valido = false;
+    }
     
     if (!form.terminos) {
         nuevosErrores.terminos = "Debes aceptar los términos y condiciones"; valido = false;
@@ -80,6 +100,8 @@ export default function Registro() {
           telefono: form.telefono,
           email: form.email,
           contraseña: form.contraseña,
+          region: form.region,
+          comuna: form.comuna,
       };
 
       const response = await fetch("http://localhost:8080/usuarios", {
@@ -108,6 +130,56 @@ export default function Registro() {
 
   const onCaptchaChange = (value) => {
     setCaptchaValido(!!value);
+  };
+
+  const handleRegionChange = (e) => {
+    const regionSeleccionada = e.target.value;
+    const comunas = regionSeleccionada ? obtenerComunasPorRegion(regionSeleccionada) : [];
+    
+    setForm(prev => {
+      // Si hay una comuna seleccionada y no pertenece a la nueva región, limpiarla
+      if (prev.comuna && regionSeleccionada && !comunas.includes(prev.comuna)) {
+        return { ...prev, region: regionSeleccionada, comuna: "" };
+      }
+      return { ...prev, region: regionSeleccionada };
+    });
+    
+    setComunasDisponibles(comunas);
+    
+    // Si se seleccionó una región, actualizar las regiones disponibles para mostrar todas
+    setRegionesDisponibles(obtenerRegiones());
+  };
+
+  const handleComunaChange = (e) => {
+    const comunaSeleccionada = e.target.value;
+    const regionDeComuna = comunaSeleccionada ? obtenerRegionPorComuna(comunaSeleccionada) : null;
+    
+    setForm(prev => {
+      // Si se selecciona una comuna, establecer su región automáticamente
+      if (comunaSeleccionada && regionDeComuna) {
+        // Si ya hay una región seleccionada y no coincide, actualizar la región
+        return { ...prev, comuna: comunaSeleccionada, region: regionDeComuna };
+      }
+      // Si se limpia la comuna, mantener la región si existe
+      return { ...prev, comuna: comunaSeleccionada };
+    });
+    
+    // Si se selecciona una comuna, filtrar las regiones disponibles para mostrar solo la de esa comuna
+    if (comunaSeleccionada && regionDeComuna) {
+      setRegionesDisponibles([regionDeComuna]);
+      setComunasDisponibles(obtenerComunasPorRegion(regionDeComuna));
+    } else {
+      // Si se limpia la comuna, restaurar todas las regiones disponibles
+      setRegionesDisponibles(obtenerRegiones());
+      // Si hay una región seleccionada, mostrar sus comunas
+      const regionActual = comunaSeleccionada === "" ? form.region : null;
+      if (regionActual) {
+        setComunasDisponibles(obtenerComunasPorRegion(regionActual));
+      } else {
+        // Si no hay región, no mostrar comunas (o todas si se quiere permitir selección de comuna primero)
+        setComunasDisponibles([]);
+      }
+    }
   };
 
   return (
@@ -169,6 +241,57 @@ export default function Registro() {
                       <input type="password" className="contact_control" placeholder="Repite la contraseña" 
                         value={form.confirmarContraseña} onChange={(e) => setForm({ ...form, confirmarContraseña: e.target.value })} required />
                       {errores.confirmarContraseña && <small style={{ color: "red" }}>{errores.confirmarContraseña}</small>}
+                    </div>
+                    <div className="col-md-6">
+                      <label>Región</label>
+                      <select 
+                        className="contact_control" 
+                        value={form.region} 
+                        onChange={handleRegionChange}
+                        required
+                      >
+                        <option value="">Selecciona una región</option>
+                        {regionesDisponibles.map((region) => (
+                          <option key={region} value={region}>
+                            {region}
+                          </option>
+                        ))}
+                      </select>
+                      {errores.region && <small style={{ color: "red" }}>{errores.region}</small>}
+                    </div>
+                    <div className="col-md-6">
+                      <label>Comuna</label>
+                      <select 
+                        className="contact_control" 
+                        value={form.comuna} 
+                        onChange={handleComunaChange}
+                        required
+                      >
+                        <option value="">Selecciona una comuna</option>
+                        {comunasDisponibles.length > 0 ? (
+                          comunasDisponibles.map((comuna) => (
+                            <option key={comuna} value={comuna}>
+                              {comuna}
+                            </option>
+                          ))
+                        ) : form.region ? (
+                          obtenerComunasPorRegion(form.region).map((comuna) => (
+                            <option key={comuna} value={comuna}>
+                              {comuna}
+                            </option>
+                          ))
+                        ) : (
+                          // Si no hay región seleccionada, mostrar todas las comunas para permitir selección primero
+                          obtenerRegiones().flatMap(region => 
+                            obtenerComunasPorRegion(region).map(comuna => (
+                              <option key={comuna} value={comuna}>
+                                {comuna}
+                              </option>
+                            ))
+                          )
+                        )}
+                      </select>
+                      {errores.comuna && <small style={{ color: "red" }}>{errores.comuna}</small>}
                     </div>
 
                     <div className="col-md-12 mt-3 text-center">

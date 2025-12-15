@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
+import { PDFDocument, rgb } from "pdf-lib";
 
 export default function Firma() {
   const location = useLocation();
@@ -48,15 +49,199 @@ export default function Firma() {
     }, 3000);
   };
 
-  const descargarArchivo = () => {
+  // Función auxiliar para generar el certificado como PDF usando pdf-lib
+  const generarCertificadoPDF = async () => {
+    const pdfDoc = await PDFDocument.create();
+    const page = pdfDoc.addPage([595, 842]); // Tamaño A4
+    const { width, height } = page.getSize();
+    
+    // Embed fonts
+    const helveticaFont = await pdfDoc.embedFont('Helvetica');
+    const helveticaBoldFont = await pdfDoc.embedFont('Helvetica-Bold');
+    
+    // Encabezado con fondo
+    page.drawRectangle({
+      x: 0,
+      y: height - 20,
+      width: width,
+      height: 20,
+      color: rgb(0.122, 0.137, 0.369), // #1f235e
+    });
+    
+    // Texto VERITRUST
+    page.drawText("VERITRUST", {
+      x: 10,
+      y: height - 14,
+      size: 14,
+      color: rgb(1, 1, 1),
+      font: helveticaBoldFont,
+    });
+    
+    // Título principal (centrado) - más espacio desde el encabezado
+    const tituloTexto = "CERTIFICADO DE FIRMA ELECTRÓNICA";
+    const tituloWidth = helveticaBoldFont.widthOfTextAtSize(tituloTexto, 26);
+    page.drawText(tituloTexto, {
+      x: (width - tituloWidth) / 2,
+      y: height - 70,
+      size: 26,
+      color: rgb(0.122, 0.137, 0.369),
+      font: helveticaBoldFont,
+    });
+    
+    // Círculo de validación - más espacio desde el título
+    page.drawCircle({
+      x: width / 2,
+      y: height - 140,
+      size: 30,
+      borderColor: rgb(0.122, 0.137, 0.369),
+      borderWidth: 1.5,
+    });
+    
+    const texto1 = "FIRMA ELECTRÓNICA AVANZADA";
+    const texto1Width = helveticaFont.widthOfTextAtSize(texto1, 10);
+    page.drawText(texto1, {
+      x: (width - texto1Width) / 2,
+      y: height - 140,
+      size: 10,
+      color: rgb(0.122, 0.137, 0.369),
+      font: helveticaFont,
+    });
+    
+    const texto2 = "VALIDADO POR VERITRUST";
+    const texto2Width = helveticaFont.widthOfTextAtSize(texto2, 10);
+    page.drawText(texto2, {
+      x: (width - texto2Width) / 2,
+      y: height - 150,
+      size: 10,
+      color: rgb(0.122, 0.137, 0.369),
+      font: helveticaFont,
+    });
+    
+    let y = height - 200; // Más espacio desde el círculo
+    
+    // Detalles - más espacio entre secciones
+    page.drawText("Detalles de la Firma Digital:", {
+      x: 20,
+      y: y,
+      size: 12,
+      color: rgb(0.122, 0.137, 0.369),
+      font: helveticaBoldFont,
+    });
+    
+    y -= 15; // Más espacio antes de la línea
+    page.drawLine({
+      start: { x: 20, y: y },
+      end: { x: width - 20, y: y },
+      thickness: 1,
+      color: rgb(0.78, 0.78, 0.78),
+    });
+    
+    y -= 10; // Más espacio después de la línea
+    page.drawText(`Documento Firmado: ${archivo.name}`, {
+      x: 25,
+      y: y,
+      size: 10,
+      color: rgb(0, 0, 0),
+      font: helveticaFont,
+    });
+    
+    y -= 12; // Más espacio entre líneas
+    page.drawText(`Firmante (RUT): ${nombreUsuario} (${rutUsuario})`, {
+      x: 25,
+      y: y,
+      size: 10,
+      color: rgb(0, 0, 0),
+      font: helveticaFont,
+    });
+    
+    y -= 12; // Más espacio entre líneas
+    page.drawText(`Fecha y Hora de Sello: ${fechaFirma}`, {
+      x: 25,
+      y: y,
+      size: 10,
+      color: rgb(0, 0, 0),
+      font: helveticaFont,
+    });
+    
+    y -= 18; // Más espacio antes de la sección de hash
+    page.drawText("Hash de Integridad (SHA-256):", {
+      x: 25,
+      y: y,
+      size: 10,
+      color: rgb(0.122, 0.137, 0.369),
+      font: helveticaBoldFont,
+    });
+    
+    y -= 12; // Más espacio antes del hash
+    page.drawText(hashDocumento.substring(0, 32), {
+      x: 25,
+      y: y,
+      size: 9,
+      color: rgb(0, 0, 0),
+      font: helveticaFont,
+    });
+    
+    y -= 10; // Más espacio entre líneas del hash
+    page.drawText(hashDocumento.substring(32), {
+      x: 25,
+      y: y,
+      size: 9,
+      color: rgb(0, 0, 0),
+      font: helveticaFont,
+    });
+    
+    // Texto final (centrado) - más espacio desde arriba
+    const textoFinal = "Este certificado es una página adjunta al documento original y prueba su validez legal.";
+    const textoFinalWidth = helveticaFont.widthOfTextAtSize(textoFinal, 9);
+    page.drawText(textoFinal, {
+      x: (width - textoFinalWidth) / 2,
+      y: 40, // Más espacio desde el borde inferior
+      size: 9,
+      color: rgb(0.59, 0.59, 0.59),
+      font: helveticaFont,
+    });
+    
+    return await pdfDoc.save();
+  };
+
+  const descargarArchivo = async () => {
     if (!archivo) return;
-    const url = window.URL.createObjectURL(archivo);
-    const link = document.createElement('a');
-    link.href = url;
-    link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    
+    try {
+      // Leer el archivo PDF original
+      const arrayBuffer = await archivo.arrayBuffer();
+      const pdfDoc = await PDFDocument.load(arrayBuffer);
+      
+      // Generar el certificado
+      const certificadoBytes = await generarCertificadoPDF();
+      const certificadoDoc = await PDFDocument.load(certificadoBytes);
+      
+      // Copiar la página del certificado al documento original
+      const [certificadoPage] = await pdfDoc.copyPages(certificadoDoc, [0]);
+      pdfDoc.addPage(certificadoPage);
+      
+      // Guardar el PDF combinado
+      const pdfBytes = await pdfDoc.save();
+      const blob = new Blob([pdfBytes], { type: 'application/pdf' });
+      const url = window.URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error al combinar PDFs:', error);
+      // Fallback: descargar solo el archivo original si hay error
+      const url = window.URL.createObjectURL(archivo);
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `DOCUMENTO_FIRMADO_${nombreSanitizado}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   const descargarCertificado = () => {
@@ -228,11 +413,7 @@ export default function Firma() {
                   <div className="d-flex justify-content-center gap-3 mt-4" style={{gap: '15px', flexWrap: 'wrap'}}>
                     
                     <button onClick={descargarArchivo} className="btn_primary" style={{background: '#28a745', border: 'none', minWidth: '220px'}}>
-                        <i className="fa fa-download"></i> Descargar Documento
-                    </button>
-
-                    <button onClick={descargarCertificado} className="btn_primary" style={{background: '#1f235e', border: 'none', minWidth: '220px'}}>
-                        <i className="fa fa-file-text-o"></i> Descargar Certificado
+                        <i className="fa fa-download"></i> Descargar Documento + Certificado
                     </button>
                     
                     <button onClick={descargarBoleta} className="btn_primary" style={{background: '#0FB3D1', border: 'none', minWidth: '220px'}}>
