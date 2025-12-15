@@ -54,14 +54,14 @@ body {
 
 a,
 .btn {
-    color: #0FB3D1;
+    color: #66d6ff;
     text-decoration: none;
     outline: none;
     transition: all .3s ease-in-out;
 }
 
 a {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 /* Botones, enlaces y llamados a la acción con Montserrat */
@@ -85,7 +85,7 @@ h6 {
     position: relative;
     padding-bottom: 10px;
     line-height: normal;
-    color: #0B1F2E;
+    color: #004478;
     margin: 0;
 }
 
@@ -133,7 +133,7 @@ h3 a,
 h4 a,
 h5 a,
 h6 a {
-    color: #0FB3D1;
+    color: #66d6ff;
     text-decoration: none;
     opacity: 1;
 }
@@ -155,7 +155,7 @@ p {
     font-weight: 500;
     font-size: 15px;
     line-height: 24px;
-    color: #0F1720;
+    color: #002e63;
 }
 
 img {
@@ -167,10 +167,10 @@ img {
 .btn-custom {
     margin-top: 20px;
     background-color: transparent;
-    border: 2px solid #0FB3D1;
+    border: 2px solid #66d6ff;
     padding: 12px 40px;
     font-size: 16px;
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 .lead {
@@ -180,7 +180,7 @@ img {
 }
 
 .form-control:focus {
-    border-color: #0FB3D1;
+    border-color: #66d6ff;
     box-shadow: 0 0 0 .2rem rgba(15, 179, 209, 0.15);
 }
 
@@ -195,9 +195,9 @@ img {
 blockquote {
     margin: 20px 0;
     padding: 30px;
-    background: #E2F2F4;
-    color: #0FB3D1;
-    border-left: 4px solid #0FB3D1;
+    background: #f4feff;
+    color: #66d6ff;
+    border-left: 4px solid #66d6ff;
 }
 
 button {
@@ -252,7 +252,7 @@ ul.btn li {
 }
 
 ul.btn li a {
-    color: #0FB3D1;
+    color: #66d6ff;
     font-size: 16px;
 }
 
@@ -271,16 +271,16 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 }
 
 .header_to {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     color: #fff;
 }
 
 .header_midil {
-    background-color: #FFFFFF;
+    background-color: #e8f5fe;
 }
 
 .header_bo {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     width: 100%;
     height: 70px;
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
@@ -310,7 +310,7 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 .navigation.navbar-dark .navbar-nav .nav-link.active,
 .navigation.navbar-dark .navbar-nav .nav-link.show,
 .navigation.navbar-dark .navbar-nav .show>.nav-link {
-    color: #0FB3D1 !important;
+    color: #66d6ff !important;
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
@@ -337,7 +337,7 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
 
 .sign_btn:hover {
     background-color: #fff;
-    color: #0FB3D1 !important;
+    color: #66d6ff !important;
 }
 
 /* Ajuste para select de idioma en header */
@@ -393,7 +393,7 @@ ul.lan li select {
 
 /* Botón de llamado a la acción personalizado */
 .btn-about-start {
-    background-color: #0FB3D1;
+    background-color: #0f7dd1;
     color: #FFF !important;
     /* !important para asegurar que sobreescriba otras reglas de 'a' */
     padding: 14px 30px;
@@ -483,7 +483,7 @@ ul.lan li {
     position: absolute;
     right: -3px;
     top: 5px;
-    background: #0FB3D1;
+    background: #66d6ff;
     width: 20px;
     height: 21px;
     line-height: 15px;
@@ -533,7 +533,7 @@ ul.conta_icon li {
 
 ul.conta_icon li a i {
     padding-right: 5px;
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 ul.conta_icon li a {
@@ -543,7 +543,7 @@ ul.conta_icon li a {
 }
 
 ul.conta_icon li a:hover {
-    color: #0FB3D1;
+    color: #66d6ff;
     text-decoration: underline;
 }
 
@@ -553,7 +553,7 @@ ul.conta_icon li a:hover {
 }
 
 .form_sea {
-    border: 1px solid #0FB3D1;
+    border: 1px solid #66d6ff;
     padding: 0 15px;
     color: #0F1720;
     height: 40px;
@@ -612,17 +612,21 @@ ul.conta_icon li a:hover {
 /** Banner Section **/
 
 .banner_main {
-    padding: 70px 0 0;
-    background: #E2F2F4 url(../images/banner.png) no-repeat center center/cover;
+    padding: 200px 0;
+    border-top: 10px;
+    background: #e2f2f400 url(../images/principal.gif) ;
+    background-size: contain; 
+    background-position: no-repeat center ;
+    overflow: hidden;
 }
 
 .text-bg {
     text-align: center;
-    padding-top: 120px;
+    padding-top: 20px;
 }
 
 .text-bg h1 {
-    color: #0FB3D1;
+    color: #66d6ff;
     font-size: 60px;
     line-height: 70px;
     font-weight: bold;
@@ -632,7 +636,7 @@ ul.conta_icon li a:hover {
     line-height: 28px;
     padding-bottom: 20px;
     display: block;
-    color: #1f235e;
+    color: #e0e9f3;
     font-size: 30px;
     font-weight: 600;
 }
@@ -640,13 +644,13 @@ ul.conta_icon li a:hover {
 .text-bg p {
     line-height: 28px;
     padding-bottom: 70px;
-    color: #0F1720;
+    color: #e0e9f3;
     font-size: 17px;
 }
 
 .text-bg a {
     font-size: 25px;
-    color: #0FB3D1;
+    color: #66d6ff;
     font-weight: 600;
     display: inline-block;
     transition: all 0.5s;
@@ -679,7 +683,7 @@ ul.conta_icon li a:hover {
 
 .titlepage h2 {
     font-size: 36px;
-    color: #0FB3D1;
+    color: #66d6ff;
     line-height: 45px;
     font-weight: bold;
     text-transform: uppercase;
@@ -707,7 +711,7 @@ ul.conta_icon li a:hover {
 
 .read_more {
     font-size: 25px;
-    color: #0FB3D1 !important;
+    color: #66d6ff !important;
     display: inline-block;
     border-radius: 10px;
     font-weight: 500;
@@ -753,7 +757,7 @@ ul.conta_icon li a:hover {
 }
 
 .about_box h3 {
-    color: #0FB3D1;
+    color: #66d6ff;
     font-size: 25px;
     font-weight: bold;
     line-height: 30px;
@@ -792,7 +796,7 @@ ul.conta_icon li a:hover {
     margin-top: 7px;
     padding: 8px 0;
     margin-left: 25%;
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     max-width: 250px;
     width: 100%;
     display: inline-block;
@@ -966,7 +970,7 @@ ul.conta_icon li a:hover {
 #myCarousel .carousel-control-prev {
     width: 60px;
     height: 60px;
-    background: #0FB3D1;
+    background: #66d6ff;
     opacity: 1;
     display: flex;
     align-items: center;
@@ -993,7 +997,7 @@ ul.conta_icon li a:hover {
 }
 
 .portfolio .read_more:hover {
-    color: #0FB3D1 !important;
+    color: #66d6ff !important;
 }
 
 /** End Portfolio Section **/
@@ -1005,7 +1009,7 @@ ul.conta_icon li a:hover {
 }
 
 .business .titlepage h2 {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 .business .titlepage p {
@@ -1037,13 +1041,13 @@ ul.conta_icon li a:hover {
 .business .business_box h3 {
     font-weight: bold;
     font-size: 40px;
-    color: #0FB3D1;
+    color: #66d6ff;
     padding-bottom: 3px;
     line-height: 42px;
 }
 
 .business .business_box p {
-    color: #1f235e;
+    color: #1d28c0;
     font-size: 19px;
     font-weight: bold;
 }
@@ -1054,7 +1058,7 @@ ul.conta_icon li a:hover {
 }
 
 .business .read_more:hover {
-    color: #0FB3D1 !important;
+    color: #66d6ff !important;
 }
 
 /** End Business Section **/
@@ -1066,7 +1070,7 @@ ul.conta_icon li a:hover {
 }
 
 .team .titlepage h2 {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 .team .team_Carousel .carousel-caption {
@@ -1081,7 +1085,7 @@ ul.conta_icon li a:hover {
 .team_img img {
     margin-bottom: 30px;
     border-radius: 220px;
-    border: 15px solid #0FB3D1;
+    border: 15px solid #66d6ff;
 }
 
 ul.social_icont {
@@ -1099,7 +1103,7 @@ ul.social_icont li {
 }
 
 ul.social_icont li a {
-    color: #0FB3D1;
+    color: #66d6ff;
     width: 40px;
     height: 40px;
     background: #E2F2F4;
@@ -1121,7 +1125,7 @@ ul.social_icont li a {
     right: 0;
     left: 0;
     transition: .5s ease;
-    background-color: #0FB3D1de;
+    background-color: #66d6ff;
     border-radius: 381px;
     width: 242px;
     margin: 0 auto;
@@ -1134,7 +1138,7 @@ ul.social_icont li a {
 }
 
 .team_Carousel .carousel-indicators {
-    bottom: -30px;
+    bottom: 0px;
     align-items: center;
 }
 
@@ -1143,11 +1147,11 @@ ul.social_icont li a {
     padding: 5px;
     width: 20px;
     height: 20px;
-    border: 4px solid #0FB3D1;
+    border: 4px solid #66d6ff;
 }
 
 .team_Carousel .carousel-indicators li {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     width: 15px;
     height: 15px;
     border-radius: 20px;
@@ -1171,7 +1175,7 @@ ul.social_icont li a {
 }
 
 .testimonial .titlepage h2 {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 .testimonial .testimonial_Carousel .carousel-caption {
@@ -1200,7 +1204,7 @@ ul.social_icont li a {
     line-height: 28px;
     color: #0F1720;
     text-align: left;
-    border: 1px solid #0FB3D1;
+    border: 1px solid #66d6ff;
     display: inline-block;
     margin-bottom: 30px;
     background: #F7FAFC;
@@ -1216,7 +1220,7 @@ ul.social_icont li a {
 }
 
 .testimonial_Carousel .carousel-indicators li {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     width: 15px;
     height: 15px;
 }
@@ -1254,7 +1258,7 @@ ul.social_icont li a {
     color: #0F1720;
     font-size: 18px;
     font-weight: normal;
-    border: 1px solid #0FB3D1;
+    border: 1px solid #66d6ff;
     border-radius: 8px;
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
 }
@@ -1287,7 +1291,7 @@ ul.social_icont li a {
 }
 
 .contact_form .send_btn:hover {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     color: #F7FAFC;
 }
 
@@ -1300,10 +1304,10 @@ ul.social_icont li a {
 
 /** Footer **/
 .footer {
-    padding-top: 90px;
+    padding-top: 5px;
     background: #F7FAFC url(../images/footer_bg.png) no-repeat center center/cover;
     text-align: center;
-    margin-top: 30px;
+    margin-top: 10px;
 }
 
 .logo2 {
@@ -1313,7 +1317,7 @@ ul.social_icont li a {
 }
 
 .footer h3 {
-    color: #0FB3D1;
+    color: #66d6ff;
     font-weight: 600;
     font-size: 20px;
     line-height: 30px;
@@ -1341,7 +1345,7 @@ ul.location_icon li a i {
 
 ul.location_icon li a {
     font-size: 25px;
-    color: #0FB3D1;
+    color: #66d6ff;
     line-height: 35px;
 }
 
@@ -1364,7 +1368,7 @@ ul.social_icon li:last-child {
 }
 
 ul.social_icon li a {
-    color: #0FB3D1;
+    color: #66d6ff;
     width: 40px;
     height: 40px;
     text-align: center;
@@ -1395,7 +1399,7 @@ ul.link_icon li a {
 }
 
 ul.link_icon li a:hover {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 ul.img_icon {
@@ -1417,7 +1421,7 @@ ul.img_icon li {
     background: #F7FAFC;
     color: #0F1720;
     font-size: 16px;
-    border: 1px solid #0FB3D1;
+    border: 1px solid #66d6ff;
     border-radius: 10px;
 }
 
@@ -1437,7 +1441,7 @@ ul.img_icon li {
 }
 
 .main_form .send_btn:hover {
-    background-color: #0FB3D1;
+    background-color: #66d6ff;
     color: #F7FAFC;
 }
 
@@ -1460,7 +1464,7 @@ ul.img_icon li {
 }
 
 .copyright a {
-    color: #0FB3D1;
+    color: #66d6ff;
 }
 
 .copyright a:hover {
@@ -1801,7 +1805,7 @@ small.form-text.text-muted,
     .about_subtitle {
         border-left: none;
         padding-left: 0;
-        border-bottom: 3px solid #0FB3D1;
+        border-bottom: 3px solid #66d6ff;
         display: inline-block;
         padding-bottom: 5px;
     }

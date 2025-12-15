@@ -1,0 +1,162 @@
+/* --- Estilos para el carrusel infinito automático --- */
+
+.logo-carousel-section {
+    padding: 40px 0;
+    background-color: #f8f9fa;
+    margin-top: 40px;
+}
+
+/* Contenedor principal del carrusel */
+.logo-marquee-container {
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+    padding: 40px 0;
+    background: #f8f9fa;
+}
+
+/* Capa de desvanecimiento en los bordes */
+.logo-marquee-container::before,
+.logo-marquee-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    width: 50px;
+    height: 100%;
+    z-index: 2;
+    pointer-events: none;
+}
+
+
+
+.logo-marquee-container::after {
+    right: 0;
+    background: linear-gradient(to left, rgba(265, 265, 250, 1) 0%, rgba(248, 249, 250, 0) 100%);
+}
+
+/* Pista del carrusel que se mueve */
+.logo-marquee-track {
+    display: flex;
+    animation: scroll-infinite 25s linear infinite;
+    width: max-content;
+    gap: 20px;
+    padding: 0 2px;
+}
+
+/* Pausa la animación al hacer hover */
+.logo-marquee-container:hover .logo-marquee-track {
+    animation-play-state: paused;
+}
+
+/* Elementos individuales del carrusel */
+.logo-marquee-item {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    width: 280px;
+    height: auto;
+}
+
+.logo-marquee-item:hover {
+    transform: translateY(-3px);
+}
+
+/* Imágenes dentro de los elementos */
+.logo-marquee-item img {
+    max-width: 100%;
+    max-height: 300px;
+    width: auto;
+    height: 300px;
+    object-fit: contain;
+    filter: grayscale(30%);
+    transition: filter 0.3s ease;
+    padding: 0; 
+
+}
+
+.logo-marquee-item:hover img {
+    filter: grayscale(0%);
+    transform: scale(1.05); 
+}
+
+/* Animación principal */
+@keyframes scroll-infinite {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+/* Responsive para móviles */
+@media (max-width: 768px) {
+    .logo-marquee-container {
+        padding: 15px 0;
+    }
+    
+    .logo-marquee-container::before,
+    .logo-marquee-container::after {
+        width: 50px;
+    }
+    
+    .logo-marquee-item {
+        width: 200px;
+        height: auto;
+        padding: 0;
+    }
+    
+    .logo-marquee-track {
+        gap: 15px;
+        animation-duration: 15s;
+    }
+    
+    .logo-marquee-item img {
+        height: 120px;
+        max-height: 120px;
+    }
+}
+
+/* Para tablets */
+@media (min-width: 769px) and (max-width: 1024px) {
+    .logo-marquee-item {
+        width: 300px;
+        height: auto;
+    }
+    
+    .logo-marquee-track {
+        gap: 40px;
+        animation-duration: 20s;
+    }
+}
+
+/* Para pantallas muy grandes */
+@media (min-width: 1400px) {
+    .logo-marquee-item {
+        width: 450px;
+        height: 140px;
+    }
+    
+    .logo-marquee-track {
+        gap: 60px;
+        animation-duration: 30s; 
+    }
+}
+
+/* Efecto de pausa suave */
+.logo-marquee-track {
+    transition: animation-play-state 0.3s ease;
+}
+
+/* Animación alternativa para navegadores que no soportan animation-play-state */
+@supports not (animation-play-state: paused) {
+    .logo-marquee-container:hover .logo-marquee-track {
+        animation: none;
+    }
+}

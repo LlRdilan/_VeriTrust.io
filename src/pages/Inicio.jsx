@@ -1,8 +1,42 @@
-import { useState, useEffect } from 'react';
+import '../styles/a_animacion_carrusel.css';
+import '../styles/owl.carousel.min.css';
 import { Link } from 'react-router-dom';
 
+const LOGO_IMAGES = [
+    'banco_cencopay.png', 
+    'banco_falabella.jpg', 
+    'banco_santander.webp', 
+    'banco_sii.jpg', 
+    'banco_Chile.jpg', 
+    'banco_bci.jpg', 
+    'banco_scotiabank.png', 
+    'banco_mercadopago.jpg'
+];
+
+// Duplicamos los logos para crear el efecto infinito suave
+const DUPLICATED_LOGOS = [...LOGO_IMAGES, ...LOGO_IMAGES];
+
+function LogoCarousel({ logos, roundedStyle }) {
+    return (
+        <div className="logo-marquee-container">
+            <div className="logo-marquee-track">
+                {DUPLICATED_LOGOS.map((logo, index) => (
+                    <div key={`${logo}-${index}`} className="logo-marquee-item">
+                        <img 
+                            src={`images/${logo}`} 
+                            alt={`Logo ${index + 1}`} 
+                            style={roundedStyle} 
+                            className="logo-img"
+                            loading="lazy"
+                        />
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
 export default function Inicio() {
-    
     const roundedStyle = {
         borderRadius: '20px',
         boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
@@ -83,6 +117,7 @@ export default function Inicio() {
                     </div>
                 </div>
 
+<<<<<<< Updated upstream
                 {/* CARRUSEL DE IMÁGENES */}
                 <div id="myCarousel" className="carousel slide portfolio_Carousel" data-ride="carousel">
                     <ol className="carousel-indicators">
@@ -168,8 +203,13 @@ export default function Inicio() {
                     <a className="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
                         <i className="fa fa-chevron-right" aria-hidden="true"></i>
                     </a>
+=======
+                {/* Carrusel de logos con animación CSS */}
+                <div className="logo-carousel-section">
+                    <LogoCarousel logos={LOGO_IMAGES} roundedStyle={roundedStyle} />
+>>>>>>> Stashed changes
                 </div>
             </div>
         </section>
-    )
+    );
 }
