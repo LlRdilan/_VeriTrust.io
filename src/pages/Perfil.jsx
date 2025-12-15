@@ -33,6 +33,22 @@ export default function Perfil() {
   const cargarDatosUsuario = async (session) => {
     setCargando(true);
     try {
+      // Cargar datos completos del usuario desde el backend
+      const usuarioResponse = await fetch(`http://localhost:8080/usuarios/${session.id}`, {
+        headers: {
+          "Authorization": `Bearer ${session.token}`
+        }
+      });
+
+      if (usuarioResponse.ok) {
+        const usuarioData = await usuarioResponse.json();
+        // Combinar datos de la sesión con los datos completos del backend
+        setUsuario({ ...session, ...usuarioData });
+      } else {
+        // Si no se pueden cargar los datos completos, usar los de la sesión
+        console.warn("No se pudieron cargar los datos completos del usuario");
+      }
+
       // Cargar compras del usuario
       const comprasResponse = await fetch(`http://localhost:8080/compras/usuario/${session.id}`, {
         headers: {
@@ -78,6 +94,35 @@ export default function Perfil() {
       style: 'currency',
       currency: 'CLP'
     }).format(monto || 0);
+  };
+
+  const calcularEdad = (fechaNac) => {
+    if (!fechaNac) return null;
+    try {
+      const hoy = new Date();
+      const nacimiento = new Date(fechaNac);
+      let edad = hoy.getFullYear() - nacimiento.getFullYear();
+      const mes = hoy.getMonth() - nacimiento.getMonth();
+      if (mes < 0 || (mes === 0 && hoy.getDate() < nacimiento.getDate())) {
+        edad--;
+      }
+      return edad;
+    } catch {
+      return null;
+    }
+  };
+
+  const formatearFechaNacimiento = (fecha) => {
+    if (!fecha) return "N/A";
+    try {
+      return new Date(fecha).toLocaleDateString('es-CL', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      });
+    } catch {
+      return fecha;
+    }
   };
 
   if (cargando) {
@@ -128,16 +173,85 @@ export default function Perfil() {
                   fontSize: '40px',
                   fontWeight: 'bold'
                 }}>
-                  {usuario.nombre.charAt(0).toUpperCase()}
+                  {usuario.nombre?.charAt(0).toUpperCase() || 'U'}
                 </div>
-                <h3 style={{color: '#1f235e', marginBottom: '10px'}}>{usuario.nombre}</h3>
-                <p style={{color: '#666', marginBottom: '5px'}}>RUT: {usuario.rut}</p>
-                <p style={{color: '#666', marginBottom: '5px'}}>Email: {usuario.email}</p>
-                <p style={{color: '#666'}}>Rol: <span style={{textTransform: 'capitalize'}}>{usuario.rol || 'Usuario'}</span></p>
+                <h3 style={{color: '#1f235e', marginBottom: '15px'}}>{usuario.nombre || 'Usuario'}</h3>
               </div>
 
               <div style={{borderTop: '1px solid #ddd', paddingTop: '20px', marginTop: '20px'}}>
-                <h4 style={{color: '#1f235e', fontSize: '18px', marginBottom: '15px'}}>Estadísticas</h4>
+                <h4 style={{color: '#1f235e', fontSize: '18px', marginBottom: '15px'}}>
+                  <i className="fa fa-user" style={{marginRight: '8px'}}></i>
+                  Información Personal
+                </h4>
+                
+                <div style={{marginBottom: '12px'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                    <span style={{color: '#666', fontWeight: '500'}}>RUT:</span>
+                    <strong style={{color: '#333'}}>{usuario.rut || 'N/A'}</strong>
+                  </div>
+                </div>
+
+                <div style={{marginBottom: '12px'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                    <span style={{color: '#666', fontWeight: '500'}}>Email:</span>
+                    <strong style={{color: '#333'}}>{usuario.email || 'N/A'}</strong>
+                  </div>
+                </div>
+
+                {usuario.telefono && (
+                  <div style={{marginBottom: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                      <span style={{color: '#666', fontWeight: '500'}}>Teléfono:</span>
+                      <strong style={{color: '#333'}}>{usuario.telefono}</strong>
+                    </div>
+                  </div>
+                )}
+
+                {usuario.fechaNac && (
+                  <div style={{marginBottom: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                      <span style={{color: '#666', fontWeight: '500'}}>Fecha de Nacimiento:</span>
+                      <strong style={{color: '#333'}}>{formatearFechaNacimiento(usuario.fechaNac)}</strong>
+                    </div>
+                    {calcularEdad(usuario.fechaNac) && (
+                      <div style={{textAlign: 'right', fontSize: '12px', color: '#999'}}>
+                        ({calcularEdad(usuario.fechaNac)} años)
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {usuario.region && (
+                  <div style={{marginBottom: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                      <span style={{color: '#666', fontWeight: '500'}}>Región:</span>
+                      <strong style={{color: '#333'}}>{usuario.region}</strong>
+                    </div>
+                  </div>
+                )}
+
+                {usuario.comuna && (
+                  <div style={{marginBottom: '12px'}}>
+                    <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                      <span style={{color: '#666', fontWeight: '500'}}>Comuna:</span>
+                      <strong style={{color: '#333'}}>{usuario.comuna}</strong>
+                    </div>
+                  </div>
+                )}
+
+                <div style={{marginBottom: '12px'}}>
+                  <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '5px'}}>
+                    <span style={{color: '#666', fontWeight: '500'}}>Rol:</span>
+                    <strong style={{color: '#333', textTransform: 'capitalize'}}>{usuario.rol || 'Usuario'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{borderTop: '1px solid #ddd', paddingTop: '20px', marginTop: '20px'}}>
+                <h4 style={{color: '#1f235e', fontSize: '18px', marginBottom: '15px'}}>
+                  <i className="fa fa-bar-chart" style={{marginRight: '8px'}}></i>
+                  Estadísticas
+                </h4>
                 <div style={{display: 'flex', justifyContent: 'space-between', marginBottom: '10px'}}>
                   <span style={{color: '#666'}}>Compras realizadas:</span>
                   <strong style={{color: '#0FB3D1'}}>{compras.length}</strong>
