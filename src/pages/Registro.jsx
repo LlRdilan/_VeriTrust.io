@@ -100,7 +100,6 @@ export default function Registro() {
           telefono: form.telefono,
           email: form.email,
           contraseña: form.contraseña,
-          // region y comuna no están en el UsuarioDTO del backend, se eliminan
       };
 
       const response = await fetch("http://localhost:8080/usuarios", {
@@ -199,48 +198,56 @@ export default function Registro() {
                         value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} required />
                       {errores.rut && <small style={{ color: "red" }}>{errores.rut}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Nombre</label>
                       <input type="text" className="contact_control" placeholder="Nombre completo" 
                         value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
                       {errores.nombre && <small style={{ color: "red" }}>{errores.nombre}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Fecha Nacimiento</label>
                       <input type="date" className="contact_control" 
                         value={form.fechaNac} onChange={(e) => setForm({ ...form, fechaNac: e.target.value })} required />
                       {errores.fechaNac && <small style={{ color: "red" }}>{errores.fechaNac}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Teléfono</label>
                       <input type="text" className="contact_control" placeholder="+569..." 
                         value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} required />
                       {errores.telefono && <small style={{ color: "red" }}>{errores.telefono}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Email</label>
                       <input type="email" className="contact_control" placeholder="correo@ejemplo.com" 
                         value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
                       {errores.email && <small style={{ color: "red" }}>{errores.email}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Confirmar Email</label>
                       <input type="email" className="contact_control" placeholder="Repite tu correo" 
                         value={form.confirmarEmail} onChange={(e) => setForm({ ...form, confirmarEmail: e.target.value })} required />
                       {errores.confirmarEmail && <small style={{ color: "red" }}>{errores.confirmarEmail}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Contraseña</label>
                       <input type="password" className="contact_control" placeholder="****** (Min. 6 caracteres)" 
                         value={form.contraseña} onChange={(e) => setForm({ ...form, contraseña: e.target.value })} required />
                       {errores.contraseña && <small style={{ color: "red" }}>{errores.contraseña}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Confirmar Contraseña</label>
                       <input type="password" className="contact_control" placeholder="Repite la contraseña" 
                         value={form.confirmarContraseña} onChange={(e) => setForm({ ...form, confirmarContraseña: e.target.value })} required />
                       {errores.confirmarContraseña && <small style={{ color: "red" }}>{errores.confirmarContraseña}</small>}
                     </div>
+
                     <div className="col-md-6">
                       <label>Región</label>
                       <select 
@@ -258,6 +265,7 @@ export default function Registro() {
                       </select>
                       {errores.region && <small style={{ color: "red" }}>{errores.region}</small>}
                     </div>
+                    
                     <div className="col-md-6">
                       <label>Comuna</label>
                       <select 
