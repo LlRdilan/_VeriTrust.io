@@ -150,7 +150,7 @@ export default function Login() {
             <form className="contact_form" onSubmit={handleSubmit}>
               <div className="row">
                 <div className="col-md-12">
-                  <label>RUT (Sin puntos y con guion)</label>
+                  <label>RUT (Sin puntos ni guion)</label>
                   <input
                     type="text"
                     className="contact_control"
