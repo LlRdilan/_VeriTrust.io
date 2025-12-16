@@ -188,8 +188,54 @@ export default function Admin() {
             setModal({ show: true, title: "Eliminado", message: "El servicio fue eliminado de la Base de Datos.", status: "success" });
             cargarServicios();
         } else {
-            const errorInfo = await handleHttpError(res);
-            setModal({ show: true, title: errorInfo.title, message: errorInfo.message, status: errorInfo.status });
+            // Intentar obtener el mensaje de error del servidor
+            let errorMessage = `Error del servidor (${res.status})`;
+            let errorTitle = "Error al Eliminar";
+            let errorStatus = "error";
+            
+            try {
+                const errorData = await res.text();
+                if (errorData) {
+                    try {
+                        const parsed = JSON.parse(errorData);
+                        errorMessage = parsed.message || parsed.error || errorData;
+                    } catch {
+                        errorMessage = errorData;
+                    }
+                    
+                    // Detectar si es un error de integridad referencial (clave foránea)
+                    const errorLower = errorMessage.toLowerCase();
+                    const isForeignKeyError = 
+                        errorLower.includes("foreign key") ||
+                        errorLower.includes("constraint") ||
+                        errorLower.includes("referenced") ||
+                        errorLower.includes("integrity") ||
+                        errorLower.includes("violation") ||
+                        errorLower.includes("fk_") ||
+                        (errorLower.includes("servicio") && (errorLower.includes("compra") || errorLower.includes("reference")));
+                    
+                    // Si es un error 500 y detectamos que es por clave foránea
+                    if (res.status === 500 && isForeignKeyError) {
+                        errorTitle = "No se puede eliminar";
+                        errorMessage = "No se puede eliminar el servicio debido a que tiene compras asociadas";
+                        errorStatus = "warning";
+                    } else if (res.status === 409 || errorLower.includes("compras asociadas")) {
+                        // Si el backend ya devuelve 409 o menciona compras asociadas
+                        errorTitle = "No se puede eliminar";
+                        errorMessage = errorMessage || "No se puede eliminar el servicio debido a que tiene compras asociadas";
+                        errorStatus = "warning";
+                    }
+                }
+            } catch (e) {
+                console.error("Error al leer respuesta del servidor:", e);
+            }
+            
+            setModal({ 
+                show: true, 
+                title: errorTitle, 
+                message: errorMessage, 
+                status: errorStatus 
+            });
         }
     } catch (error) {
         const errorInfo = handleError(error);

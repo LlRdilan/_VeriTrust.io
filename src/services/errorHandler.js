@@ -65,6 +65,16 @@ export const handleError = (error, options = {}) => {
     };
   }
 
+  // Error de conflicto (409) - Usado para recursos con dependencias
+  if (error.status === 409) {
+    return {
+      title: "No se puede eliminar",
+      message: error.message || "El recurso no puede ser eliminado porque tiene dependencias asociadas.",
+      status: "warning",
+      type: "conflict"
+    };
+  }
+
   // Error de validación (400)
   if (error.status === 400) {
     return {
