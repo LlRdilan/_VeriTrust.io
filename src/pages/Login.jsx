@@ -154,7 +154,7 @@ export default function Login() {
                   <input
                     type="text"
                     className="contact_control"
-                    placeholder="Ej: 12345678-9"
+                    placeholder="Ej: 123456789"
                     value={rut}
                     onChange={(e) => setRut(e.target.value)}
                     required
