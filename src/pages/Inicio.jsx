@@ -117,97 +117,9 @@ export default function Inicio() {
                     </div>
                 </div>
 
-<<<<<<< Updated upstream
-                {/* CARRUSEL DE IMÁGENES */}
-                <div id="myCarousel" className="carousel slide portfolio_Carousel" data-ride="carousel">
-                    <ol className="carousel-indicators">
-                        <li data-target="#myCarousel" data-slide-to="0" className="active"></li>
-                        <li data-target="#myCarousel" data-slide-to="1"></li>
-                        <li data-target="#myCarousel" data-slide-to="2"></li>
-                    </ol>
-
-                    <div className="carousel-inner">
-                        <div className="carousel-item active">
-                            <div className="container">
-                                <div className="carousel-caption">
-                                    {/* CLASE d-flex justify-content-center para centrar las imágenes pequeñas */}
-                                    <div className="row d-flex justify-content-center"> 
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />
-                                                <div className="middle">
-                                                    <div className="text2">View More</div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/banco_falabella_empresa.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/banco_santander_empresa.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/sii_foto.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div className="carousel-item">
-                            <div className="container">
-                                <div className="carousel-caption">
-                                    <div className="row d-flex justify-content-center"> 
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/cenco_pay_empresa.jpg" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/banco_falabella_empresa.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/banco_santander_empresa.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                        <div className="col-md-3 col-sm-6">
-                                            <div className="portfolio_img">
-                                                <img src="images/sii_foto.png" alt="#" style={roundedStyle} />
-                                                <div className="middle"></div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <a className="carousel-control-prev" href="#myCarousel" role="button" data-slide="prev">
-                        <i className="fa fa-chevron-left" aria-hidden="true"></i>
-                    </a>
-                    <a className="carousel-control-next" href="#myCarousel" role="button" data-slide="next">
-                        <i className="fa fa-chevron-right" aria-hidden="true"></i>
-                    </a>
-=======
                 {/* Carrusel de logos con animación CSS */}
                 <div className="logo-carousel-section">
                     <LogoCarousel logos={LOGO_IMAGES} roundedStyle={roundedStyle} />
->>>>>>> Stashed changes
                 </div>
             </div>
         </section>
