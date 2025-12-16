@@ -43,27 +43,15 @@ export default function Servicios() {
 
         <div className="row mb-5">
             <div className="col-md-12">
-                <div style={{
-                    width: '100%', 
-                    height: '300px', 
-                    borderRadius: '20px', 
-                    overflow: 'hidden', 
-                    position: 'relative',
-                    boxShadow: '0 10px 30px rgba(0,0,0,0.1)'
-                }}>
+                <div className="servicios-banner">
                     <img 
                         src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80" 
                         alt="Servicios Digitales" 
-                        style={{width: '100%', height: '100%', objectFit: 'cover'}}
+                        className="servicios-banner-img"
                     />
-                    <div style={{
-                        position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
-                        background: 'rgba(31, 35, 94, 0.7)',
-                        display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center',
-                        color: '#fff', padding: '20px'
-                    }}>
-                        <h2 style={{color: '#fff', fontSize: '35px', fontWeight: 'bold'}}>Tecnología de Punta</h2>
-                        <p style={{color: '#ddd', fontSize: '18px', maxWidth: '600px'}}>Garantizamos la seguridad de tus transacciones con los estándares más altos del mercado.</p>
+                    <div className="servicios-banner-overlay">
+                        <h2 className="servicios-banner-title">Tecnología de Punta</h2>
+                        <p className="servicios-banner-text">Garantizamos la seguridad de tus transacciones con los estándares más altos del mercado.</p>
                     </div>
                 </div>
             </div>
@@ -114,7 +102,7 @@ export default function Servicios() {
         
         {servicios.length === 0 && (
             <div className="text-center w-100">
-                <p style={{color: '#888'}}>No hay servicios cargados en la base de datos o el servidor está apagado.</p>
+                <p className="servicios-empty-text">No hay servicios cargados en la base de datos o el servidor está apagado.</p>
             </div>
         )}
 

@@ -76,11 +76,11 @@ export default function ServicioDetalle() {
     };
 
     if (loading) {
-        return <div className="service text-center" style={{padding: '100px'}}>Cargando detalles...</div>;
+        return <div className="service text-center servicio-detalle-loading">Cargando detalles...</div>;
     }
 
     if (!servicio) {
-        return <div className="service text-center" style={{padding: '100px'}}>Servicio no disponible.</div>;
+        return <div className="service text-center servicio-detalle-loading">Servicio no disponible.</div>;
     }
 
     const netoFinal = Number(servicio.precio);
@@ -89,12 +89,12 @@ export default function ServicioDetalle() {
 
 
     return (
-        <div id="service-detail" className="service" style={{padding: '60px 0'}}>
+        <div id="service-detail" className="service servicio-detalle-container">
             <div className="container">
                 <div className="row">
                     <div className="col-md-12">
-                        <Link to="/servicios" style={{marginBottom: '20px', display: 'block', fontWeight: 'bold', color: '#1f235e'}}>
-                            <i className="fa fa-chevron-left" style={{marginRight: '8px'}}></i> Volver a Servicios
+                        <Link to="/servicios" className="servicio-detalle-back-link">
+                            <i className="fa fa-chevron-left servicio-detalle-back-icon"></i> Volver a Servicios
                         </Link>
                     </div>
                 </div>
@@ -102,48 +102,45 @@ export default function ServicioDetalle() {
                 <div className="row">
                     
                     <div className="col-md-4">
-                        <div className="backoffice_section" style={{padding: '30px', position: 'sticky', top: '100px'}}>
-                            <h2 style={{color: '#1f235e', fontWeight: 'bold', fontSize: '30px'}}>
+                        <div className="backoffice_section servicio-detalle-sidebar">
+                            <h2 className="servicio-detalle-price">
                                 ${totalFinal.toLocaleString()}
                             </h2>
-                            <span style={{color: '#888', fontSize: '14px'}}>Neto: ${netoFinal.toLocaleString()} + IVA (${ivaFinal.toLocaleString()})</span>
+                            <span className="servicio-detalle-price-detail">Neto: ${netoFinal.toLocaleString()} + IVA (${ivaFinal.toLocaleString()})</span>
                             
-                            <hr style={{marginTop: '20px', marginBottom: '20px'}} />
+                            <hr className="servicio-detalle-divider" />
 
-                            <p style={{fontSize: '14px', marginBottom: '15px', fontWeight: 'bold'}}>Beneficios Incluidos:</p>
+                            <p className="servicio-detalle-benefits-title">Beneficios Incluidos:</p>
                             <ul>
                                 {(servicio.detalles || []).map((d, index) => (
-                                    <li key={index} style={{listStyle: 'disc', marginLeft: '20px', marginBottom: '5px', color: '#555'}}>
-                                        <i className="fa fa-check-circle" style={{color: '#0FB3D1', marginRight: '8px'}}></i> {d}
+                                    <li key={index} className="servicio-detalle-benefit-item">
+                                        <i className="fa fa-check-circle servicio-detalle-benefit-icon"></i> {d}
                                     </li>
                                 ))}
                             </ul>
 
-                            <button onClick={iniciarCompra} className="comprar_btn" style={{width: '100%', marginTop: '30px', fontSize: '18px'}}>
+                            <button onClick={iniciarCompra} className="comprar_btn servicio-detalle-buy-btn">
                                 COMPRAR AHORA
                             </button>
                         </div>
                     </div>
 
                     <div className="col-md-8">
-                        <div className="backoffice_section" style={{padding: '40px', background: '#fff'}}>
-                            <h1 style={{color: '#0FB3D1', marginBottom: '20px', fontSize: '40px', paddingBottom: '0'}}>{servicio.nombre}</h1>
+                        <div className="backoffice_section servicio-detalle-content">
+                            <h1 className="servicio-detalle-title">{servicio.nombre}</h1>
                             
-                            <hr style={{marginBottom: '30px'}} />
+                            <hr className="servicio-detalle-content-divider" />
                             
-                            <h3 style={{marginBottom: '20px'}}>Detalles Completos del Servicio</h3>
+                            <h3 style={{marginBottom: '20px', fontSize: '24px'}}>Detalles Completos del Servicio</h3>
                             
-                            <div 
-                                className="full-description-content"
-                                style={{lineHeight: '1.8', color: '#333'}}
-                            >
+                            <div className="full-description-content servicio-detalle-description">
                                 {servicio.descripcionCompleta ? (
                                     <div dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(servicio.descripcionCompleta) }} />
                                 ) : (
                                     <>
                                         <p><strong>{servicio.descripcion}</strong></p>
                                         <p>¡Edita este servicio desde el panel de Administrador para agregar formato y contenido enriquecido!</p>
-                                        <h4 style={{color: '#1f235e', marginTop: '30px'}}>Próxima Tarea: Clasificar Productos.</h4>
+                                        <h4 className="servicio-detalle-subtitle">Próxima Tarea: Clasificar Productos.</h4>
                                     </>
                                 )}
                             </div>

@@ -16,7 +16,7 @@ const LOGO_IMAGES = [
 // Duplicamos los logos para crear el efecto infinito suave
 const DUPLICATED_LOGOS = [...LOGO_IMAGES, ...LOGO_IMAGES];
 
-function LogoCarousel({ logos, roundedStyle }) {
+function LogoCarousel({ logos }) {
     return (
         <div className="logo-marquee-container">
             <div className="logo-marquee-track">
@@ -25,8 +25,7 @@ function LogoCarousel({ logos, roundedStyle }) {
                         <img 
                             src={`images/${logo}`} 
                             alt={`Logo ${index + 1}`} 
-                            style={roundedStyle} 
-                            className="logo-img"
+                            className="logo-img inicio-logo-rounded"
                             loading="lazy"
                         />
                     </div>
@@ -37,17 +36,6 @@ function LogoCarousel({ logos, roundedStyle }) {
 }
 
 export default function Inicio() {
-    const roundedStyle = {
-        borderRadius: '20px',
-        boxShadow: '0 8px 20px rgba(0,0,0,0.1)',
-        transition: 'transform 0.3s ease',
-        width: '100%',
-        maxWidth: '180px',
-        height: 'auto',
-        margin: '0 auto',
-        display: 'block'
-    };
-
     return (
         <section className="banner_main">
             <div className="container">
@@ -119,7 +107,7 @@ export default function Inicio() {
 
                 {/* Carrusel de logos con animación CSS */}
                 <div className="logo-carousel-section">
-                    <LogoCarousel logos={LOGO_IMAGES} roundedStyle={roundedStyle} />
+                    <LogoCarousel logos={LOGO_IMAGES} />
                 </div>
             </div>
         </section>

@@ -56,16 +56,7 @@ export default function Tutorial() {
                                 <div className="flip-card-inner">
                                     {/* AHORA ESTE ES EL BACK - Información (se muestra primero) */}
                                     <div className="flip-card-back">
-                                        <div className="card" style={{
-                                            borderRadius: '20px',
-                                            overflow: 'hidden',
-                                            border: 'none',
-                                            boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-                                            height: '100%',
-                                            display: 'flex',
-                                            flexDirection: 'column',
-                                            backgroundColor: '#f8f9fa'
-                                        }}>
+                                        <div className="card tutorial-card">
                                             <div className="card-header-back">
                                                 <h5 className="card-title-back">{tutorial.title}</h5>
                                             </div>
@@ -91,15 +82,7 @@ export default function Tutorial() {
                                     
                                     {/* AHORA ESTE ES EL FRONT - Video (se muestra después del click) */}
                                     <div className="flip-card-front">
-                                        <div className="card" style={{
-                                            borderRadius: '20px',
-                                            overflow: 'hidden',
-                                            border: 'none',
-                                            boxShadow: '0 5px 15px rgba(0,0,0,0.1)',
-                                            height: '100%',
-                                            display: 'flex',
-                                            flexDirection: 'column'
-                                        }}>
+                                        <div className="card tutorial-card-front">
                                             <div className="video-wrapper">
                                                 <iframe 
                                                     width="100%" 

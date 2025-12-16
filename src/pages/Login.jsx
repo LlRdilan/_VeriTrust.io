@@ -151,7 +151,7 @@ export default function Login() {
   };
 
   return (
-    <div className="contact" style={{ paddingTop: "40px", paddingBottom: "40px" }}>
+    <div className="contact page-login-container">
       <div className="container">
         <div className="row">
           <div className="col-md-8 offset-md-2">
@@ -182,7 +182,7 @@ export default function Login() {
                     onChange={(e) => setContraseña(e.target.value)}
                     required
                   />
-                  {error && <small className="error" style={{ color: "red" }}>{error}</small>}
+                  {error && <small className="error login-error-text">{error}</small>}
                 </div>
 
                 <div className="col-md-12 mt-3 justify-content-center d-flex">

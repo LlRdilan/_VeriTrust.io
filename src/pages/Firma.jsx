@@ -545,40 +545,39 @@ export default function Firma() {
 
 
   return (
-    <div className="service" style={{ padding: "80px 0", minHeight: "100vh" }}>
+    <div className="service page-firma-container">
       <div className="container">
         <div className="row justify-content-center">
           <div className="col-md-10">
             <div className="titlepage">
               <h2>Firma de Documentos</h2>
-              <p>Servicio activo: <strong style={{color: '#0FB3D1'}}>{servicioComprado.nombre}</strong></p>
+              <p>Servicio activo: <strong className="firma-servicio-name">{servicioComprado.nombre}</strong></p>
             </div>
 
-            <div className="backoffice_section text-center" style={{padding: '40px'}}>
+            <div className="backoffice_section text-center firma-upload-section">
               
               {!firmado && !cargando && (
                 <>
-                  <i className="fa fa-cloud-upload" style={{fontSize: '50px', color: '#1f235e', marginBottom: '20px'}}></i>
-                  <h3 style={{marginBottom: '20px', fontWeight: '600'}}>1. Sube tu documento</h3>
-                  <p style={{marginBottom: '20px', color: '#666', fontSize: '14px'}}>
+                  <i className="fa fa-cloud-upload firma-upload-icon"></i>
+                  <h3 className="firma-upload-title">1. Sube tu documento</h3>
+                  <p className="firma-upload-text">
                     Formatos soportados: PDF, Word (.doc, .docx), Texto (.txt), Imágenes (.jpg, .png, .gif, etc.)
                   </p>
                   
                   <div className="form-group mb-4">
                     <input 
                       type="file" 
-                      className="form-control" 
+                      className="form-control firma-file-input" 
                       accept=".pdf,.doc,.docx,.txt,.rtf,image/*,.jpg,.jpeg,.png,.gif,.bmp,.webp" 
                       onChange={manejarArchivo} 
-                      style={{padding: '10px', height: 'auto'}}
                     />
                   </div>
 
                   {archivo && (
-                    <div className="mb-4" style={{border: '1px solid #ddd', borderRadius: '10px', overflow: 'hidden'}}>
-                        <div style={{background: '#f1f1f1', padding: '10px', borderBottom: '1px solid #ddd', fontWeight: 'bold', color: '#333'}}>
+                    <div className="mb-4 firma-preview-container">
+                        <div className="firma-preview-header">
                             Vista Previa: {archivo.name}
-                            <span style={{float: 'right', fontSize: '12px', fontWeight: 'normal', color: '#666'}}>
+                            <span className="firma-preview-header-span">
                               Tipo: {tipoArchivo?.toUpperCase() || 'Desconocido'}
                             </span>
                         </div>
@@ -589,33 +588,26 @@ export default function Firma() {
                             src={archivoUrl} 
                             width="100%" 
                             height="500px" 
-                            style={{border: 'none'}}
+                            className="firma-preview-iframe"
                             title="Vista Previa PDF"
                           ></iframe>
                         )}
                         
                         {/* Vista previa para imágenes */}
                         {tipoArchivo === 'imagen' && archivoUrl && (
-                          <div style={{padding: '20px', textAlign: 'center', backgroundColor: '#fff'}}>
+                          <div className="firma-preview-image-wrapper">
                             <img 
                               src={archivoUrl} 
                               alt="Vista previa" 
-                              style={{maxWidth: '100%', maxHeight: '500px', borderRadius: '5px'}}
+                              className="firma-preview-image"
                             />
                           </div>
                         )}
                         
                         {/* Vista previa para texto */}
                         {tipoArchivo === 'texto' && contenidoTexto && (
-                          <div style={{padding: '20px', backgroundColor: '#fff', maxHeight: '500px', overflow: 'auto'}}>
-                            <pre style={{
-                              margin: 0,
-                              fontFamily: 'monospace',
-                              fontSize: '12px',
-                              whiteSpace: 'pre-wrap',
-                              wordWrap: 'break-word',
-                              color: '#333'
-                            }}>
+                          <div className="firma-preview-text-wrapper">
+                            <pre className="firma-preview-pre">
                               {contenidoTexto}
                             </pre>
                           </div>
@@ -623,16 +615,16 @@ export default function Firma() {
                         
                         {/* Información para otros tipos */}
                         {archivo && tipoArchivo !== 'pdf' && tipoArchivo !== 'imagen' && tipoArchivo !== 'texto' && (
-                          <div style={{padding: '40px', backgroundColor: '#fff', textAlign: 'center'}}>
-                            <i className="fa fa-file" style={{fontSize: '60px', color: '#1f235e', marginBottom: '20px'}}></i>
-                            <h4 style={{color: '#333', marginBottom: '10px'}}>{archivo.name}</h4>
-                            <p style={{color: '#666', marginBottom: '5px'}}>
+                          <div className="firma-preview-other-wrapper">
+                            <i className="fa fa-file firma-preview-other-icon"></i>
+                            <h4 className="firma-preview-other-title">{archivo.name}</h4>
+                            <p className="firma-preview-other-text">
                               <strong>Tipo:</strong> {tipoArchivo?.toUpperCase() || 'Desconocido'}
                             </p>
-                            <p style={{color: '#666', marginBottom: '5px'}}>
+                            <p className="firma-preview-other-text">
                               <strong>Tamaño:</strong> {(archivo.size / 1024).toFixed(2)} KB
                             </p>
-                            <p style={{color: '#999', fontSize: '12px', marginTop: '20px'}}>
+                            <p className="firma-preview-other-note">
                               Este tipo de archivo será convertido a PDF al firmar
                             </p>
                           </div>
@@ -641,7 +633,7 @@ export default function Firma() {
                   )}
 
                   {archivo && (
-                    <button onClick={procesarFirma} className="btn_primary" style={{width: '100%', maxWidth: '400px'}}>
+                    <button onClick={procesarFirma} className="btn_primary firma-sign-btn">
                       <i className="fa fa-pen-fancy"></i> Firmar Documento Digitalmente
                     </button>
                   )}
@@ -649,11 +641,11 @@ export default function Firma() {
               )}
 
               {cargando && (
-                <div style={{padding: '60px 0'}}>
-                   <div className="spinner-border text-primary" role="status" style={{width: '3rem', height: '3rem', color: '#0FB3D1 !important'}}>
+                <div className="firma-loading-container">
+                   <div className="spinner-border text-primary firma-loading-spinner" role="status">
                     <span className="sr-only">Cargando...</span>
                   </div>
-                  <h4 style={{marginTop: '20px', color: '#1f235e'}}>Firmando documento...</h4>
+                  <h4 className="firma-loading-title">Firmando documento...</h4>
                   <p>Incrustando certificado digital de: <strong>{nombreUsuario}</strong></p>
                 </div>
               )}
@@ -661,36 +653,34 @@ export default function Firma() {
 
               {firmado && (
                 <div className="animate__animated animate__fadeIn">
-                  <i className="fa fa-check-circle" style={{fontSize: '70px', color: '#28a745', marginBottom: '20px'}}></i>
-                  <h3 style={{color: '#1f235e', fontWeight: 'bold'}}>¡Documento Firmado con Éxito!</h3>
+                  <i className="fa fa-check-circle firma-success-icon"></i>
+                  <h3 className="firma-success-title">¡Documento Firmado con Éxito!</h3>
                   
-                  <div style={{marginTop: '30px', padding: '20px', backgroundColor: '#f0fdf4', borderRadius: '15px', border: '1px solid #28a745', textAlign: 'left'}}>
-                    <p style={{marginBottom: '5px'}}><strong>Archivo Generado:</strong> DOCUMENTO_FIRMADO_{nombreSanitizado}.pdf</p>
-                    <p style={{marginBottom: '5px'}}><strong>Hash de Seguridad (SHA-256):</strong> {hashDocumento || 'Se calculará al descargar'}</p>
-                    <p style={{marginBottom: '0'}}><strong>Fecha:</strong> {fechaFirma}</p>
+                  <div className="firma-success-info">
+                    <p><strong>Archivo Generado:</strong> DOCUMENTO_FIRMADO_{nombreSanitizado}.pdf</p>
+                    <p><strong>Hash de Seguridad (SHA-256):</strong> {hashDocumento || 'Se calculará al descargar'}</p>
+                    <p><strong>Fecha:</strong> {fechaFirma}</p>
                   </div>
 
-                  <div className="d-flex justify-content-center gap-3 mt-4" style={{gap: '15px', flexWrap: 'wrap'}}>
+                  <div className="d-flex justify-content-center gap-3 mt-4 firma-success-buttons">
                     
                     <button 
                       onClick={descargarArchivo} 
-                      className="btn_primary" 
-                      style={{background: '#28a745', border: 'none', minWidth: '220px'}}
+                      className="btn_primary firma-btn-download-success"
                     >
                         <i className="fa fa-download"></i> Descargar Documento + Certificado
                     </button>
                     
                     <button 
                       onClick={descargarBoleta} 
-                      className="btn_primary" 
-                      style={{background: '#0FB3D1', border: 'none', minWidth: '220px'}}
+                      className="btn_primary firma-btn-download-info"
                     >
                         <i className="fa fa-receipt"></i> Descargar Boleta
                     </button>
                   </div>
                   
                   <br/>
-                  <button onClick={() => navigate("/")} className="btn btn-link mt-3" style={{color: '#666', textDecoration: 'none'}}>
+                  <button onClick={() => navigate("/")} className="btn btn-link mt-3 firma-back-link">
                     Volver al inicio
                   </button>
                 </div>

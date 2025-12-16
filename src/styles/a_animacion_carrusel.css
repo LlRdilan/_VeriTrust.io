@@ -39,8 +39,8 @@
     display: flex;
     animation: scroll-infinite 25s linear infinite;
     width: max-content;
-    gap: 20px;
-    padding: 0 2px;
+    gap: 60px;
+    padding: 0 30px;
 }
 
 /* Pausa la animación al hacer hover */
@@ -54,13 +54,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 0;
+    padding: 10px;
     background: transparent;
-    border-radius: 0;
-    box-shadow: none;
+    border-radius: 20px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.15);
     transition: all 0.3s ease;
-    width: 280px;
-    height: auto;
+    width: 220px;
+    height: 220px;
+    overflow: visible;
 }
 
 .logo-marquee-item:hover {
@@ -68,21 +69,31 @@
 }
 
 /* Imágenes dentro de los elementos */
-.logo-marquee-item img {
+.logo-marquee-item img,
+.logo-marquee-item img.logo-img,
+.logo-marquee-item img.inicio-logo-rounded {
     max-width: 100%;
-    max-height: 300px;
+    max-height: 100%;
     width: auto;
-    height: 300px;
+    height: auto;
     object-fit: contain;
     filter: grayscale(30%);
-    transition: filter 0.3s ease;
-    padding: 0; 
+    transition: all 0.3s ease;
+    padding: 10px;
+    border-radius: 20px !important;
+    background: #fff;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+}
 
+.logo-marquee-item:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.2);
 }
 
 .logo-marquee-item:hover img {
     filter: grayscale(0%);
-    transform: scale(1.05); 
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
 }
 
 /* Animación principal */
@@ -107,31 +118,53 @@
     }
     
     .logo-marquee-item {
-        width: 200px;
-        height: auto;
-        padding: 0;
+        width: 150px;
+        height: 150px;
+        padding: 8px;
+        border-radius: 15px;
+        overflow: visible;
     }
     
     .logo-marquee-track {
-        gap: 15px;
+        gap: 35px;
         animation-duration: 15s;
     }
     
-    .logo-marquee-item img {
-        height: 120px;
-        max-height: 120px;
+    .logo-marquee-item img,
+    .logo-marquee-item img.logo-img,
+    .logo-marquee-item img.inicio-logo-rounded {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        padding: 8px;
+        border-radius: 15px !important;
     }
 }
 
 /* Para tablets */
 @media (min-width: 769px) and (max-width: 1024px) {
     .logo-marquee-item {
-        width: 300px;
+        width: 180px;
+        height: 180px;
+        padding: 10px;
+        border-radius: 20px;
+        overflow: visible;
+    }
+    
+    .logo-marquee-item img,
+    .logo-marquee-item img.logo-img,
+    .logo-marquee-item img.inicio-logo-rounded {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
         height: auto;
+        padding: 10px;
+        border-radius: 20px !important;
     }
     
     .logo-marquee-track {
-        gap: 40px;
+        gap: 70px;
         animation-duration: 20s;
     }
 }
@@ -139,12 +172,26 @@
 /* Para pantallas muy grandes */
 @media (min-width: 1400px) {
     .logo-marquee-item {
-        width: 450px;
-        height: 140px;
+        width: 250px;
+        height: 250px;
+        padding: 12px;
+        border-radius: 20px;
+        overflow: visible;
+    }
+    
+    .logo-marquee-item img,
+    .logo-marquee-item img.logo-img,
+    .logo-marquee-item img.inicio-logo-rounded {
+        max-width: 100%;
+        max-height: 100%;
+        width: auto;
+        height: auto;
+        padding: 12px;
+        border-radius: 20px !important;
     }
     
     .logo-marquee-track {
-        gap: 60px;
+        gap: 80px;
         animation-duration: 30s; 
     }
 }

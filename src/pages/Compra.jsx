@@ -162,43 +162,43 @@ export default function Compra() {
   if (!servicio) return null;
 
   return (
-    <main className="container" style={{ padding: "60px 0" }}>
+    <main className="container page-compra-container">
       <div className="row justify-content-center">
         <div className="col-md-8">
             <div className="titlepage">
                 <h2>Finalizar Compra</h2>
             </div>
 
-            <div className="card" style={{ padding: "30px", boxShadow: "0 5px 20px rgba(0,0,0,0.05)", borderRadius: "20px", background: "#fff", border: "none" }}>
+            <div className="card compra-card">
                 
-                <div style={{ backgroundColor: "#f7fafc", padding: "20px", borderRadius: "15px", marginBottom: "30px", borderLeft: "5px solid #0FB3D1" }}>
-                    <h3 style={{color: "#1f235e", fontWeight: "700", fontSize: "20px", marginBottom: "15px"}}>
+                <div className="compra-summary">
+                    <h3 className="compra-summary-title">
                         Resumen del Pedido
                     </h3>
-                    <div style={{display: "flex", justifyContent: "space-between", marginBottom: "5px"}}>
+                    <div className="compra-summary-row">
                         <span>Servicio:</span>
-                        <span style={{fontWeight: "600"}}>{servicio.nombre}</span>
+                        <span className="compra-summary-label">{servicio.nombre}</span>
                     </div>
                     {servicio.neto && (
                       <>
-                        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "5px", color: "#666"}}>
+                        <div className="compra-summary-row-gray">
                             <span>Precio Neto:</span>
                             <span>${servicio.neto.toLocaleString()}</span>
                         </div>
-                        <div style={{display: "flex", justifyContent: "space-between", marginBottom: "10px", color: "#666"}}>
+                        <div className="compra-summary-row-gray">
                             <span>IVA (19%):</span>
                             <span>${servicio.iva.toLocaleString()}</span>
                         </div>
                       </>
                     )}
-                    <hr style={{margin: "10px 0"}}/>
-                    <div style={{display: "flex", justifyContent: "space-between", fontSize: "22px", fontWeight: "bold", color: "#1f235e"}}>
+                    <hr className="compra-summary-divider"/>
+                    <div className="compra-summary-total">
                         <span>Total a Pagar:</span>
                         <span>${(servicio.total || servicio.price || 0).toLocaleString()}</span>
                     </div>
                 </div>
 
-                <h4 style={{color: "#0FB3D1", fontWeight: "600", marginBottom: "20px"}}>Datos de Pago</h4>
+                <h4 className="compra-form-title">Datos de Pago</h4>
                 
                 <form onSubmit={manejarEnvio}>
                     <div className="form-group mb-3">
@@ -209,10 +209,10 @@ export default function Compra() {
                     <div className="form-group mb-3">
                         <div className="d-flex justify-content-between align-items-center">
                             <label>Numero de tarjeta</label>
-                            <div style={{fontSize: '24px'}}>
-                                <i className={`fa-brands fa-cc-visa ${tipoTarjeta === 'visa' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'visa' ? '#1A1F71' : '#ccc', transition: '0.3s'}}></i>
-                                <i className={`fa-brands fa-cc-mastercard ${tipoTarjeta === 'mastercard' ? '' : 'text-muted'}`} style={{marginRight: '10px', color: tipoTarjeta === 'mastercard' ? '#EB001B' : '#ccc', transition: '0.3s'}}></i>
-                                <i className={`fa-brands fa-cc-amex ${tipoTarjeta === 'amex' ? '' : 'text-muted'}`} style={{color: tipoTarjeta === 'amex' ? '#2E77BC' : '#ccc', transition: '0.3s'}}></i>
+                            <div className="compra-card-icons">
+                                <i className={`fa-brands fa-cc-visa compra-card-icon ${tipoTarjeta === 'visa' ? 'compra-card-icon-visa' : 'compra-card-icon-muted'}`}></i>
+                                <i className={`fa-brands fa-cc-mastercard compra-card-icon ${tipoTarjeta === 'mastercard' ? 'compra-card-icon-mastercard' : 'compra-card-icon-muted'}`}></i>
+                                <i className={`fa-brands fa-cc-amex compra-card-icon ${tipoTarjeta === 'amex' ? 'compra-card-icon-amex' : 'compra-card-icon-muted'}`}></i>
                             </div>
                         </div>
                         <input type="text" maxLength={16} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
@@ -238,7 +238,7 @@ export default function Compra() {
                     </div>
 
                     <div className="form-group text-center">
-                        <button className="comprar_btn" type="submit" style={{maxWidth: '100%'}} disabled={cargando}>
+                        <button className="comprar_btn compra-submit-btn" type="submit" disabled={cargando}>
                             {cargando ? "Procesando..." : "Pagar"}
                         </button>
                     </div>

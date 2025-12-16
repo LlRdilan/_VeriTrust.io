@@ -51,7 +51,7 @@ export default function Contactanos() {
                 
                 {mensajeEnviado && (
                   <div className="col-md-12 mt-4">
-                    <div className="alert alert-success text-center" role="alert" style={{ borderRadius: '15px', fontWeight: '600' }}>
+                    <div className="alert alert-success text-center contactanos-success-alert" role="alert">
                       ¡Mensaje enviado con éxito! <br/>
                       Nos pondremos en contacto contigo a tu correo a la brevedad.
                     </div>

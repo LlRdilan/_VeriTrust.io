@@ -181,12 +181,12 @@ export default function Registro() {
   };
 
   return (
-    <div className="contact" style={{ paddingTop: "60px", paddingBottom: "80px" }}>
+    <div className="contact page-registro-container">
       <div className="container">
         <div className="row">
           <div className="col-md-8 offset-md-2">
-            <div style={{ background: "#fff", padding: "40px", borderRadius: "20px", boxShadow: "0 5px 20px rgba(0,0,0,0.05)" }}>
-                <div className="titlepage" style={{paddingBottom: '30px'}}>
+            <div className="registro-form-wrapper">
+                <div className="titlepage registro-title-section">
                   <h2>Crea tu cuenta</h2>
                 </div>
 
@@ -196,56 +196,56 @@ export default function Registro() {
                       <label>RUT</label>
                       <input type="text" className="contact_control" placeholder="12.345.678-9 (Sin puntos ni guion)" 
                         value={form.rut} onChange={(e) => setForm({ ...form, rut: e.target.value })} required />
-                      {errores.rut && <small style={{ color: "red" }}>{errores.rut}</small>}
+                      {errores.rut && <small className="registro-error-text">{errores.rut}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Nombre</label>
                       <input type="text" className="contact_control" placeholder="Nombre completo" 
                         value={form.nombre} onChange={(e) => setForm({ ...form, nombre: e.target.value })} required />
-                      {errores.nombre && <small style={{ color: "red" }}>{errores.nombre}</small>}
+                      {errores.nombre && <small className="registro-error-text">{errores.nombre}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Fecha Nacimiento</label>
                       <input type="date" className="contact_control" 
                         value={form.fechaNac} onChange={(e) => setForm({ ...form, fechaNac: e.target.value })} required />
-                      {errores.fechaNac && <small style={{ color: "red" }}>{errores.fechaNac}</small>}
+                      {errores.fechaNac && <small className="registro-error-text">{errores.fechaNac}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Teléfono</label>
                       <input type="text" className="contact_control" placeholder="+569..." 
                         value={form.telefono} onChange={(e) => setForm({ ...form, telefono: e.target.value })} required />
-                      {errores.telefono && <small style={{ color: "red" }}>{errores.telefono}</small>}
+                      {errores.telefono && <small className="registro-error-text">{errores.telefono}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Email</label>
                       <input type="email" className="contact_control" placeholder="correo@ejemplo.com" 
                         value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-                      {errores.email && <small style={{ color: "red" }}>{errores.email}</small>}
+                      {errores.email && <small className="registro-error-text">{errores.email}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Confirmar Email</label>
                       <input type="email" className="contact_control" placeholder="Repite tu correo" 
                         value={form.confirmarEmail} onChange={(e) => setForm({ ...form, confirmarEmail: e.target.value })} required />
-                      {errores.confirmarEmail && <small style={{ color: "red" }}>{errores.confirmarEmail}</small>}
+                      {errores.confirmarEmail && <small className="registro-error-text">{errores.confirmarEmail}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Contraseña</label>
                       <input type="password" className="contact_control" placeholder="****** (Min. 6 caracteres)" 
                         value={form.contraseña} onChange={(e) => setForm({ ...form, contraseña: e.target.value })} required />
-                      {errores.contraseña && <small style={{ color: "red" }}>{errores.contraseña}</small>}
+                      {errores.contraseña && <small className="registro-error-text">{errores.contraseña}</small>}
                     </div>
 
                     <div className="col-md-6">
                       <label>Confirmar Contraseña</label>
                       <input type="password" className="contact_control" placeholder="Repite la contraseña" 
                         value={form.confirmarContraseña} onChange={(e) => setForm({ ...form, confirmarContraseña: e.target.value })} required />
-                      {errores.confirmarContraseña && <small style={{ color: "red" }}>{errores.confirmarContraseña}</small>}
+                      {errores.confirmarContraseña && <small className="registro-error-text">{errores.confirmarContraseña}</small>}
                     </div>
 
                     <div className="col-md-6">
@@ -263,7 +263,7 @@ export default function Registro() {
                           </option>
                         ))}
                       </select>
-                      {errores.region && <small style={{ color: "red" }}>{errores.region}</small>}
+                      {errores.region && <small className="registro-error-text">{errores.region}</small>}
                     </div>
                     
                     <div className="col-md-6">
@@ -298,7 +298,7 @@ export default function Registro() {
                           )
                         )}
                       </select>
-                      {errores.comuna && <small style={{ color: "red" }}>{errores.comuna}</small>}
+                      {errores.comuna && <small className="registro-error-text">{errores.comuna}</small>}
                     </div>
 
                     <div className="col-md-12 mt-3 text-center">
@@ -307,10 +307,10 @@ export default function Registro() {
                           checked={form.terminos} onChange={(e) => setForm({ ...form, terminos: e.target.checked })} />
                         
                         <label className="form-check-label" htmlFor="Terminos">
-                          Acepto los <Link to="/importante" target="_blank" style={{color: '#0FB3D1', fontWeight: 'bold'}}>términos y condiciones</Link>
+                          Acepto los <Link to="/importante" target="_blank" className="registro-link-terms">términos y condiciones</Link>
                         </label>
                       </div>
-                      {errores.terminos && <small style={{ color: "red", display:'block' }}>{errores.terminos}</small>}
+                      {errores.terminos && <small className="registro-error-text-block">{errores.terminos}</small>}
                     </div>
 
                     <div className="col-md-12 mt-4 d-flex justify-content-center">
@@ -318,7 +318,7 @@ export default function Registro() {
                     </div>
 
                     <div className="col-md-12 mt-4">
-                      <button type="submit" className="send_btn" style={{margin:'0 auto'}}>Registrarme</button>
+                      <button type="submit" className="send_btn registro-submit-btn">Registrarme</button>
                     </div>
                   </div>
                 </form>

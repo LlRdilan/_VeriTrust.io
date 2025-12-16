@@ -237,7 +237,7 @@ export default function Admin() {
   };
 
   return (
-    <div className="service" style={{ minHeight: "100vh", paddingBottom: "100px" }}>
+    <div className="service page-admin-container">
       <div className="container">
         <div className="titlepage">
             <h2>Panel de Administración</h2>
@@ -245,7 +245,7 @@ export default function Admin() {
         </div>
         
         <div className="backoffice_section">
-          <h4 style={{borderBottom: '2px solid #0FB3D1', paddingBottom: '10px', marginBottom: '20px'}}>
+          <h4 className="admin-section-title">
             {idEdicion !== null ? "Editar Servicio" : "Crear Nuevo Servicio"}
           </h4>
           <form onSubmit={manejarEnvio}>
@@ -322,13 +322,13 @@ export default function Admin() {
 
                         return (
                           <tr key={s.id}>
-                                <td style={{fontWeight: 'bold', color: '#1f235e'}}>{s.nombre}</td>
+                                <td className="admin-table-name">{s.nombre}</td>
                                 <td>{s.descripcion}</td>
                                 <td>${neto.toLocaleString()}</td>
                                 <td>${iva.toLocaleString()}</td> 
-                                <td style={{fontWeight: 'bold', color: '#0FB3D1'}}>${total.toLocaleString()}</td> 
+                                <td className="admin-table-total">${total.toLocaleString()}</td> 
                                 <td className="text-right">
-                                    <button onClick={() => cargarParaEditar(s)} className="btn btn-sm btn-warning mr-2" style={{color:'#fff'}}>
+                                    <button onClick={() => cargarParaEditar(s)} className="btn btn-sm btn-warning mr-2 admin-btn-edit">
                                         <i className="fa fa-edit"></i>
                                     </button>
                                     <button onClick={() => manejarEliminarClick(s.id)} className="btn btn-sm btn-danger">
