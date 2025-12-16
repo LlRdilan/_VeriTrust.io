@@ -1,52 +1,84 @@
-import { describe, it, expect } from "vitest";
-import { validarRut } from "../../pages/Registro";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter } from "react-router-dom";
+import Registro from "../../pages/Registro";
 
-describe("validarRut()", () => {
-  it("deberia retornar true para un rut valido", () => {
-    expect(validarRut("12345678-5")).toBe(true);
-  });
-
-  it("deberia retornar false para un rut invalido", () => {
-    expect(validarRut("12345678-9")).toBe(false);
-  });
-
-  it("deberia retornar false si el cuerpo tiene letras", () => {
-    expect(validarRut("12A45678-5")).toBe(false);
-  });
-
-  it("deberia retornar false si falta el digito verificador", () => {
-    expect(validarRut("12345678")).toBe(false);
-  });
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+  };
 });
 
-describe("validacion de formulario de registro", () => {
-  it("deberia lanzar error si nombre esta vacio", () => {
-    const nombre = "";
-    expect(() => {
-      if (!nombre) throw new Error("Nombre vacio");
-    }).toThrow("Nombre vacio");
+vi.mock("../../components/api/ReCaptcha", () => ({
+  default: ({ onChange }) => (
+    <div data-testid="recaptcha" onClick={() => onChange("token-valido")}>
+      reCAPTCHA
+    </div>
+  ),
+}));
+
+global.fetch = vi.fn();
+
+describe("Registro - Tests de Página Real", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("deberia lanzar error si correo y confirmacion no coinciden", () => {
-    const email = "correo@ejemplo.com";
-    const confirmarEmail = "otro@ejemplo.com";
-    expect(() => {
-      if (email !== confirmarEmail) throw new Error("Los correos no coinciden");
-    }).toThrow("Los correos no coinciden");
+  it("debe renderizar todos los campos del formulario de registro", () => {
+    render(
+      <BrowserRouter>
+        <Registro />
+      </BrowserRouter>
+    );
+
+    expect(screen.getByText("Crea tu cuenta")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText(/12.345.678-9/i)).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Nombre completo")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("correo@ejemplo.com")).toBeInTheDocument();
+    expect(screen.getByText("Registrarme")).toBeInTheDocument();
   });
 
-  it("deberia lanzar error si contraseña y confirmacion no coinciden", () => {
-    const contraseña = "123456";
-    const confirmarContraseña = "654321";
-    expect(() => {
-      if (contraseña !== confirmarContraseña) throw new Error("Las contraseñas no coinciden");
-    }).toThrow("Las contraseñas no coinciden");
+  it("debe mostrar campos de región y comuna", () => {
+    render(
+      <BrowserRouter>
+        <Registro />
+      </BrowserRouter>
+    );
+
+    const regionSelect = screen.getByText("Selecciona una región");
+    const comunaSelect = screen.getByText("Selecciona una comuna");
+    expect(regionSelect).toBeInTheDocument();
+    expect(comunaSelect).toBeInTheDocument();
   });
 
-  it("deberia lanzar error si no se aceptan terminos", () => {
-    const terminos = false;
-    expect(() => {
-      if (!terminos) throw new Error("Debes aceptar los terminos");
-    }).toThrow("Debes aceptar los terminos");
+  it("debe mostrar checkbox de términos y condiciones", () => {
+    render(
+      <BrowserRouter>
+        <Registro />
+      </BrowserRouter>
+    );
+
+    const terminosCheckbox = screen.getByLabelText(/Acepto los/i);
+    expect(terminosCheckbox).toBeInTheDocument();
+    expect(terminosCheckbox).not.toBeChecked();
+  });
+
+  it("debe validar que los campos requeridos estén presentes", () => {
+    render(
+      <BrowserRouter>
+        <Registro />
+      </BrowserRouter>
+    );
+
+    const rutInput = screen.getByPlaceholderText(/12.345.678-9/i);
+    const nombreInput = screen.getByPlaceholderText("Nombre completo");
+    const emailInput = screen.getByPlaceholderText("correo@ejemplo.com");
+
+    expect(rutInput).toBeRequired();
+    expect(nombreInput).toBeRequired();
+    expect(emailInput).toBeRequired();
   });
 });

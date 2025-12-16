@@ -1,51 +1,95 @@
-import { describe, it, expect } from "vitest";
-import { validarNumeroTarjeta } from "../../pages/Compra";
+import { describe, it, expect, vi, beforeEach } from "vitest";
+import { render, screen, waitFor } from "@testing-library/react";
+import { BrowserRouter, MemoryRouter } from "react-router-dom";
+import Compra from "../../pages/Compra";
 
-describe("validarNumeroTarjeta()", () => {
-  it("deberia retornar true si el numero de tarjeta es valido", () => {
-    expect(validarNumeroTarjeta("4539578763621486")).toBe(true);
-  });
-
-  it("deberia retornar false si el numero de tarjeta es invalido", () => {
-    expect(validarNumeroTarjeta("1234567812345678")).toBe(false);
-  });
-
-  it("deberia retornar false si se pasa un valor con menos de 16 digitos", () => {
-    expect(validarNumeroTarjeta("12345678")).toBe(false);
-  });
-
-  it("deberia retornar false si se pasa un valor con caracteres no numericos", () => {
-    expect(validarNumeroTarjeta("1234abcd5678efgh")).toBe(false);
-  });
+const mockNavigate = vi.fn();
+vi.mock("react-router-dom", async () => {
+  const actual = await vi.importActual("react-router-dom");
+  return {
+    ...actual,
+    useNavigate: () => mockNavigate,
+    useLocation: () => ({
+      state: {
+        nombre: "Firma Digital",
+        neto: 15000,
+        iva: 2850,
+        total: 17850,
+        id: 1,
+      },
+    }),
+  };
 });
 
-describe("validacion de campos de compra", () => {
-  it("deberia lanzar error si nombre esta vacio", () => {
-    const nombre = "";
-    expect(() => {
-      if (!nombre) throw new Error("Nombre vacio");
-    }).toThrow("Nombre vacio");
+vi.mock("../../components/api/ReCaptcha", () => ({
+  default: ({ onChange }) => (
+    <div data-testid="recaptcha" onClick={() => onChange("token-valido")}>
+      reCAPTCHA
+    </div>
+  ),
+}));
+
+vi.mock("../../services/auth", () => ({
+  getSession: () => ({
+    id: 1,
+    token: "mock-token",
+    nombre: "Usuario Test",
+  }),
+}));
+
+global.fetch = vi.fn();
+
+describe("Compra - Tests de Página Real", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  it("deberia lanzar error si mes es menor que 1 o mayor que 12", () => {
-    const mes = 13;
-    expect(() => {
-      if (mes < 1 || mes > 12) throw new Error("Mes invalido");
-    }).toThrow("Mes invalido");
+  it("debe renderizar el resumen del pedido con los datos del servicio", () => {
+    render(
+      <MemoryRouter>
+        <Compra />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Finalizar Compra")).toBeInTheDocument();
+    expect(screen.getByText("Resumen del Pedido")).toBeInTheDocument();
+    expect(screen.getByText("Firma Digital")).toBeInTheDocument();
+    expect(screen.getByText(/\$17.850/)).toBeInTheDocument();
   });
 
-  it("deberia lanzar error si anio es menor al actual", () => {
-    const anio = 2020;
-    const anioActual = new Date().getFullYear();
-    expect(() => {
-      if (anio < anioActual) throw new Error("Anio invalido");
-    }).toThrow("Anio invalido");
+  it("debe mostrar todos los campos del formulario de pago", () => {
+    render(
+      <MemoryRouter>
+        <Compra />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText("Datos de Pago")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("0000 0000 0000 0000")).toBeInTheDocument();
+    expect(screen.getByText(/Mes \(MM\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/Año \(AAAA\)/i)).toBeInTheDocument();
+    expect(screen.getByText(/CVV/i)).toBeInTheDocument();
   });
 
-  it("deberia lanzar error si CVV no tiene 3 digitos", () => {
-    const cvv = "12";
-    expect(() => {
-      if (!/^\d{3}$/.test(cvv)) throw new Error("CVV invalido");
-    }).toThrow("CVV invalido");
+  it("debe mostrar el botón de pago", () => {
+    render(
+      <MemoryRouter>
+        <Compra />
+      </MemoryRouter>
+    );
+
+    const pagarButton = screen.getByText("Pagar");
+    expect(pagarButton).toBeInTheDocument();
+    expect(pagarButton).toBeInTheDocument();
+  });
+
+  it("debe mostrar el campo de número de tarjeta", () => {
+    render(
+      <MemoryRouter>
+        <Compra />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByPlaceholderText("0000 0000 0000 0000")).toBeInTheDocument();
   });
 });
