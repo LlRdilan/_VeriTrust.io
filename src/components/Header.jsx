@@ -95,7 +95,7 @@ export default function Header() {
                                             
                                             {user ? (
                                                 <li className="nav-item dropdown">
-                                                    <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{color: '#fff', fontWeight: 'bold'}}>
+                                                    <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style={{color: '#fff', fontWeight: 'bold'}} title={user.nombre}>
                                                         <i className="fa fa-user-circle" style={{marginRight: '5px'}}></i> {user.nombre}
                                                     </a>
                                                     <div className="dropdown-menu" aria-labelledby="navbarDropdown">

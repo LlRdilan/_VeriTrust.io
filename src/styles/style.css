@@ -173,6 +173,11 @@ img {
     color: #66d6ff;
 }
 
+.lead {
+    font-size: 18px;
+    line-height: 30px;
+    color: #0F1720;
+}
 
 .form-control:focus {
     border-color: #66d6ff;
@@ -183,6 +188,17 @@ img {
     border: none;
 }
 
+.badge {
+    font-weight: 500;
+}
+
+blockquote {
+    margin: 20px 0;
+    padding: 30px;
+    background: #f4feff;
+    color: #66d6ff;
+    border-left: 4px solid #66d6ff;
+}
 
 button {
     border: none;
@@ -192,6 +208,39 @@ button {
     background: none;
 }
 
+.full {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    display: block;
+    float: left;
+}
+
+/*---------------------------- Preloader Area ----------------------------*/
+.loader_bg {
+    position: fixed;
+    z-index: 9999999;
+    background: #F7FAFC;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+.loader {
+    height: 100vh;
+    width: 100vw;
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.loader img {
+    width: 280px;
+}
 
 ul.btn {
     float: right;
@@ -299,9 +348,102 @@ ul.lan li select {
     font-weight: 500;
 }
 
+/* Ajuste para dropdown-toggle con texto largo - mantiene una sola línea */
+.navigation.navbar-dark .navbar-nav .nav-item.dropdown {
+    max-width: 220px;
+}
+
+.navigation.navbar-dark .navbar-nav .nav-item.dropdown .nav-link.dropdown-toggle {
+    max-width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: inline-block;
+    padding: 25px 15px;
+    font-size: 15px;
+    line-height: 20px;
+    height: 70px;
+    box-sizing: border-box;
+}
+
+.navigation.navbar-dark .navbar-nav .nav-item.dropdown .nav-link.dropdown-toggle i {
+    margin-right: 5px;
+    flex-shrink: 0;
+}
+
 /* --- Estilos Mejorados para la Sección "Nosotros" --- */
 
 /* Contenedor principal de la sección */
+.about-section {
+    padding: 90px 0;
+    background-color: #E2F2F4;
+    /* O el color de fondo que prefieras */
+}
+
+/* Fila con alineación vertical centrada */
+.about-row-centered {
+    display: flex;
+    align-items: anchor-center;
+    /* Centra verticalmente */
+    flex-wrap: wrap;
+    /* Importante para que funcione en móviles */
+}
+
+/* Caja de texto mejorada */
+.about-box-content {
+    padding: 0 5%;
+    text-align: left;
+}
+
+.about-box-content .titlepage {
+    text-align: left;
+    padding-bottom: 20px;
+}
+
+.about-box-content h3 {
+    text-align: left;
+    font-weight: 700;
+    color: #0B1F2E;
+}
+
+/* Estilo para la figura de la imagen */
+.about-img-figure {
+    margin: 0 20px;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+}
+
+/* Botón de llamado a la acción personalizado */
+.btn-about-start {
+    background-color: #0f7dd1;
+    color: #FFF !important;
+    /* !important para asegurar que sobreescriba otras reglas de 'a' */
+    padding: 14px 30px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-weight: bold;
+    font-family: 'Montserrat', sans-serif;
+    display: inline-flex;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(15, 179, 209, 0.3);
+    transition: all 0.3s ease;
+    border: none;
+    margin-bottom: 5%;
+}
+
+/* Efecto hover para el botón (mucho más simple en CSS) */
+.btn-about-start:hover {
+    background-color: #1f235e;
+    color: #FFF !important;
+    transform: translateY(-2px);
+    /* Pequeño efecto de elevación */
+    box-shadow: 0 6px 20px rgba(31, 35, 94, 0.4);
+}
+
+.btn-about-start i {
+    margin-left: 10px;
+}
 
 /*--------------------------------------------------------------------- 
 Layout New CSS 
@@ -544,6 +686,10 @@ ul.conta_icon li a:hover {
     color: #1f235e;
 }
 
+.ban_img figure {
+    margin: 0;
+}
+
 .flag-icon {
     width: 20px;
     height: auto;
@@ -651,6 +797,10 @@ ul.conta_icon li a:hover {
     padding-top: 25px;
     text-transform: uppercase;
     display: block;
+}
+
+.try {
+    float: left;
 }
 
 .about_box p {
@@ -791,6 +941,89 @@ ul.conta_icon li a:hover {
     padding: 0;
 }
 
+.portfolio_box {
+    text-align: center;
+    position: relative;
+}
+
+.portfolio_img {
+    margin-bottom: 30px;
+}
+
+.middle {
+    z-index: 9999;
+    transition: .5s ease;
+    opacity: 0;
+    position: absolute;
+    top: 45%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    background-color: #0FB3D1cc;
+    width: 90%;
+    height: 92%;
+}
+
+.portfolio_box:hover .middle {
+    opacity: 1;
+}
+
+.text2 {
+    background-color: transparent;
+    color: #0B1F2E;
+    font-size: 17px;
+    padding: 7px 0;
+    width: 144px;
+    margin: 50% auto 0;
+    border: 2px solid #1f235e;
+    display: block;
+}
+
+.portfolio_Carousel .carousel-indicators {
+    display: none;
+}
+
+#myCarousel .carousel-control-prev {
+    left: 20px;
+}
+
+#myCarousel .carousel-control-next {
+    right: 20px;
+}
+
+#myCarousel .carousel-control-next,
+#myCarousel .carousel-control-prev {
+    width: 60px;
+    height: 60px;
+    background: #66d6ff;
+    opacity: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #F7FAFC;
+    top: 42%;
+    border-radius: 30px;
+}
+
+#myCarousel .carousel-control-prev:hover,
+#myCarousel .carousel-control-next:hover,
+#myCarousel .carousel-control-prev:focus,
+#myCarousel .carousel-control-next:focus {
+    background: #1f235e;
+    color: #F7FAFC;
+}
+
+.portfolio .read_more {
+    color: #1f235e !important;
+    margin: 40px auto 0;
+    max-width: 140px;
+    width: 100%;
+    display: table;
+}
+
+.portfolio .read_more:hover {
+    color: #66d6ff !important;
+}
 
 /** End Portfolio Section **/
 
@@ -856,6 +1089,105 @@ ul.conta_icon li a:hover {
 /** End Business Section **/
 
 /** Team Section **/
+.team {
+    background: #E2F2F4;
+    padding-top: 80px;
+}
+
+.team .titlepage h2 {
+    color: #66d6ff;
+}
+
+.team .team_Carousel .carousel-caption {
+    position: static;
+    padding: 0;
+}
+
+.team_box {
+    text-align: center;
+}
+
+.team_img img {
+    margin-bottom: 30px;
+    border-radius: 220px;
+    border: 15px solid #66d6ff;
+}
+
+ul.social_icont {
+    margin-top: 41%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+ul.social_icont li {
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+ul.social_icont li a {
+    color: #66d6ff;
+    width: 40px;
+    height: 40px;
+    background: #E2F2F4;
+    text-align: center;
+    line-height: 40px;
+    border-radius: 100%;
+    font-size: 22px;
+}
+
+.team_img:hover img {
+    border: 15px solid #1f235e;
+    background-color: #E2F2F4;
+}
+
+.ho_socal {
+    position: absolute;
+    z-index: 9999;
+    top: 13px;
+    right: 0;
+    left: 0;
+    transition: .5s ease;
+    background-color: #66d6ff;
+    border-radius: 381px;
+    width: 242px;
+    margin: 0 auto;
+    height: 247px;
+    opacity: 0;
+}
+
+.team_box:hover .ho_socal {
+    opacity: 1;
+}
+
+.team_Carousel .carousel-indicators {
+    bottom: 0px;
+    align-items: center;
+}
+
+.team_Carousel .carousel-indicators .active {
+    background-color: #1f235e;
+    padding: 5px;
+    width: 20px;
+    height: 20px;
+    border: 4px solid #66d6ff;
+}
+
+.team_Carousel .carousel-indicators li {
+    background-color: #66d6ff;
+    width: 15px;
+    height: 15px;
+    border-radius: 20px;
+}
+
+#team .carousel-control-next,
+#team .carousel-control-prev {
+    display: none;
+}
+
+/** End Team Section **/
 
 /** Testimonial Section **/
 .testimonial {
