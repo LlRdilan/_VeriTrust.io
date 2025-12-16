@@ -4,23 +4,15 @@ import ReCAPTCHA from "../components/api/ReCaptcha";
 import NotificationModal from "../components/ui/NotificacionModal";
 import { getSession } from "../services/auth";
 import { handleError, handleHttpError } from "../services/errorHandler";
-
-export function validarNumeroTarjeta(numero) {
-  if (typeof numero !== "string") return false;
-  if (!/^\d{16}$/.test(numero)) return false;
-  let suma = 0;
-  let doble = false;
-  for (let i = numero.length - 1; i >= 0; i--) {
-    let digito = parseInt(numero.charAt(i), 10);
-    if (doble) {
-      digito *= 2;
-      if (digito > 9) digito -= 9;
-    }
-    suma += digito;
-    doble = !doble;
-  }
-  return suma % 10 === 0;
-}
+import { 
+  validarNumeroTarjeta, 
+  limpiarNumeroTarjeta, 
+  formatearNumeroTarjeta, 
+  detectarFranquicia,
+  validarMesExpiracion,
+  validarFechaExpiracion,
+  validarCVV
+} from "../utils/validaciones";
 
 export default function Compra() {
   const location = useLocation();
@@ -45,18 +37,16 @@ export default function Compra() {
     }
   }, [servicio, navigate]);
 
-  const detectarFranquicia = (numero) => {
-    if (numero.startsWith("4")) return "visa";
-    if (/^5[1-5]/.test(numero)) return "mastercard";
-    if (/^3[47]/.test(numero)) return "amex";
-    return "";
-  };
-
   const manejarCambioNumero = (e) => {
     const valor = e.target.value;
-    if (/^\d*$/.test(valor)) {
-        setNumeroTarjeta(valor);
-        setTipoTarjeta(detectarFranquicia(valor));
+    // Permitir solo dígitos y espacios
+    const valorLimpio = valor.replace(/[^\d\s]/g, '');
+    // Limitar a 16 dígitos (sin contar espacios)
+    const numeroLimpio = limpiarNumeroTarjeta(valorLimpio);
+    if (numeroLimpio.length <= 16) {
+      const numeroFormateado = formatearNumeroTarjeta(numeroLimpio);
+      setNumeroTarjeta(numeroFormateado);
+      setTipoTarjeta(detectarFranquicia(numeroLimpio));
     }
   };
 
@@ -73,34 +63,22 @@ export default function Compra() {
       return;
     }
 
-    if (!/^\d{16}$/.test(numeroTarjeta) || !validarNumeroTarjeta(numeroTarjeta)) {
+    // Limpiar espacios del número de tarjeta para validar
+    const numeroTarjetaLimpio = limpiarNumeroTarjeta(numeroTarjeta);
+    if (!/^\d{16}$/.test(numeroTarjetaLimpio) || !validarNumeroTarjeta(numeroTarjetaLimpio)) {
       mostrarError("Número de tarjeta inválido.");
       return;
     }
 
-    const mes = parseInt(mesExpiracion, 10);
-    if (!/^\d{2}$/.test(mesExpiracion) || mes < 1 || mes > 12) {
-      mostrarError("Mes de expiración inválido (formato MM).");
+    // Validar fecha de expiración
+    const validacionFecha = validarFechaExpiracion(mesExpiracion, anioExpiracion);
+    if (!validacionFecha.valido) {
+      mostrarError(validacionFecha.mensaje);
       return;
     }
 
-    const hoy = new Date();
-    const anioActual = hoy.getFullYear();
-    const mesActual = hoy.getMonth() + 1; // getMonth() devuelve 0-11
-    const anio = parseInt(anioExpiracion, 10);
-    
-    if (!/^\d{4}$/.test(anioExpiracion) || anio < anioActual) {
-      mostrarError("Año de expiración inválido o expirado.");
-      return;
-    }
-    
-    // Si el año es el actual, validar que el mes no haya expirado
-    if (anio === anioActual && mes < mesActual) {
-      mostrarError("La tarjeta ha expirado este mes.");
-      return;
-    }
-
-    if (!/^\d{3}$/.test(cvv)) {
+    // Validar CVV
+    if (!validarCVV(cvv)) {
       mostrarError("CVV inválido (debe tener 3 dígitos).");
       return;
     }
@@ -215,7 +193,7 @@ export default function Compra() {
                                 <i className={`fa-brands fa-cc-amex compra-card-icon ${tipoTarjeta === 'amex' ? 'compra-card-icon-amex' : 'compra-card-icon-muted'}`}></i>
                             </div>
                         </div>
-                        <input type="text" maxLength={16} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
+                        <input type="text" maxLength={19} className="form-control" placeholder="0000 0000 0000 0000" value={numeroTarjeta} onChange={manejarCambioNumero} required />
                     </div>
 
                     <div className="row">

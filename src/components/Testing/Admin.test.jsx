@@ -1,59 +1,63 @@
 import { describe, it, expect } from "vitest";
-import { ComprobarServicio } from "../../pages/Admin";
+import { validarServicio } from "../../utils/validaciones";
 
-describe("ComprobarServicio()", {}, () => {
+describe("validarServicio()", {}, () => {
   it("deberia aceptar un servicio valido", {}, () => {
     const servicio = {
-      name: "Firma Digital",
-      desc: "Certificado SII",
-      price: 15000,
-      longDesc: "Primera linea\nSegunda linea\nTercera linea",
+      nombre: "Firma Digital",
+      descripcion: "Certificado SII",
+      precio: 15000,
     };
 
-    expect(ComprobarServicio(servicio)).toBe(true);
+    const resultado = validarServicio(servicio);
+    expect(resultado.valido).toBe(true);
   });
 
   it("deberia lanzar error si el nombre esta vacio", {}, () => {
     const servicio = {
-      name: "",
-      desc: "Descripcion valida",
-      price: 10000,
-      longDesc: "Linea 1\nLinea 2\nLinea 3",
+      nombre: "",
+      descripcion: "Descripcion valida",
+      precio: 10000,
     };
 
-    expect(() => ComprobarServicio(servicio)).toThrow("Nombre y descripcion son obligatorios");
+    const resultado = validarServicio(servicio);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("obligatorios");
   });
 
   it("deberia lanzar error si el precio es negativo", {}, () => {
     const servicio = {
-      name: "Servicio",
-      desc: "Descripcion valida",
-      price: -5000,
-      longDesc: "Linea 1\nLinea 2\nLinea 3",
+      nombre: "Servicio",
+      descripcion: "Descripcion valida",
+      precio: -5000,
     };
 
-    expect(() => ComprobarServicio(servicio)).toThrow("El precio debe ser un numero entero positivo");
+    const resultado = validarServicio(servicio);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("número entero positivo");
   });
 
   it("deberia lanzar error si el precio es decimal", {}, () => {
     const servicio = {
-      name: "Servicio",
-      desc: "Descripcion valida",
-      price: 1234.56,
-      longDesc: "Linea 1\nLinea 2\nLinea 3",
+      nombre: "Servicio",
+      descripcion: "Descripcion valida",
+      precio: 1234.56,
     };
 
-    expect(() => ComprobarServicio(servicio)).toThrow("El precio debe ser un numero entero positivo");
+    const resultado = validarServicio(servicio);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("número entero positivo");
   });
 
-  it("deberia lanzar error si la descripcion larga tiene menos de 3 lineas", {}, () => {
+  it("deberia lanzar error si la descripcion esta vacia", {}, () => {
     const servicio = {
-      name: "Servicio",
-      desc: "Descripcion valida",
-      price: 10000,
-      longDesc: "Solo una linea",
+      nombre: "Servicio",
+      descripcion: "",
+      precio: 10000,
     };
 
-    expect(() => ComprobarServicio(servicio)).toThrow("La descripcion larga debe tener al menos 3 lineas");
+    const resultado = validarServicio(servicio);
+    expect(resultado.valido).toBe(false);
+    expect(resultado.mensaje).toContain("obligatorios");
   });
 });

@@ -2,7 +2,16 @@ import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ReCAPTCHA from "../components/api/ReCaptcha";
 import NotificationModal from "../components/ui/NotificacionModal";
-import { validarRut, validarEmail, calcularEdad } from "../utils/validaciones";
+import { 
+  validarRut, 
+  validarEmail, 
+  calcularEdad,
+  validarNombre,
+  validarContraseña,
+  validarCoincidenciaEmail,
+  validarCoincidenciaContraseña,
+  validarEdadMinima
+} from "../utils/validaciones";
 import { handleError, handleHttpError } from "../services/errorHandler";
 import { 
   obtenerRegiones, 
@@ -43,22 +52,19 @@ export default function Registro() {
     if (!validarRut(form.rut)) {
         nuevosErrores.rut = "RUT inválido"; valido = false;
     }
-    if (form.nombre.length < 3) {
+    if (!validarNombre(form.nombre)) {
         nuevosErrores.nombre = "Ingresa un nombre válido"; valido = false;
     }
     if (!form.fechaNac) {
         nuevosErrores.fechaNac = "Ingresa tu fecha de nacimiento"; valido = false;
-    } else {
-        const edad = calcularEdad(form.fechaNac);
-        if (edad < 18) {
-            nuevosErrores.fechaNac = "Debes ser mayor de 18 años"; valido = false;
-        }
+    } else if (!validarEdadMinima(form.fechaNac)) {
+        nuevosErrores.fechaNac = "Debes ser mayor de 18 años"; valido = false;
     }
     if (!validarEmail(form.email)) { nuevosErrores.email = "Correo inválido"; valido = false; }
-    if (form.email !== form.confirmarEmail) { nuevosErrores.confirmarEmail = "Los correos no coinciden"; valido = false; }
+    if (!validarCoincidenciaEmail(form.email, form.confirmarEmail)) { nuevosErrores.confirmarEmail = "Los correos no coinciden"; valido = false; }
     
-    if (form.contraseña.length < 6) { nuevosErrores.contraseña = "Mínimo 6 caracteres"; valido = false; }
-    if (form.contraseña !== form.confirmarContraseña) { nuevosErrores.confirmarContraseña = "Las contraseñas no coinciden"; valido = false; }
+    if (!validarContraseña(form.contraseña)) { nuevosErrores.contraseña = "Mínimo 6 caracteres"; valido = false; }
+    if (!validarCoincidenciaContraseña(form.contraseña, form.confirmarContraseña)) { nuevosErrores.confirmarContraseña = "Las contraseñas no coinciden"; valido = false; }
     
     if (!form.region) {
         nuevosErrores.region = "Debes seleccionar una región"; valido = false;

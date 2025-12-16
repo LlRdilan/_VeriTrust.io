@@ -668,7 +668,7 @@ export default function Firma() {
                       onClick={descargarArchivo} 
                       className="btn_primary firma-btn-download-success"
                     >
-                        <i className="fa fa-download"></i> Descargar Documento + Certificado
+                        <i className="fa fa-download"></i> Descargar Documento Certificado
                     </button>
                     
                     <button 

@@ -5,27 +5,7 @@ import RichTextEditor from "../components/RichTextEditor";
 import { getSession, removeSession } from "../services/auth";
 import { calcularIVA, calcularTotalConIVA } from "../utils/calculos";
 import { handleError, handleHttpError } from "../services/errorHandler";
-
-export function ComprobarServicio(servicio) {
-  if (!servicio || typeof servicio !== "object") {
-    throw new Error("Servicio inválido");
-  }
-
-  const nombre = (servicio.nombre ?? "").toString();
-  const descripcion = (servicio.descripcion ?? "").toString();
-  let precio = servicio.precio;
-  if (typeof precio === "string") precio = parseFloat(precio);
-  
-  if (!nombre.trim() || !descripcion.trim()) {
-    throw new Error("El nombre y la descripción corta son obligatorios.");
-  }
-
-  if (typeof precio !== "number" || !Number.isFinite(precio) || precio <= 0 || precio % 1 !== 0) {
-    throw new Error("El precio debe ser un número entero positivo.");
-  }
-  
-  return true;
-}
+import { validarServicio } from "../utils/validaciones";
 
 
 export default function Admin() {
@@ -99,10 +79,9 @@ export default function Admin() {
         descripcionCompleta: cleanedDescription,
     };
 
-    try {
-        ComprobarServicio(servicioData);
-    } catch (error) {
-        setModal({ show: true, title: "Error de Formulario", message: error.message, status: "warning" });
+    const validacionServicio = validarServicio(servicioData);
+    if (!validacionServicio.valido) {
+        setModal({ show: true, title: "Error de Formulario", message: validacionServicio.mensaje, status: "warning" });
         setCargandoForm(false);
         return;
     }
