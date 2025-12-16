@@ -616,7 +616,8 @@ ul.conta_icon li a:hover {
     border-top: 10px;
     background: #e2f2f400 url(../images/principal.gif) ;
     background-size: contain; 
-    background-position: no-repeat center ;
+    background-repeat: no-repeat;
+    background-position: top center;
     overflow: hidden;
 }
 
