@@ -13,7 +13,6 @@ const LOGO_IMAGES = [
     'banco_mercadopago.jpg'
 ];
 
-// Duplicamos los logos para crear el efecto infinito suave
 const DUPLICATED_LOGOS = [...LOGO_IMAGES, ...LOGO_IMAGES];
 
 function LogoCarousel({ logos }) {
@@ -105,7 +104,6 @@ export default function Inicio() {
                     </div>
                 </div>
 
-                {/* Carrusel de logos con animación CSS */}
                 <div className="logo-carousel-section">
                     <LogoCarousel logos={LOGO_IMAGES} />
                 </div>

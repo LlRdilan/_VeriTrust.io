@@ -80,7 +80,6 @@ export default function Clientes() {
 
   return (
     <div id="client" className="testimonial">
-      {/* Sección de Estadísticas */}
       <div className="clientes_stats_section">
         <div className="container">
           <div className="row">
@@ -107,7 +106,6 @@ export default function Clientes() {
         </div>
       </div>
 
-      {/* Sección de Empresas Clientes */}
       <div className="clientes_empresas_section">
         <div className="container">
           <div className="row">
@@ -134,7 +132,6 @@ export default function Clientes() {
         </div>
       </div>
 
-      {/* Sección de Testimonios */}
       <div className="container">
         <div className="row">
           <div className="col-md-12">
@@ -202,7 +199,6 @@ export default function Clientes() {
         </button>
       </div>
 
-      {/* Sección de Beneficios */}
       <div className="clientes_beneficios_section">
         <div className="container">
           <div className="row">

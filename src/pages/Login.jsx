@@ -44,8 +44,6 @@ export default function Login() {
 
       if (response.ok) {
         const data = await response.json();
-        
-        // La respuesta del backend ahora trae "token" y "usuario"
         const usuario = data.usuario;
         const token = data.token;
 
@@ -55,7 +53,7 @@ export default function Login() {
           email: usuario.email,
           rut: usuario.rut,
           rol: usuario.rol || "user",
-          token: token // Guardamos el token en la sesión local
+          token: token
         };
 
         setSession(sessionData);
@@ -67,12 +65,10 @@ export default function Login() {
         }
 
       } else {
-        // Manejo específico para errores de login
         let errorTitle = "Error al Iniciar Sesión";
         let errorMessage = "No se pudo iniciar sesión.";
         let errorStatus = "error";
 
-        // Intentar obtener el mensaje del servidor
         try {
           const errorData = await response.text();
           let serverMessage = errorData;
@@ -81,15 +77,11 @@ export default function Login() {
             const parsed = JSON.parse(errorData);
             serverMessage = parsed.message || parsed.error || errorData;
           } catch {
-            // Si no es JSON, usar el texto directamente
           }
 
-          // Convertir mensaje a minúsculas para buscar palabras clave
           const messageLower = serverMessage.toLowerCase();
 
-          // Mensajes específicos según el código de estado
           if (response.status === 401) {
-            // Intentar detectar si el usuario no existe o si la contraseña es incorrecta
             if (messageLower.includes("no encontrado") || 
                 messageLower.includes("no existe") || 
                 messageLower.includes("usuario no encontrado") ||
@@ -104,7 +96,6 @@ export default function Login() {
               errorMessage = "La contraseña ingresada es incorrecta. Verifica tu contraseña e intenta nuevamente.";
               errorStatus = "warning";
             } else {
-              // Por defecto, asumir que el usuario no existe (más seguro)
               errorTitle = "Usuario No Encontrado";
               errorMessage = "No existe una cuenta registrada con este RUT. Si ya tienes cuenta, verifica que hayas ingresado correctamente tu RUT y contraseña. ¿Deseas registrarte?";
               errorStatus = "warning";
@@ -121,9 +112,7 @@ export default function Login() {
             errorMessage = serverMessage || `Error del servidor (${response.status})`;
           }
         } catch {
-          // Si no se puede leer el error, usar mensajes por defecto
           if (response.status === 401) {
-            // Por defecto, asumir que el usuario no existe
             errorTitle = "Usuario No Encontrado";
             errorMessage = "No existe una cuenta registrada con este RUT. Si ya tienes cuenta, verifica que hayas ingresado correctamente tu RUT y contraseña. ¿Deseas registrarte?";
             errorStatus = "warning";

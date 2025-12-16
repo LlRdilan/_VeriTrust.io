@@ -39,9 +39,7 @@ export default function Compra() {
 
   const manejarCambioNumero = (e) => {
     const valor = e.target.value;
-    // Permitir solo dígitos y espacios
     const valorLimpio = valor.replace(/[^\d\s]/g, '');
-    // Limitar a 16 dígitos (sin contar espacios)
     const numeroLimpio = limpiarNumeroTarjeta(valorLimpio);
     if (numeroLimpio.length <= 16) {
       const numeroFormateado = formatearNumeroTarjeta(numeroLimpio);
@@ -63,30 +61,25 @@ export default function Compra() {
       return;
     }
 
-    // Limpiar espacios del número de tarjeta para validar
     const numeroTarjetaLimpio = limpiarNumeroTarjeta(numeroTarjeta);
     if (!/^\d{16}$/.test(numeroTarjetaLimpio) || !validarNumeroTarjeta(numeroTarjetaLimpio)) {
       mostrarError("Número de tarjeta inválido.");
       return;
     }
 
-    // Validar fecha de expiración
     const validacionFecha = validarFechaExpiracion(mesExpiracion, anioExpiracion);
     if (!validacionFecha.valido) {
       mostrarError(validacionFecha.mensaje);
       return;
     }
 
-    // Validar CVV
     if (!validarCVV(cvv)) {
       mostrarError("CVV inválido (debe tener 3 dígitos).");
       return;
     }
 
-    // --- INTEGRACION CON BACKEND (NUEVO) ---
     const session = getSession();
     
-    // Si no hay sesión, mandamos a login
     if (!session || !session.token) {
         mostrarError("Tu sesión ha expirado. Por favor inicia sesión nuevamente.");
         setTimeout(() => navigate("/login"), 2000);
@@ -95,11 +88,10 @@ export default function Compra() {
 
     setCargando(true);
 
-    // Preparamos los datos para el Backend (CompraDTO)
     const compraData = {
         usuarioId: session.id,
-        servicioId: servicio.id || servicio.servicioId, // Ajuste segun como venga el objeto
-        fechaCompra: new Date().toLocaleDateString('es-CL').replace(/\//g, '-'), // Formato DD-MM-YYYY
+        servicioId: servicio.id || servicio.servicioId,
+        fechaCompra: new Date().toLocaleDateString('es-CL').replace(/\//g, '-'),
         monto: servicio.total || servicio.price
     };
 
@@ -108,7 +100,7 @@ export default function Compra() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${session.token}` // ENVIAMOS EL TOKEN
+                "Authorization": `Bearer ${session.token}`
             },
             body: JSON.stringify(compraData)
         });

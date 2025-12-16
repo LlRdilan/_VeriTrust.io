@@ -42,7 +42,6 @@ body {
     color: #0F1720;
     font-size: 14px;
     font-family: 'Roboto', sans-serif;
-    /* Texto base con Roboto */
     line-height: 1.81;
     font-weight: normal;
 }
@@ -64,7 +63,6 @@ a {
     color: #66d6ff;
 }
 
-/* Botones, enlaces y llamados a la acción con Montserrat */
 a,
 .btn,
 .sign_btn,
@@ -89,7 +87,6 @@ h6 {
     margin: 0;
 }
 
-/* Títulos principales con Cossette Titre */
 h1 {
     font-size: 24px;
     font-family: 'Cossette Titre', sans-serif;
@@ -102,7 +99,6 @@ h2 {
     font-weight: 700;
 }
 
-/* Subtítulos y headings menores con Montserrat */
 h3 {
     font-size: 18px;
     font-family: 'Montserrat', sans-serif;
@@ -260,10 +256,8 @@ ul.btn li:last-child {
     padding-right: 0;
 }
 
-/*-- Header Area --*/
-
 /*--------------------------------------------------------------------- 
-HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO 
+HEADER Y NAVIGATION 
 ---------------------------------------------------------------------*/
 .header {
     width: 100%;
@@ -286,9 +280,7 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
 }
 
-/* NAVIGATION */
 .navigation.navbar {
-    /*flo+at: left; */
     padding: 0;
     background: transparent;
 }
@@ -316,7 +308,6 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
 }
 
-/* SIGN/LOGIN BUTTON EN HEADER */
 .sign_btn {
     background: #1f235e;
     font-size: 16px;
@@ -340,7 +331,6 @@ HEADER Y NAVIGATION CON FONDO Y CONTRASTE ADECUADO
     color: #66d6ff !important;
 }
 
-/* Ajuste para select de idioma en header */
 ul.lan li select {
     background: transparent;
     border: none;
@@ -348,7 +338,6 @@ ul.lan li select {
     font-weight: 500;
 }
 
-/* Ajuste para dropdown-toggle con texto largo - mantiene una sola línea */
 .navigation.navbar-dark .navbar-nav .nav-item.dropdown {
     max-width: 220px;
 }
@@ -371,25 +360,18 @@ ul.lan li select {
     flex-shrink: 0;
 }
 
-/* --- Estilos Mejorados para la Sección "Nosotros" --- */
-
-/* Contenedor principal de la sección */
+/* --- Estilos para la Sección "Nosotros" --- */
 .about-section {
     padding: 90px 0;
     background-color: #E2F2F4;
-    /* O el color de fondo que prefieras */
 }
 
-/* Fila con alineación vertical centrada */
 .about-row-centered {
     display: flex;
     align-items: anchor-center;
-    /* Centra verticalmente */
     flex-wrap: wrap;
-    /* Importante para que funcione en móviles */
 }
 
-/* Caja de texto mejorada */
 .about-box-content {
     padding: 0 5%;
     text-align: left;
@@ -406,7 +388,6 @@ ul.lan li select {
     color: #0B1F2E;
 }
 
-/* Estilo para la figura de la imagen */
 .about-img-figure {
     margin: 0 20px;
     border-radius: 20px;
@@ -414,11 +395,9 @@ ul.lan li select {
     box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
 }
 
-/* Botón de llamado a la acción personalizado */
 .btn-about-start {
     background-color: #0f7dd1;
     color: #FFF !important;
-    /* !important para asegurar que sobreescriba otras reglas de 'a' */
     padding: 14px 30px;
     border-radius: 50px;
     text-decoration: none;
@@ -432,12 +411,10 @@ ul.lan li select {
     margin-bottom: 5%;
 }
 
-/* Efecto hover para el botón (mucho más simple en CSS) */
 .btn-about-start:hover {
     background-color: #1f235e;
     color: #FFF !important;
     transform: translateY(-2px);
-    /* Pequeño efecto de elevación */
     box-shadow: 0 6px 20px rgba(31, 35, 94, 0.4);
 }
 
@@ -850,11 +827,8 @@ ul.conta_icon li a:hover {
 
 .service .service_box {
     display: flex;
-    /* Activa Flexbox */
     flex-direction: column;
-    /* Alinea los hijos verticalmente */
     justify-content: space-between;
-    /* Empuja el botón al fondo */
     margin-bottom: 30px;
     background: #F7FAFC;
     border-radius: 12px;
@@ -1049,13 +1023,10 @@ ul.conta_icon li a:hover {
     box-shadow: 0 2px 8px rgba(11, 31, 46, 0.08);
     padding: 18px 12px;
     height: 100%;
-    /* <-- Esta es la línea clave que iguala las alturas */
     display: flex;
     flex-direction: column;
     justify-content: center;
-    /* Centra el contenido verticalmente */
     align-items: center;
-    /* Centra el contenido horizontalmente */
 }
 
 .business .business_box i {
@@ -1583,9 +1554,7 @@ small.form-text.text-muted,
     width: 100%;
     text-align: center;
     border-radius: 10px;
-    /* padding: 6px 0;  <-- Elimina o comenta esta línea */
     padding: 16px 0;
-    /* Nuevo: ajusta el padding vertical */
     font-weight: 600;
     text-transform: uppercase;
     color: #F7FAFC !important;
@@ -1593,15 +1562,10 @@ small.form-text.text-muted,
     transition: background 0.2s, color 0.2s;
     margin-top: 15px;
     height: 70px;
-    /* Nuevo: igual a la altura del header_bo */
     display: flex;
-    /* Nuevo: centra verticalmente el texto */
     align-items: center;
-    /* Nuevo: centra verticalmente el texto */
     justify-content: center;
-    /* Nuevo: centra horizontalmente el texto */
     box-sizing: border-box;
-    /* font-family asignada arriba en el selector general de botones */
 }
 
 .comprar_btn:hover {
@@ -1613,12 +1577,10 @@ small.form-text.text-muted,
     margin-top: 10px;
     font-weight: bold;
     color: #06B6D4;
-    /* ejemplo de color destacado */
 }
 
 .price:hover {
     color: #1f235e;
-    /* ejemplo de color destacado al pasar el cursor */
 }
 
 .backoffice_body {
@@ -1628,7 +1590,6 @@ small.form-text.text-muted,
     min-height: 100vh;
 }
 
-/* Sidebar */
 .backoffice_sidebar {
     width: 240px;
     background-color: #1f235e;
@@ -1671,14 +1632,12 @@ small.form-text.text-muted,
     color: #fff;
 }
 
-/* Contenido principal */
 .backoffice_main {
     margin-left: 240px;
     padding: 40px;
     width: 100%;
 }
 
-/* Barra superior */
 .backoffice_topbar {
     display: flex;
     justify-content: space-between;
@@ -1694,7 +1653,6 @@ small.form-text.text-muted,
     font-size: 22px;
 }
 
-/* Botón principal */
 .btn_primary {
     background-color: #0FB3D1;
     color: #fff;
@@ -1710,7 +1668,6 @@ small.form-text.text-muted,
     color: #fff;
 }
 
-/* Secciones */
 .backoffice_section {
     background: #fff;
     border-radius: 12px;
@@ -1726,7 +1683,6 @@ small.form-text.text-muted,
     margin-bottom: 20px;
 }
 
-/* Botones específicos */
 .btn-warning.backoffice {
     background-color: #FFD369;
     border: none;
@@ -1768,11 +1724,10 @@ small.form-text.text-muted,
     font-weight: 700;
     color: #1f235e;
     margin-bottom: 20px;
-    border-left: 4px solid #0FB3D1; /* Línea azul a la izquierda */
+    border-left: 4px solid #0FB3D1;
     padding-left: 15px;
 }
 
-/* Párrafos de texto */
 .about_text {
     font-size: 16px;
     line-height: 1.8;
@@ -1780,22 +1735,19 @@ small.form-text.text-muted,
     margin-bottom: 20px;
 }
 
-/* Contenedor de la imagen para posicionamiento relativo */
 .about_img_container {
     position: relative;
     padding: 20px;
 }
 
-/* Estilo de la imagen principal */
 .about_img_style {
     border-radius: 30px;
     box-shadow: 0 20px 40px rgba(0,0,0,0.1);
     width: 100%;
-    border: 5px solid #fff; /* Marco blanco tipo foto */
+    border: 5px solid #fff;
     object-fit: cover;
 }
 
-/* Cuadro Flotante Azul (+10 años) */
 .floating_box {
     position: absolute;
     bottom: 0;
@@ -1825,7 +1777,6 @@ small.form-text.text-muted,
     margin-top: 5px;
 }
 
-/* Ajuste Responsive para móvil: Centrar subtítulo y quitar borde */
 @media (max-width: 991px) {
     .about_subtitle {
         border-left: none;
@@ -1837,10 +1788,9 @@ small.form-text.text-muted,
 }
 
 /*--------------------------------------------------------------------- 
-ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
+ESTILOS PARA PÁGINA DE CLIENTES
 ---------------------------------------------------------------------*/
 
-/* Sección de Estadísticas */
 .clientes_stats_section {
     padding: 80px 0 60px;
     background: linear-gradient(135deg, #E2F2F4 0%, #F7FAFC 100%);
@@ -1894,7 +1844,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     letter-spacing: 1px;
 }
 
-/* Sección de Empresas Clientes */
 .clientes_empresas_section {
     padding: 80px 0;
     background-color: #F7FAFC;
@@ -1935,7 +1884,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     transform: scale(1.05);
 }
 
-/* Mejoras al Carrusel de Testimonios */
 .clientes_test_box {
     position: relative;
     background: #F7FAFC;
@@ -2010,7 +1958,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     letter-spacing: 1px;
 }
 
-/* Controles del Carrusel Mejorados */
 .clientes_carousel_control {
     width: 60px;
     height: 60px;
@@ -2037,7 +1984,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     font-size: 24px;
 }
 
-/* Sección de Beneficios */
 .clientes_beneficios_section {
     padding: 80px 0;
     background: linear-gradient(135deg, #F7FAFC 0%, #E2F2F4 100%);
@@ -2098,7 +2044,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     margin: 0;
 }
 
-/* Responsive para móviles */
 @media (max-width: 768px) {
     .clientes_stats_section,
     .clientes_empresas_section,
@@ -2161,10 +2106,9 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
 }
 
 /* ========================================
-   ESTILOS EXTRAÍDOS DE COMPONENTES JSX
+   ESTILOS PARA COMPONENTES JSX
    ======================================== */
 
-/* --- Perfil.jsx --- */
 .page-perfil-container {
     padding: 80px 0;
     min-height: 100vh;
@@ -2508,7 +2452,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     color: #888;
 }
 
-/* --- Tutorial.jsx --- */
 .tutorial-card {
     border-radius: 20px !important;
     overflow: hidden;
@@ -2530,7 +2473,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     flex-direction: column;
 }
 
-/* --- Login.jsx --- */
 .page-login-container {
     padding-top: 40px;
     padding-bottom: 40px;
@@ -2540,7 +2482,6 @@ ESTILOS PARA PÁGINA DE CLIENTES MEJORADA
     color: red;
 }
 
-/* --- Inicio.jsx --- */
 .inicio-logo-rounded,
 img.inicio-logo-rounded,
 .logo-img.inicio-logo-rounded {
@@ -2556,9 +2497,7 @@ img.inicio-logo-rounded,
     background: #fff;
 }
 
-/* --- Clientes.jsx --- */
 .clientes-stat-icon {
-    /* El color se aplica dinámicamente, solo definimos la estructura si es necesario */
 }
 
 /* --- Firma.jsx --- */
@@ -2748,7 +2687,6 @@ img.inicio-logo-rounded,
     text-decoration: none;
 }
 
-/* --- Admin.jsx --- */
 .page-admin-container {
     min-height: 100vh;
     padding-bottom: 100px;
@@ -2866,13 +2804,11 @@ img.inicio-logo-rounded,
     max-width: 100%;
 }
 
-/* --- Contactanos.jsx --- */
 .contactanos-success-alert {
     border-radius: 15px;
     font-weight: 600;
 }
 
-/* --- NotFound.jsx --- */
 .page-notfound-container {
     padding: 100px 0;
     text-align: center;

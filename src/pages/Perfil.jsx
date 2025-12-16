@@ -32,7 +32,6 @@ export default function Perfil() {
   const cargarDatosUsuario = async (session) => {
     setCargando(true);
     try {
-      // Cargar datos completos del usuario desde el backend
       const usuarioResponse = await fetch(`http://localhost:8080/usuarios/${session.id}`, {
         headers: {
           "Authorization": `Bearer ${session.token}`
@@ -41,14 +40,11 @@ export default function Perfil() {
 
       if (usuarioResponse.ok) {
         const usuarioData = await usuarioResponse.json();
-        // Combinar datos de la sesión con los datos completos del backend
         setUsuario({ ...session, ...usuarioData });
       } else {
-        // Si no se pueden cargar los datos completos, usar los de la sesión
         console.warn("No se pudieron cargar los datos completos del usuario");
       }
 
-      // Cargar compras del usuario
       const comprasResponse = await fetch(`http://localhost:8080/compras/usuario/${session.id}`, {
         headers: {
           "Authorization": `Bearer ${session.token}`
@@ -59,20 +55,16 @@ export default function Perfil() {
         const comprasData = await comprasResponse.json();
         setCompras(Array.isArray(comprasData) ? comprasData : []);
       } else {
-        // Si no hay compras o el endpoint no existe, usar array vacío
         setCompras([]);
       }
 
-      // Cargar documentos firmados del usuario
       try {
-        // Usar el endpoint correcto según el backend: /api/documento/user/{userId}
         let documentosResponse = await fetch(`http://localhost:8080/api/documento/user/${session.id}`, {
           headers: {
             "Authorization": `Bearer ${session.token}`
           }
         });
 
-        // Si falla, intentar con el endpoint alternativo /api/documento/firmados/usuario/{userId}
         if (!documentosResponse.ok && documentosResponse.status === 404) {
           documentosResponse = await fetch(`http://localhost:8080/api/documento/firmados/usuario/${session.id}`, {
             headers: {
@@ -85,7 +77,6 @@ export default function Perfil() {
           const documentosData = await documentosResponse.json();
           setDocumentos(Array.isArray(documentosData) ? documentosData : []);
         } else {
-          // Si no hay documentos o el endpoint no existe, usar array vacío
           console.warn("No se pudieron cargar los documentos firmados:", documentosResponse.status);
           setDocumentos([]);
         }
@@ -167,7 +158,6 @@ export default function Perfil() {
   };
 
   const descargarDocumento = async (documentoId, nombreArchivo) => {
-    // Mostrar mensaje de que se enviará por correo
     const session = getSession();
     const emailUsuario = usuario?.email || session?.email || 'tu correo electrónico';
     setModal({
@@ -209,7 +199,6 @@ export default function Perfil() {
         </div>
 
         <div className="row mt-4">
-          {/* Información del Usuario */}
           <div className="col-md-4">
             <div className="backoffice_section perfil-card">
               <div className="text-center mb-4">
@@ -311,7 +300,6 @@ export default function Perfil() {
             </div>
           </div>
 
-          {/* Compras y Boletas */}
           <div className="col-md-8">
             <div className="backoffice_section perfil-card">
               <h3 className="perfil-section-title" style={{marginBottom: '25px', fontSize: '24px'}}>
@@ -355,7 +343,6 @@ export default function Perfil() {
                             <button 
                               className="btn btn-sm perfil-btn-download" 
                               onClick={() => {
-                                // Mostrar mensaje de que se enviará por correo
                                 const session = getSession();
                                 const emailUsuario = usuario?.email || session?.email || 'tu correo electrónico';
                                 setModal({
@@ -377,7 +364,6 @@ export default function Perfil() {
               )}
             </div>
 
-            {/* Documentos Firmados */}
             <div className="backoffice_section mt-4 perfil-card">
               <h3 className="perfil-section-title" style={{marginBottom: '25px', fontSize: '24px'}}>
                 <i className="fa fa-file-text"></i>

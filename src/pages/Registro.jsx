@@ -141,7 +141,6 @@ export default function Registro() {
     const comunas = regionSeleccionada ? obtenerComunasPorRegion(regionSeleccionada) : [];
     
     setForm(prev => {
-      // Si hay una comuna seleccionada y no pertenece a la nueva región, limpiarla
       if (prev.comuna && regionSeleccionada && !comunas.includes(prev.comuna)) {
         return { ...prev, region: regionSeleccionada, comuna: "" };
       }
@@ -149,8 +148,6 @@ export default function Registro() {
     });
     
     setComunasDisponibles(comunas);
-    
-    // Si se seleccionó una región, actualizar las regiones disponibles para mostrar todas
     setRegionesDisponibles(obtenerRegiones());
   };
 
@@ -159,28 +156,21 @@ export default function Registro() {
     const regionDeComuna = comunaSeleccionada ? obtenerRegionPorComuna(comunaSeleccionada) : null;
     
     setForm(prev => {
-      // Si se selecciona una comuna, establecer su región automáticamente
       if (comunaSeleccionada && regionDeComuna) {
-        // Si ya hay una región seleccionada y no coincide, actualizar la región
         return { ...prev, comuna: comunaSeleccionada, region: regionDeComuna };
       }
-      // Si se limpia la comuna, mantener la región si existe
       return { ...prev, comuna: comunaSeleccionada };
     });
     
-    // Si se selecciona una comuna, filtrar las regiones disponibles para mostrar solo la de esa comuna
     if (comunaSeleccionada && regionDeComuna) {
       setRegionesDisponibles([regionDeComuna]);
       setComunasDisponibles(obtenerComunasPorRegion(regionDeComuna));
     } else {
-      // Si se limpia la comuna, restaurar todas las regiones disponibles
       setRegionesDisponibles(obtenerRegiones());
-      // Si hay una región seleccionada, mostrar sus comunas
       const regionActual = comunaSeleccionada === "" ? form.region : null;
       if (regionActual) {
         setComunasDisponibles(obtenerComunasPorRegion(regionActual));
       } else {
-        // Si no hay región, no mostrar comunas (o todas si se quiere permitir selección de comuna primero)
         setComunasDisponibles([]);
       }
     }
@@ -294,7 +284,6 @@ export default function Registro() {
                             </option>
                           ))
                         ) : (
-                          // Si no hay región seleccionada, mostrar todas las comunas para permitir selección primero
                           obtenerRegiones().flatMap(region => 
                             obtenerComunasPorRegion(region).map(comuna => (
                               <option key={comuna} value={comuna}>

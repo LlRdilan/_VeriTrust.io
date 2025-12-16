@@ -115,8 +115,6 @@ export const validarNumeroTarjeta = (numero) => {
   return suma % 10 === 0;
 };
 
-// ========== VALIDACIONES DE FORMULARIO DE REGISTRO ==========
-
 /**
  * Valida que un nombre tenga al menos una longitud mínima
  * @param {string} nombre - Nombre a validar
@@ -173,8 +171,6 @@ export const validarEdadMinima = (fechaNac, edadMinima = 18) => {
   return edad >= edadMinima;
 };
 
-// ========== VALIDACIONES DE TARJETA DE CRÉDITO ==========
-
 /**
  * Valida el mes de expiración de una tarjeta (formato MM, 1-12)
  * @param {string} mes - Mes de expiración (formato MM)
@@ -221,7 +217,6 @@ export const validarFechaExpiracion = (mes, anio) => {
   const mesNum = parseInt(mes, 10);
   const anioNum = parseInt(anio, 10);
 
-  // Si el año es el actual, validar que el mes no haya expirado
   if (anioNum === anioActual && mesNum < mesActual) {
     return { valido: false, mensaje: "La tarjeta ha expirado este mes." };
   }
@@ -238,8 +233,6 @@ export const validarCVV = (cvv) => {
   if (!cvv || typeof cvv !== "string") return false;
   return /^\d{3}$/.test(cvv);
 };
-
-// ========== VALIDACIONES DE SERVICIO ==========
 
 /**
  * Valida los datos de un servicio

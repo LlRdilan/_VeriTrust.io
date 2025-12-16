@@ -10,12 +10,10 @@ import { getSession } from "../services/auth";
 export default function ProtectedRoute({ children, requireAdmin = false }) {
   const session = getSession();
 
-  // Si no hay sesión, redirigir a login
   if (!session) {
     return <Navigate to="/login" replace />;
   }
 
-  // Si requiere admin y no es admin, redirigir
   if (requireAdmin && session.rol !== "admin") {
     return <Navigate to="/servicios" replace />;
   }

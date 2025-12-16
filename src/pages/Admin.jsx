@@ -86,7 +86,6 @@ export default function Admin() {
         return;
     }
 
-    // OBTENEMOS EL TOKEN
     const session = getSession();
     const token = session ? session.token : "";
 
@@ -102,7 +101,7 @@ export default function Admin() {
         method: method,
         headers: { 
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${token}` // ENVIAMOS EL TOKEN
+            "Authorization": `Bearer ${token}`
         },
         body: JSON.stringify(servicioData)
       });
@@ -151,7 +150,6 @@ export default function Admin() {
 
     if (!id) return;
 
-    // OBTENEMOS EL TOKEN
     const session = getSession();
     const token = session ? session.token : "";
 
@@ -159,7 +157,7 @@ export default function Admin() {
         const res = await fetch(`${API_URL}/${id}`, { 
             method: "DELETE",
             headers: {
-                "Authorization": `Bearer ${token}` // ENVIAMOS EL TOKEN
+                "Authorization": `Bearer ${token}`
             } 
         });
         
@@ -167,7 +165,6 @@ export default function Admin() {
             setModal({ show: true, title: "Eliminado", message: "El servicio fue eliminado de la Base de Datos.", status: "success" });
             cargarServicios();
         } else {
-            // Intentar obtener el mensaje de error del servidor
             let errorMessage = `Error del servidor (${res.status})`;
             let errorTitle = "Error al Eliminar";
             let errorStatus = "error";
@@ -182,7 +179,6 @@ export default function Admin() {
                         errorMessage = errorData;
                     }
                     
-                    // Detectar si es un error de integridad referencial (clave foránea)
                     const errorLower = errorMessage.toLowerCase();
                     const isForeignKeyError = 
                         errorLower.includes("foreign key") ||
@@ -193,13 +189,11 @@ export default function Admin() {
                         errorLower.includes("fk_") ||
                         (errorLower.includes("servicio") && (errorLower.includes("compra") || errorLower.includes("reference")));
                     
-                    // Si es un error 500 y detectamos que es por clave foránea
                     if (res.status === 500 && isForeignKeyError) {
                         errorTitle = "No se puede eliminar";
                         errorMessage = "No se puede eliminar el servicio debido a que tiene compras asociadas";
                         errorStatus = "warning";
                     } else if (res.status === 409 || errorLower.includes("compras asociadas")) {
-                        // Si el backend ya devuelve 409 o menciona compras asociadas
                         errorTitle = "No se puede eliminar";
                         errorMessage = errorMessage || "No se puede eliminar el servicio debido a que tiene compras asociadas";
                         errorStatus = "warning";

@@ -54,7 +54,6 @@ export default function Tutorial() {
                                 onClick={() => handleCardFlip(tutorial.id)}
                             >
                                 <div className="flip-card-inner">
-                                    {/* AHORA ESTE ES EL BACK - Información (se muestra primero) */}
                                     <div className="flip-card-back">
                                         <div className="card tutorial-card">
                                             <div className="card-header-back">
@@ -80,7 +79,6 @@ export default function Tutorial() {
                                         </div>
                                     </div>
                                     
-                                    {/* AHORA ESTE ES EL FRONT - Video (se muestra después del click) */}
                                     <div className="flip-card-front">
                                         <div className="card tutorial-card-front">
                                             <div className="video-wrapper">

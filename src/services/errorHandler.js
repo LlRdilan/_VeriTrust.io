@@ -14,7 +14,6 @@ export const handleError = (error, options = {}) => {
     showDetails = false 
   } = options;
 
-  // Error de red (sin conexión, timeout, etc.)
   if (error instanceof TypeError && error.message.includes("fetch")) {
     return {
       title: "Error de Conexión",
@@ -24,7 +23,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error de timeout
   if (error.name === "TimeoutError" || error.message?.includes("timeout")) {
     return {
       title: "Tiempo de Espera Agotado",
@@ -34,7 +32,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error del servidor (500, 502, 503, etc.)
   if (error.status >= 500) {
     return {
       title: "Error del Servidor",
@@ -44,7 +41,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error de autenticación (401)
   if (error.status === 401) {
     return {
       title: "Sesión Expirada",
@@ -55,7 +51,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error de autorización (403)
   if (error.status === 403) {
     return {
       title: "Acceso Denegado",
@@ -65,7 +60,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error de conflicto (409) - Usado para recursos con dependencias
   if (error.status === 409) {
     return {
       title: "No se puede eliminar",
@@ -75,7 +69,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error de validación (400)
   if (error.status === 400) {
     return {
       title: "Error de Validación",
@@ -85,7 +78,6 @@ export const handleError = (error, options = {}) => {
     };
   }
 
-  // Error genérico
   return {
     title: "Error",
     message: showDetails && error.message ? error.message : defaultMessage,
@@ -113,7 +105,6 @@ export const handleHttpError = async (response) => {
       }
     }
   } catch {
-    // Si no se puede leer el error, usar el mensaje por defecto
   }
 
   return handleError({

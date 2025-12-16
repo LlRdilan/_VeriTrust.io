@@ -51,13 +51,11 @@ export default function Firma() {
       const tipo = obtenerTipoArchivo(file);
       setTipoArchivo(tipo);
       
-      // Para PDFs e imágenes, usar URL directa
       if (tipo === 'pdf' || tipo === 'imagen') {
         const url = window.URL.createObjectURL(file);
         setArchivoUrl(url);
         setContenidoTexto(null);
       } 
-      // Para archivos de texto, leer el contenido
       else if (tipo === 'texto') {
         const reader = new FileReader();
         reader.onload = (event) => {
@@ -66,7 +64,6 @@ export default function Firma() {
         };
         reader.readAsText(file);
       }
-      // Para otros tipos, mostrar información
       else {
         setArchivoUrl(null);
         setContenidoTexto(null);
@@ -81,23 +78,19 @@ export default function Firma() {
     setTimeout(() => {
       setCargando(false);
       setFirmado(true);
-      // El hash real se calculará cuando se genere el PDF firmado
-      setHashDocumento(""); // Se establecerá después
+      setHashDocumento("");
       setFechaFirma(new Date().toISOString().slice(0, 19));
     }, 3000);
   };
 
-  // Calcular hash SHA-256
   const calcularHashSHA256 = async (arrayBuffer) => {
     const hashBuffer = await crypto.subtle.digest('SHA-256', arrayBuffer);
     const hashArray = Array.from(new Uint8Array(hashBuffer));
     return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
   };
 
-  // Enviar solo los metadatos del documento al backend (sin archivo)
   const enviarMetadatosAlBackend = async (hash, nombreArchivo) => {
     try {
-      // Obtener el token y datos de la sesión
       const sessionActual = JSON.parse(localStorage.getItem("user_session") || "null");
       const token = sessionActual?.token || getToken();
 
@@ -106,16 +99,14 @@ export default function Firma() {
         return;
       }
 
-      // Usar la fecha del estado (ya en formato ISO 8601) o generar una nueva
       const fechaFirmaISO = fechaFirma || new Date().toISOString().slice(0, 19);
       const fechaActual = new Date().toISOString();
 
-      // Preparar datos según DocumentoDTO (todos los campos requeridos)
       const documentoData = {
         nombreOriginal: nombreArchivo,
-        nombreAlmacenado: `metadatos_${hash.substring(0, 8)}_${Date.now()}.pdf`, // Nombre único temporal
+        nombreAlmacenado: `metadatos_${hash.substring(0, 8)}_${Date.now()}.pdf`,
         tipoContenido: 'application/pdf',
-        tamano: 0, // Sin archivo físico, usar 0
+        tamano: 0,
         fechaSubida: fechaActual,
         firmado: true,
         usuarioId: sessionActual?.id
@@ -139,31 +130,25 @@ export default function Firma() {
       }
     } catch (error) {
       console.error('Error al enviar metadatos al backend:', error);
-      // No mostramos error al usuario, solo lo registramos en consola
     }
   };
 
 
-  // Función auxiliar para generar el certificado como PDF usando pdf-lib
   const generarCertificadoPDF = async (hashParaCertificado = null) => {
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]); // Tamaño A4
+    const page = pdfDoc.addPage([595, 842]);
     const { width, height } = page.getSize();
     
-    // Embed fonts
     const helveticaFont = await pdfDoc.embedFont('Helvetica');
     const helveticaBoldFont = await pdfDoc.embedFont('Helvetica-Bold');
-    
-    // Encabezado con fondo
     page.drawRectangle({
       x: 0,
       y: height - 20,
       width: width,
       height: 20,
-      color: rgb(0.122, 0.137, 0.369), // #1f235e
+      color: rgb(0.122, 0.137, 0.369),
     });
     
-    // Texto VERITRUST
     page.drawText("VERITRUST", {
       x: 10,
       y: height - 14,
@@ -172,7 +157,6 @@ export default function Firma() {
       font: helveticaBoldFont,
     });
     
-    // Título principal (centrado) - más espacio desde el encabezado
     const tituloTexto = "CERTIFICADO DE FIRMA ELECTRÓNICA";
     const tituloWidth = helveticaBoldFont.widthOfTextAtSize(tituloTexto, 26);
     page.drawText(tituloTexto, {
@@ -183,7 +167,6 @@ export default function Firma() {
       font: helveticaBoldFont,
     });
     
-    // Círculo de validación - más espacio desde el título
     page.drawCircle({
       x: width / 2,
       y: height - 140,
@@ -212,9 +195,8 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    let y = height - 200; // Más espacio desde el círculo
+    let y = height - 200;
     
-    // Detalles - más espacio entre secciones
     page.drawText("Detalles de la Firma Digital:", {
       x: 20,
       y: y,
@@ -223,7 +205,7 @@ export default function Firma() {
       font: helveticaBoldFont,
     });
     
-    y -= 15; // Más espacio antes de la línea
+    y -= 15;
     page.drawLine({
       start: { x: 20, y: y },
       end: { x: width - 20, y: y },
@@ -231,7 +213,7 @@ export default function Firma() {
       color: rgb(0.78, 0.78, 0.78),
     });
     
-    y -= 10; // Más espacio después de la línea
+    y -= 10;
     page.drawText(`Documento Firmado: ${archivo.name}`, {
       x: 25,
       y: y,
@@ -240,7 +222,7 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    y -= 12; // Más espacio entre líneas
+    y -= 12;
     page.drawText(`Firmante (RUT): ${nombreUsuario} (${rutUsuario})`, {
       x: 25,
       y: y,
@@ -249,7 +231,7 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    y -= 12; // Más espacio entre líneas
+    y -= 12;
     page.drawText(`Fecha y Hora de Sello: ${fechaFirma}`, {
       x: 25,
       y: y,
@@ -258,7 +240,7 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    y -= 18; // Más espacio antes de la sección de hash
+    y -= 18;
     page.drawText("Hash de Integridad (SHA-256):", {
       x: 25,
       y: y,
@@ -268,7 +250,7 @@ export default function Firma() {
     });
     
     const hashParaMostrar = hashParaCertificado || hashDocumento || 'Calculando...';
-    y -= 12; // Más espacio antes del hash
+    y -= 12;
     page.drawText(hashParaMostrar.substring(0, 32), {
       x: 25,
       y: y,
@@ -277,7 +259,7 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    y -= 10; // Más espacio entre líneas del hash
+    y -= 10;
     page.drawText(hashParaMostrar.substring(32) || '', {
       x: 25,
       y: y,
@@ -286,12 +268,11 @@ export default function Firma() {
       font: helveticaFont,
     });
     
-    // Texto final (centrado) - más espacio desde arriba
     const textoFinal = "Este certificado es una página adjunta al documento original y prueba su validez legal.";
     const textoFinalWidth = helveticaFont.widthOfTextAtSize(textoFinal, 9);
     page.drawText(textoFinal, {
       x: (width - textoFinalWidth) / 2,
-      y: 40, // Más espacio desde el borde inferior
+      y: 40,
       size: 9,
       color: rgb(0.59, 0.59, 0.59),
       font: helveticaFont,
@@ -300,10 +281,9 @@ export default function Firma() {
     return await pdfDoc.save();
   };
 
-  // Función para convertir archivo a PDF
   const convertirArchivoAPDF = async () => {
     const pdfDoc = await PDFDocument.create();
-    const page = pdfDoc.addPage([595, 842]); // A4
+    const page = pdfDoc.addPage([595, 842]);
     const { width, height } = page.getSize();
     
     const helveticaFont = await pdfDoc.embedFont('Helvetica');
@@ -314,7 +294,6 @@ export default function Firma() {
     const fontSize = 11;
     const lineHeight = 14;
     
-    // Título del documento
     page.drawText(`Documento: ${archivo.name}`, {
       x: margin,
       y: y,
@@ -324,22 +303,18 @@ export default function Firma() {
     });
     y -= 25;
     
-    // Contenido según el tipo
     let currentPage = page;
     
     if (tipoArchivo === 'texto' && contenidoTexto) {
-      // Dividir el texto en líneas que quepan en la página
       const maxWidth = width - (margin * 2);
       const lines = contenidoTexto.split('\n');
       
       for (const line of lines) {
         if (y < margin + 20) {
-          // Nueva página si es necesario
           currentPage = pdfDoc.addPage([595, 842]);
           y = height - 40;
         }
         
-        // Si la línea es muy larga, dividirla
         const words = line.split(' ');
         let currentLine = '';
         
@@ -376,7 +351,6 @@ export default function Firma() {
         }
       }
     } else if (tipoArchivo === 'imagen' && archivoUrl) {
-      // Para imágenes, cargar y agregar
       try {
         const imageBytes = await fetch(archivoUrl).then(res => res.arrayBuffer());
         let image;
@@ -407,7 +381,6 @@ export default function Firma() {
         });
       }
     } else {
-      // Para otros tipos, mostrar información
       currentPage.drawText('Tipo de archivo: ' + tipoArchivo, {
         x: margin,
         y: y,
@@ -440,37 +413,24 @@ export default function Firma() {
       let pdfDoc;
       let pdfOriginalBytes;
       
-      // Si es PDF, cargarlo directamente
       if (tipoArchivo === 'pdf') {
         const arrayBuffer = await archivo.arrayBuffer();
         pdfOriginalBytes = new Uint8Array(arrayBuffer);
         pdfDoc = await PDFDocument.load(arrayBuffer);
       } else {
-        // Convertir otros tipos a PDF
         pdfOriginalBytes = await convertirArchivoAPDF();
         pdfDoc = await PDFDocument.load(pdfOriginalBytes);
       }
       
-      // Calcular hash SHA-256 del PDF original (sin certificado) para mostrar en el certificado
       const hashOriginal = await calcularHashSHA256(pdfOriginalBytes);
-      
-      // Generar el certificado con el hash del PDF original
       const certificadoBytes = await generarCertificadoPDF(hashOriginal);
       const certificadoDoc = await PDFDocument.load(certificadoBytes);
-      
-      // Copiar la página del certificado al documento
       const [certificadoPage] = await pdfDoc.copyPages(certificadoDoc, [0]);
       pdfDoc.addPage(certificadoPage);
-      
-      // Guardar el PDF combinado (con certificado)
       const pdfBytesFinal = await pdfDoc.save();
-      
-      // Calcular hash SHA-256 del PDF final (con certificado)
       const hashFinal = await calcularHashSHA256(pdfBytesFinal);
-      // Actualizar el hash en el estado para mostrar el hash del PDF final
       setHashDocumento(hashFinal);
       
-      // Descargar el archivo localmente
       const blob = new Blob([pdfBytesFinal], { type: 'application/pdf' });
       const url = window.URL.createObjectURL(blob);
       const link = document.createElement('a');
@@ -482,7 +442,6 @@ export default function Firma() {
       document.body.removeChild(link);
       window.URL.revokeObjectURL(url);
       
-      // Enviar solo los metadatos al backend (sin el archivo)
       await enviarMetadatosAlBackend(hashFinal, nombreArchivo);
     } catch (error) {
       console.error('Error al procesar archivo:', error);
@@ -582,7 +541,6 @@ export default function Firma() {
                             </span>
                         </div>
                         
-                        {/* Vista previa para PDF */}
                         {tipoArchivo === 'pdf' && archivoUrl && (
                           <iframe 
                             src={archivoUrl} 
@@ -593,7 +551,6 @@ export default function Firma() {
                           ></iframe>
                         )}
                         
-                        {/* Vista previa para imágenes */}
                         {tipoArchivo === 'imagen' && archivoUrl && (
                           <div className="firma-preview-image-wrapper">
                             <img 
@@ -604,7 +561,6 @@ export default function Firma() {
                           </div>
                         )}
                         
-                        {/* Vista previa para texto */}
                         {tipoArchivo === 'texto' && contenidoTexto && (
                           <div className="firma-preview-text-wrapper">
                             <pre className="firma-preview-pre">
@@ -613,7 +569,6 @@ export default function Firma() {
                           </div>
                         )}
                         
-                        {/* Información para otros tipos */}
                         {archivo && tipoArchivo !== 'pdf' && tipoArchivo !== 'imagen' && tipoArchivo !== 'texto' && (
                           <div className="firma-preview-other-wrapper">
                             <i className="fa fa-file firma-preview-other-icon"></i>
